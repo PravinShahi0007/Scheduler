@@ -138,7 +138,7 @@
 
             If fp.bIsConnected Then
                 fp.get_attlog(data.Rows(i)("id_fingerprint").ToString())
-                'fp.clear_attlog()
+                fp.clear_attlog()
             Else
                 If Not i = 0 Then
                     string_err += vbNewLine
