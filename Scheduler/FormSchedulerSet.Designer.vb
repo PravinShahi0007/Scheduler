@@ -48,7 +48,7 @@ Partial Class FormSchedulerSet
         Me.BCancel.Location = New System.Drawing.Point(208, 2)
         Me.BCancel.Name = "BCancel"
         Me.BCancel.Size = New System.Drawing.Size(71, 32)
-        Me.BCancel.TabIndex = 1
+        Me.BCancel.TabIndex = 4
         Me.BCancel.Text = "Close"
         '
         'BSave
@@ -57,7 +57,7 @@ Partial Class FormSchedulerSet
         Me.BSave.Location = New System.Drawing.Point(279, 2)
         Me.BSave.Name = "BSave"
         Me.BSave.Size = New System.Drawing.Size(75, 32)
-        Me.BSave.TabIndex = 0
+        Me.BSave.TabIndex = 3
         Me.BSave.Text = "Save"
         '
         'TETime
@@ -68,7 +68,7 @@ Partial Class FormSchedulerSet
         Me.TETime.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
         Me.TETime.Properties.Mask.EditMask = "HH:mm:ss"
         Me.TETime.Size = New System.Drawing.Size(100, 20)
-        Me.TETime.TabIndex = 5
+        Me.TETime.TabIndex = 2
         '
         'LabelControl1
         '
@@ -91,7 +91,7 @@ Partial Class FormSchedulerSet
         Me.TESchedule.Location = New System.Drawing.Point(94, 19)
         Me.TESchedule.Name = "TESchedule"
         Me.TESchedule.Size = New System.Drawing.Size(238, 20)
-        Me.TESchedule.TabIndex = 8
+        Me.TESchedule.TabIndex = 1
         '
         'FormSchedulerSet
         '

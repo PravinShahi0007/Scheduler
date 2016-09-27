@@ -71,7 +71,7 @@ Partial Class FormScheduler
         '
         'NotifyIcon
         '
-        Me.NotifyIcon.BalloonTipText = "Right click here to setup !"
+        Me.NotifyIcon.BalloonTipText = "Still running here !"
         Me.NotifyIcon.BalloonTipTitle = "Scheduler PHP"
         Me.NotifyIcon.ContextMenuStrip = Me.ContextMenuStrip
         Me.NotifyIcon.Icon = CType(resources.GetObject("NotifyIcon.Icon"), System.Drawing.Icon)
@@ -84,9 +84,9 @@ Partial Class FormScheduler
         Me.PanelControl1.Controls.Add(Me.BCancel)
         Me.PanelControl1.Controls.Add(Me.BSave)
         Me.PanelControl1.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me.PanelControl1.Location = New System.Drawing.Point(0, 270)
+        Me.PanelControl1.Location = New System.Drawing.Point(0, 149)
         Me.PanelControl1.Name = "PanelControl1"
-        Me.PanelControl1.Size = New System.Drawing.Size(757, 36)
+        Me.PanelControl1.Size = New System.Drawing.Size(493, 36)
         Me.PanelControl1.TabIndex = 3
         '
         'Linfo
@@ -100,7 +100,7 @@ Partial Class FormScheduler
         'BCancel
         '
         Me.BCancel.Dock = System.Windows.Forms.DockStyle.Right
-        Me.BCancel.Location = New System.Drawing.Point(612, 2)
+        Me.BCancel.Location = New System.Drawing.Point(348, 2)
         Me.BCancel.Name = "BCancel"
         Me.BCancel.Size = New System.Drawing.Size(71, 32)
         Me.BCancel.TabIndex = 1
@@ -109,7 +109,7 @@ Partial Class FormScheduler
         'BSave
         '
         Me.BSave.Dock = System.Windows.Forms.DockStyle.Right
-        Me.BSave.Location = New System.Drawing.Point(683, 2)
+        Me.BSave.Location = New System.Drawing.Point(419, 2)
         Me.BSave.Name = "BSave"
         Me.BSave.Size = New System.Drawing.Size(72, 32)
         Me.BSave.TabIndex = 0
@@ -122,34 +122,34 @@ Partial Class FormScheduler
         Me.PanelControl2.Dock = System.Windows.Forms.DockStyle.Top
         Me.PanelControl2.Location = New System.Drawing.Point(0, 0)
         Me.PanelControl2.Name = "PanelControl2"
-        Me.PanelControl2.Size = New System.Drawing.Size(757, 36)
+        Me.PanelControl2.Size = New System.Drawing.Size(493, 30)
         Me.PanelControl2.TabIndex = 4
         '
         'BDelete
         '
         Me.BDelete.Dock = System.Windows.Forms.DockStyle.Right
-        Me.BDelete.Location = New System.Drawing.Point(612, 2)
+        Me.BDelete.Location = New System.Drawing.Point(409, 2)
         Me.BDelete.Name = "BDelete"
-        Me.BDelete.Size = New System.Drawing.Size(71, 32)
+        Me.BDelete.Size = New System.Drawing.Size(42, 26)
         Me.BDelete.TabIndex = 1
-        Me.BDelete.Text = "Delete"
+        Me.BDelete.Text = "-"
         '
         'BAdd
         '
         Me.BAdd.Dock = System.Windows.Forms.DockStyle.Right
-        Me.BAdd.Location = New System.Drawing.Point(683, 2)
+        Me.BAdd.Location = New System.Drawing.Point(451, 2)
         Me.BAdd.Name = "BAdd"
-        Me.BAdd.Size = New System.Drawing.Size(72, 32)
+        Me.BAdd.Size = New System.Drawing.Size(40, 26)
         Me.BAdd.TabIndex = 0
-        Me.BAdd.Text = "Add"
+        Me.BAdd.Text = "+"
         '
         'GCSchedule
         '
         Me.GCSchedule.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.GCSchedule.Location = New System.Drawing.Point(0, 36)
+        Me.GCSchedule.Location = New System.Drawing.Point(0, 30)
         Me.GCSchedule.MainView = Me.GVSchedule
         Me.GCSchedule.Name = "GCSchedule"
-        Me.GCSchedule.Size = New System.Drawing.Size(757, 234)
+        Me.GCSchedule.Size = New System.Drawing.Size(493, 119)
         Me.GCSchedule.TabIndex = 5
         Me.GCSchedule.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.GVSchedule})
         '
@@ -158,6 +158,7 @@ Partial Class FormScheduler
         Me.GVSchedule.Columns.AddRange(New DevExpress.XtraGrid.Columns.GridColumn() {Me.GridColumn3, Me.GridColumn1, Me.GridColumn2})
         Me.GVSchedule.GridControl = Me.GCSchedule
         Me.GVSchedule.Name = "GVSchedule"
+        Me.GVSchedule.OptionsBehavior.Editable = False
         Me.GVSchedule.OptionsView.ShowGroupPanel = False
         '
         'GridColumn3
@@ -188,7 +189,7 @@ Partial Class FormScheduler
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(757, 306)
+        Me.ClientSize = New System.Drawing.Size(493, 185)
         Me.Controls.Add(Me.GCSchedule)
         Me.Controls.Add(Me.PanelControl2)
         Me.Controls.Add(Me.PanelControl1)
