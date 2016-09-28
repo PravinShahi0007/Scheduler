@@ -4,6 +4,11 @@
     Private Sub FormScheduler_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Cursor = Cursors.WaitCursor
 
+        load_form()
+
+        Cursor = Cursors.Default
+    End Sub
+    Sub load_form()
         ShowInTaskbar = False
 
         Try
@@ -22,12 +27,12 @@
             FormDatabase.TopMost = False
         End Try
 
-        load_schedule()
-        start_timer()
-
-        Cursor = Cursors.Default
+        If connection_problem = False Then
+            load_schedule()
+            start_timer()
+            WindowState = FormWindowState.Minimized
+        End If
     End Sub
-
     Sub load_schedule()
         Dim query As String = ""
         query = "SELECT * FROM tb_scheduler_attn"

@@ -52,7 +52,8 @@
             read_database_configuration()
 
             FormScheduler.Visible = True
-
+            FormScheduler.connection_problem = False
+            FormScheduler.load_form()
             Close()
 
         Catch ex As Exception

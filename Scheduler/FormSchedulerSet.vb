@@ -13,4 +13,5 @@
         FormScheduler.load_schedule()
         Close()
     End Sub
+
 End Class
