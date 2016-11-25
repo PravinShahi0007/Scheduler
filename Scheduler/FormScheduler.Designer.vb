@@ -46,6 +46,12 @@ Partial Class FormScheduler
         Me.TETime = New DevExpress.XtraEditors.TimeEdit()
         Me.LEDay = New DevExpress.XtraEditors.LookUpEdit()
         Me.Label1 = New System.Windows.Forms.Label()
+        Me.XTPLeaveRemaining = New DevExpress.XtraTab.XtraTabPage()
+        Me.BSaveMonthly = New DevExpress.XtraEditors.SimpleButton()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.TETimeMonthly = New DevExpress.XtraEditors.TimeEdit()
+        Me.LEDOM = New DevExpress.XtraEditors.LookUpEdit()
+        Me.Label4 = New System.Windows.Forms.Label()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -59,6 +65,9 @@ Partial Class FormScheduler
         Me.XTPAttendance.SuspendLayout()
         CType(Me.TETime.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LEDay.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.XTPLeaveRemaining.SuspendLayout()
+        CType(Me.TETimeMonthly.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LEDOM.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Timer
@@ -207,7 +216,7 @@ Partial Class FormScheduler
         Me.XtraTabControl1.SelectedTabPage = Me.XTPSchedule
         Me.XtraTabControl1.Size = New System.Drawing.Size(562, 189)
         Me.XtraTabControl1.TabIndex = 6
-        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance})
+        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining})
         '
         'XTPSchedule
         '
@@ -230,7 +239,7 @@ Partial Class FormScheduler
         '
         'BSaveWAR
         '
-        Me.BSaveWAR.Location = New System.Drawing.Point(204, 53)
+        Me.BSaveWAR.Location = New System.Drawing.Point(190, 41)
         Me.BSaveWAR.Name = "BSaveWAR"
         Me.BSaveWAR.Size = New System.Drawing.Size(66, 23)
         Me.BSaveWAR.TabIndex = 5
@@ -239,7 +248,7 @@ Partial Class FormScheduler
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(11, 58)
+        Me.Label2.Location = New System.Drawing.Point(11, 47)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(28, 13)
         Me.Label2.TabIndex = 4
@@ -248,7 +257,7 @@ Partial Class FormScheduler
         'TETime
         '
         Me.TETime.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
-        Me.TETime.Location = New System.Drawing.Point(84, 55)
+        Me.TETime.Location = New System.Drawing.Point(84, 44)
         Me.TETime.Name = "TETime"
         Me.TETime.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
         Me.TETime.Properties.Mask.EditMask = "HH:mm:ss"
@@ -257,7 +266,7 @@ Partial Class FormScheduler
         '
         'LEDay
         '
-        Me.LEDay.Location = New System.Drawing.Point(84, 22)
+        Me.LEDay.Location = New System.Drawing.Point(84, 11)
         Me.LEDay.Name = "LEDay"
         Me.LEDay.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
         Me.LEDay.Properties.Columns.AddRange(New DevExpress.XtraEditors.Controls.LookUpColumnInfo() {New DevExpress.XtraEditors.Controls.LookUpColumnInfo("id_day", "ID Day", 20, DevExpress.Utils.FormatType.None, "", False, DevExpress.Utils.HorzAlignment.[Default], DevExpress.Data.ColumnSortOrder.Ascending), New DevExpress.XtraEditors.Controls.LookUpColumnInfo("day_name", "Day")})
@@ -267,11 +276,67 @@ Partial Class FormScheduler
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(11, 25)
+        Me.Label1.Location = New System.Drawing.Point(11, 14)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(67, 13)
         Me.Label1.TabIndex = 1
         Me.Label1.Text = "Run Every : "
+        '
+        'XTPLeaveRemaining
+        '
+        Me.XTPLeaveRemaining.Controls.Add(Me.BSaveMonthly)
+        Me.XTPLeaveRemaining.Controls.Add(Me.Label3)
+        Me.XTPLeaveRemaining.Controls.Add(Me.TETimeMonthly)
+        Me.XTPLeaveRemaining.Controls.Add(Me.LEDOM)
+        Me.XTPLeaveRemaining.Controls.Add(Me.Label4)
+        Me.XTPLeaveRemaining.Name = "XTPLeaveRemaining"
+        Me.XTPLeaveRemaining.Size = New System.Drawing.Size(556, 161)
+        Me.XTPLeaveRemaining.Text = "Leave Remaining"
+        '
+        'BSaveMonthly
+        '
+        Me.BSaveMonthly.Location = New System.Drawing.Point(190, 41)
+        Me.BSaveMonthly.Name = "BSaveMonthly"
+        Me.BSaveMonthly.Size = New System.Drawing.Size(66, 23)
+        Me.BSaveMonthly.TabIndex = 10
+        Me.BSaveMonthly.Text = "Save"
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(11, 47)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(28, 13)
+        Me.Label3.TabIndex = 9
+        Me.Label3.Text = "At : "
+        '
+        'TETimeMonthly
+        '
+        Me.TETimeMonthly.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
+        Me.TETimeMonthly.Location = New System.Drawing.Point(84, 44)
+        Me.TETimeMonthly.Name = "TETimeMonthly"
+        Me.TETimeMonthly.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.TETimeMonthly.Properties.Mask.EditMask = "HH:mm:ss"
+        Me.TETimeMonthly.Size = New System.Drawing.Size(100, 20)
+        Me.TETimeMonthly.TabIndex = 8
+        '
+        'LEDOM
+        '
+        Me.LEDOM.Location = New System.Drawing.Point(84, 11)
+        Me.LEDOM.Name = "LEDOM"
+        Me.LEDOM.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.LEDOM.Properties.Columns.AddRange(New DevExpress.XtraEditors.Controls.LookUpColumnInfo() {New DevExpress.XtraEditors.Controls.LookUpColumnInfo("id_day", "ID Day", 20, DevExpress.Utils.FormatType.None, "", False, DevExpress.Utils.HorzAlignment.[Default], DevExpress.Data.ColumnSortOrder.Ascending), New DevExpress.XtraEditors.Controls.LookUpColumnInfo("day_name", "Day")})
+        Me.LEDOM.Size = New System.Drawing.Size(445, 20)
+        Me.LEDOM.TabIndex = 7
+        '
+        'Label4
+        '
+        Me.Label4.AutoSize = True
+        Me.Label4.Location = New System.Drawing.Point(11, 14)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(67, 13)
+        Me.Label4.TabIndex = 6
+        Me.Label4.Text = "Run Every : "
         '
         'FormScheduler
         '
@@ -300,6 +365,10 @@ Partial Class FormScheduler
         Me.XTPAttendance.PerformLayout()
         CType(Me.TETime.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LEDay.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.XTPLeaveRemaining.ResumeLayout(False)
+        Me.XTPLeaveRemaining.PerformLayout()
+        CType(Me.TETimeMonthly.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LEDOM.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -329,4 +398,10 @@ Partial Class FormScheduler
     Friend WithEvents Label2 As Label
     Friend WithEvents TETime As DevExpress.XtraEditors.TimeEdit
     Friend WithEvents BSaveWAR As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents XTPLeaveRemaining As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents BSaveMonthly As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents Label3 As Label
+    Friend WithEvents TETimeMonthly As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents LEDOM As DevExpress.XtraEditors.LookUpEdit
+    Friend WithEvents Label4 As Label
 End Class
