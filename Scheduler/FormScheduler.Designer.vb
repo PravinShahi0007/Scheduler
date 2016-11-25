@@ -38,6 +38,14 @@ Partial Class FormScheduler
         Me.GridColumn3 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn1 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn2 = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.XtraTabControl1 = New DevExpress.XtraTab.XtraTabControl()
+        Me.XTPSchedule = New DevExpress.XtraTab.XtraTabPage()
+        Me.XTPAttendance = New DevExpress.XtraTab.XtraTabPage()
+        Me.BSaveWAR = New DevExpress.XtraEditors.SimpleButton()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.TETime = New DevExpress.XtraEditors.TimeEdit()
+        Me.LEDay = New DevExpress.XtraEditors.LookUpEdit()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -45,6 +53,12 @@ Partial Class FormScheduler
         Me.PanelControl2.SuspendLayout()
         CType(Me.GCSchedule, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.GVSchedule, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.XtraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.XtraTabControl1.SuspendLayout()
+        Me.XTPSchedule.SuspendLayout()
+        Me.XTPAttendance.SuspendLayout()
+        CType(Me.TETime.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LEDay.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Timer
@@ -84,9 +98,9 @@ Partial Class FormScheduler
         Me.PanelControl1.Controls.Add(Me.BCancel)
         Me.PanelControl1.Controls.Add(Me.BSave)
         Me.PanelControl1.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me.PanelControl1.Location = New System.Drawing.Point(0, 149)
+        Me.PanelControl1.Location = New System.Drawing.Point(0, 189)
         Me.PanelControl1.Name = "PanelControl1"
-        Me.PanelControl1.Size = New System.Drawing.Size(493, 36)
+        Me.PanelControl1.Size = New System.Drawing.Size(562, 36)
         Me.PanelControl1.TabIndex = 3
         '
         'Linfo
@@ -100,7 +114,7 @@ Partial Class FormScheduler
         'BCancel
         '
         Me.BCancel.Dock = System.Windows.Forms.DockStyle.Right
-        Me.BCancel.Location = New System.Drawing.Point(348, 2)
+        Me.BCancel.Location = New System.Drawing.Point(417, 2)
         Me.BCancel.Name = "BCancel"
         Me.BCancel.Size = New System.Drawing.Size(71, 32)
         Me.BCancel.TabIndex = 1
@@ -109,7 +123,7 @@ Partial Class FormScheduler
         'BSave
         '
         Me.BSave.Dock = System.Windows.Forms.DockStyle.Right
-        Me.BSave.Location = New System.Drawing.Point(419, 2)
+        Me.BSave.Location = New System.Drawing.Point(488, 2)
         Me.BSave.Name = "BSave"
         Me.BSave.Size = New System.Drawing.Size(72, 32)
         Me.BSave.TabIndex = 0
@@ -122,13 +136,13 @@ Partial Class FormScheduler
         Me.PanelControl2.Dock = System.Windows.Forms.DockStyle.Top
         Me.PanelControl2.Location = New System.Drawing.Point(0, 0)
         Me.PanelControl2.Name = "PanelControl2"
-        Me.PanelControl2.Size = New System.Drawing.Size(493, 30)
+        Me.PanelControl2.Size = New System.Drawing.Size(556, 30)
         Me.PanelControl2.TabIndex = 4
         '
         'BDelete
         '
         Me.BDelete.Dock = System.Windows.Forms.DockStyle.Right
-        Me.BDelete.Location = New System.Drawing.Point(409, 2)
+        Me.BDelete.Location = New System.Drawing.Point(472, 2)
         Me.BDelete.Name = "BDelete"
         Me.BDelete.Size = New System.Drawing.Size(42, 26)
         Me.BDelete.TabIndex = 1
@@ -137,7 +151,7 @@ Partial Class FormScheduler
         'BAdd
         '
         Me.BAdd.Dock = System.Windows.Forms.DockStyle.Right
-        Me.BAdd.Location = New System.Drawing.Point(451, 2)
+        Me.BAdd.Location = New System.Drawing.Point(514, 2)
         Me.BAdd.Name = "BAdd"
         Me.BAdd.Size = New System.Drawing.Size(40, 26)
         Me.BAdd.TabIndex = 0
@@ -149,7 +163,7 @@ Partial Class FormScheduler
         Me.GCSchedule.Location = New System.Drawing.Point(0, 30)
         Me.GCSchedule.MainView = Me.GVSchedule
         Me.GCSchedule.Name = "GCSchedule"
-        Me.GCSchedule.Size = New System.Drawing.Size(493, 119)
+        Me.GCSchedule.Size = New System.Drawing.Size(556, 131)
         Me.GCSchedule.TabIndex = 5
         Me.GCSchedule.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.GVSchedule})
         '
@@ -185,13 +199,86 @@ Partial Class FormScheduler
         Me.GridColumn2.Visible = True
         Me.GridColumn2.VisibleIndex = 1
         '
+        'XtraTabControl1
+        '
+        Me.XtraTabControl1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.XtraTabControl1.Location = New System.Drawing.Point(0, 0)
+        Me.XtraTabControl1.Name = "XtraTabControl1"
+        Me.XtraTabControl1.SelectedTabPage = Me.XTPSchedule
+        Me.XtraTabControl1.Size = New System.Drawing.Size(562, 189)
+        Me.XtraTabControl1.TabIndex = 6
+        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance})
+        '
+        'XTPSchedule
+        '
+        Me.XTPSchedule.Controls.Add(Me.GCSchedule)
+        Me.XTPSchedule.Controls.Add(Me.PanelControl2)
+        Me.XTPSchedule.Name = "XTPSchedule"
+        Me.XTPSchedule.Size = New System.Drawing.Size(556, 161)
+        Me.XTPSchedule.Text = "Attendance Fingerprint Data"
+        '
+        'XTPAttendance
+        '
+        Me.XTPAttendance.Controls.Add(Me.BSaveWAR)
+        Me.XTPAttendance.Controls.Add(Me.Label2)
+        Me.XTPAttendance.Controls.Add(Me.TETime)
+        Me.XTPAttendance.Controls.Add(Me.LEDay)
+        Me.XTPAttendance.Controls.Add(Me.Label1)
+        Me.XTPAttendance.Name = "XTPAttendance"
+        Me.XTPAttendance.Size = New System.Drawing.Size(556, 161)
+        Me.XTPAttendance.Text = "Weekly Attendance Report"
+        '
+        'BSaveWAR
+        '
+        Me.BSaveWAR.Location = New System.Drawing.Point(204, 53)
+        Me.BSaveWAR.Name = "BSaveWAR"
+        Me.BSaveWAR.Size = New System.Drawing.Size(66, 23)
+        Me.BSaveWAR.TabIndex = 5
+        Me.BSaveWAR.Text = "Save"
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(11, 58)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(28, 13)
+        Me.Label2.TabIndex = 4
+        Me.Label2.Text = "At : "
+        '
+        'TETime
+        '
+        Me.TETime.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
+        Me.TETime.Location = New System.Drawing.Point(84, 55)
+        Me.TETime.Name = "TETime"
+        Me.TETime.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.TETime.Properties.Mask.EditMask = "HH:mm:ss"
+        Me.TETime.Size = New System.Drawing.Size(100, 20)
+        Me.TETime.TabIndex = 3
+        '
+        'LEDay
+        '
+        Me.LEDay.Location = New System.Drawing.Point(84, 22)
+        Me.LEDay.Name = "LEDay"
+        Me.LEDay.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.LEDay.Properties.Columns.AddRange(New DevExpress.XtraEditors.Controls.LookUpColumnInfo() {New DevExpress.XtraEditors.Controls.LookUpColumnInfo("id_day", "ID Day", 20, DevExpress.Utils.FormatType.None, "", False, DevExpress.Utils.HorzAlignment.[Default], DevExpress.Data.ColumnSortOrder.Ascending), New DevExpress.XtraEditors.Controls.LookUpColumnInfo("day_name", "Day")})
+        Me.LEDay.Size = New System.Drawing.Size(445, 20)
+        Me.LEDay.TabIndex = 2
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(11, 25)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(67, 13)
+        Me.Label1.TabIndex = 1
+        Me.Label1.Text = "Run Every : "
+        '
         'FormScheduler
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(493, 185)
-        Me.Controls.Add(Me.GCSchedule)
-        Me.Controls.Add(Me.PanelControl2)
+        Me.ClientSize = New System.Drawing.Size(562, 225)
+        Me.Controls.Add(Me.XtraTabControl1)
         Me.Controls.Add(Me.PanelControl1)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MaximizeBox = False
@@ -206,6 +293,13 @@ Partial Class FormScheduler
         Me.PanelControl2.ResumeLayout(False)
         CType(Me.GCSchedule, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.GVSchedule, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.XtraTabControl1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.XtraTabControl1.ResumeLayout(False)
+        Me.XTPSchedule.ResumeLayout(False)
+        Me.XTPAttendance.ResumeLayout(False)
+        Me.XTPAttendance.PerformLayout()
+        CType(Me.TETime.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LEDay.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -227,4 +321,12 @@ Partial Class FormScheduler
     Friend WithEvents GridColumn1 As DevExpress.XtraGrid.Columns.GridColumn
     Friend WithEvents GridColumn2 As DevExpress.XtraGrid.Columns.GridColumn
     Friend WithEvents GridColumn3 As DevExpress.XtraGrid.Columns.GridColumn
+    Friend WithEvents XtraTabControl1 As DevExpress.XtraTab.XtraTabControl
+    Friend WithEvents XTPSchedule As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents XTPAttendance As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents Label1 As Label
+    Friend WithEvents LEDay As DevExpress.XtraEditors.LookUpEdit
+    Friend WithEvents Label2 As Label
+    Friend WithEvents TETime As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents BSaveWAR As DevExpress.XtraEditors.SimpleButton
 End Class
