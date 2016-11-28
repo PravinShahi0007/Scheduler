@@ -185,6 +185,12 @@
     <Compile Include="ReportEmpAttn.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ReportEmpLeaveStock.Designer.vb">
+      <DependentUpon>ReportEmpLeaveStock.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ReportEmpLeaveStock.vb">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FormDatabase.resx">

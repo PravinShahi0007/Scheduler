@@ -61,19 +61,28 @@
             load_schedule()
             'weekly
             load_days()
-            load_schedule_wekkly_attn_report()
+            load_schedule_weekly_attn_report()
+            'monthly
+            load_schedule_monthly_leave_report()
             '
             start_timer()
             WindowState = FormWindowState.Minimized
         End If
     End Sub
-    Sub load_schedule_wekkly_attn_report()
+    Sub load_schedule_monthly_leave_report()
         Dim query As String = ""
-        query = "SELECT * FROM tb_opt_scheduler LIMIT 1"
+        query = "SELECT time_stock_leave FROM tb_opt_scheduler LIMIT 1"
         Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
 
-        LEDay.ItemIndex = LEDay.Properties.GetDataSourceRowIndex("id_day", data.Rows(0)("day").ToString)
-        TETime.EditValue = data.Rows(0)("time")
+        TETimeMonthly.EditValue = data.Rows(0)("time_stock_leave")
+    End Sub
+    Sub load_schedule_weekly_attn_report()
+        Dim query As String = ""
+        query = "SELECT day_weekly_attn,time_weekly_attn FROM tb_opt_scheduler LIMIT 1"
+        Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+
+        LEDay.ItemIndex = LEDay.Properties.GetDataSourceRowIndex("id_day", data.Rows(0)("day_weekly_attn").ToString)
+        TETime.EditValue = data.Rows(0)("time_weekly_attn")
     End Sub
     Sub load_schedule()
         Dim query As String = ""
@@ -97,14 +106,16 @@
                 mail.report_mark_type = "weekly_attn"
                 mail.send_email_html()
             End If
+            'monthly attendance
+            If cur_datetime.Day = 28 And (Date.Parse(TETimeMonthly.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
+                Dim mail As ClassSendEmail = New ClassSendEmail()
+                mail.report_mark_type = "monthly_leave_remaining"
+                mail.send_email_html()
+            End If
         Catch ex As Exception
             stop_timer()
             MsgBox(ex.ToString)
         End Try
-    End Sub
-
-    Sub exec_weekly_attn()
-
     End Sub
 
     Private Sub BSave_Click(sender As Object, e As EventArgs) Handles BSave.Click
@@ -220,6 +231,12 @@
     Private Sub BSaveWAR_Click(sender As Object, e As EventArgs) Handles BSaveWAR.Click
         Dim query_log As String = "UPDATE tb_opt_scheduler SET day='" & LEDay.EditValue.ToString & "',`time`='" & Date.Parse(TETime.EditValue.ToString).ToString("HH:mm:ss") & "'"
         execute_non_query(query_log, True, "", "", "", "")
-        MsgBox("Schedule saved.")
+        MsgBox("Weekly Schedule saved.")
+    End Sub
+
+    Private Sub BSaveMonthly_Click(sender As Object, e As EventArgs) Handles BSaveMonthly.Click
+        Dim query As String = "UPDATE tb_opt_scheduler SET time_stock_leave='" & Date.Parse(TETimeMonthly.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        execute_non_query(query, True, "", "", "", "")
+        MsgBox("Monthly Schedule saved.")
     End Sub
 End Class

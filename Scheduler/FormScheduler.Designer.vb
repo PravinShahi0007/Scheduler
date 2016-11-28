@@ -1,9 +1,9 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class FormScheduler
     Inherits DevExpress.XtraEditors.XtraForm
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         If disposing AndAlso components IsNot Nothing Then
             components.Dispose()
@@ -17,7 +17,7 @@ Partial Class FormScheduler
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FormScheduler))
@@ -50,8 +50,6 @@ Partial Class FormScheduler
         Me.BSaveMonthly = New DevExpress.XtraEditors.SimpleButton()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.TETimeMonthly = New DevExpress.XtraEditors.TimeEdit()
-        Me.LEDOM = New DevExpress.XtraEditors.LookUpEdit()
-        Me.Label4 = New System.Windows.Forms.Label()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -67,7 +65,6 @@ Partial Class FormScheduler
         CType(Me.LEDay.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.XTPLeaveRemaining.SuspendLayout()
         CType(Me.TETimeMonthly.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.LEDOM.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Timer
@@ -287,15 +284,13 @@ Partial Class FormScheduler
         Me.XTPLeaveRemaining.Controls.Add(Me.BSaveMonthly)
         Me.XTPLeaveRemaining.Controls.Add(Me.Label3)
         Me.XTPLeaveRemaining.Controls.Add(Me.TETimeMonthly)
-        Me.XTPLeaveRemaining.Controls.Add(Me.LEDOM)
-        Me.XTPLeaveRemaining.Controls.Add(Me.Label4)
         Me.XTPLeaveRemaining.Name = "XTPLeaveRemaining"
         Me.XTPLeaveRemaining.Size = New System.Drawing.Size(556, 161)
         Me.XTPLeaveRemaining.Text = "Leave Remaining"
         '
         'BSaveMonthly
         '
-        Me.BSaveMonthly.Location = New System.Drawing.Point(190, 41)
+        Me.BSaveMonthly.Location = New System.Drawing.Point(284, 16)
         Me.BSaveMonthly.Name = "BSaveMonthly"
         Me.BSaveMonthly.Size = New System.Drawing.Size(66, 23)
         Me.BSaveMonthly.TabIndex = 10
@@ -304,39 +299,21 @@ Partial Class FormScheduler
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(11, 47)
+        Me.Label3.Location = New System.Drawing.Point(18, 21)
         Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(28, 13)
+        Me.Label3.Size = New System.Drawing.Size(154, 13)
         Me.Label3.TabIndex = 9
-        Me.Label3.Text = "At : "
+        Me.Label3.Text = "Beginning of every month At : "
         '
         'TETimeMonthly
         '
         Me.TETimeMonthly.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
-        Me.TETimeMonthly.Location = New System.Drawing.Point(84, 44)
+        Me.TETimeMonthly.Location = New System.Drawing.Point(178, 18)
         Me.TETimeMonthly.Name = "TETimeMonthly"
         Me.TETimeMonthly.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
         Me.TETimeMonthly.Properties.Mask.EditMask = "HH:mm:ss"
         Me.TETimeMonthly.Size = New System.Drawing.Size(100, 20)
         Me.TETimeMonthly.TabIndex = 8
-        '
-        'LEDOM
-        '
-        Me.LEDOM.Location = New System.Drawing.Point(84, 11)
-        Me.LEDOM.Name = "LEDOM"
-        Me.LEDOM.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
-        Me.LEDOM.Properties.Columns.AddRange(New DevExpress.XtraEditors.Controls.LookUpColumnInfo() {New DevExpress.XtraEditors.Controls.LookUpColumnInfo("id_day", "ID Day", 20, DevExpress.Utils.FormatType.None, "", False, DevExpress.Utils.HorzAlignment.[Default], DevExpress.Data.ColumnSortOrder.Ascending), New DevExpress.XtraEditors.Controls.LookUpColumnInfo("day_name", "Day")})
-        Me.LEDOM.Size = New System.Drawing.Size(445, 20)
-        Me.LEDOM.TabIndex = 7
-        '
-        'Label4
-        '
-        Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(11, 14)
-        Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(67, 13)
-        Me.Label4.TabIndex = 6
-        Me.Label4.Text = "Run Every : "
         '
         'FormScheduler
         '
@@ -368,7 +345,6 @@ Partial Class FormScheduler
         Me.XTPLeaveRemaining.ResumeLayout(False)
         Me.XTPLeaveRemaining.PerformLayout()
         CType(Me.TETimeMonthly.Properties, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.LEDOM.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -402,6 +378,4 @@ Partial Class FormScheduler
     Friend WithEvents BSaveMonthly As DevExpress.XtraEditors.SimpleButton
     Friend WithEvents Label3 As Label
     Friend WithEvents TETimeMonthly As DevExpress.XtraEditors.TimeEdit
-    Friend WithEvents LEDOM As DevExpress.XtraEditors.LookUpEdit
-    Friend WithEvents Label4 As Label
 End Class
