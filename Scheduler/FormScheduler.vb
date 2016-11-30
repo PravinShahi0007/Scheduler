@@ -107,11 +107,16 @@
                 mail.send_email_html()
             End If
             'monthly attendance
-            If cur_datetime.Day = 28 And (Date.Parse(TETimeMonthly.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
+            If cur_datetime.Day = 1 And (Date.Parse(TETimeMonthly.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
                 Dim mail As ClassSendEmail = New ClassSendEmail()
                 mail.report_mark_type = "monthly_leave_remaining"
                 mail.send_email_html()
+                'dept head
+                Dim mail_dept As ClassSendEmail = New ClassSendEmail
+                mail_dept.report_mark_type = "monthly_leave_remaining_head"
+                mail_dept.send_email_html()
             End If
+
         Catch ex As Exception
             stop_timer()
             MsgBox(ex.ToString)
