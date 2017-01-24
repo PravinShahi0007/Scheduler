@@ -105,6 +105,10 @@
                 Dim mail As ClassSendEmail = New ClassSendEmail()
                 mail.report_mark_type = "weekly_attn"
                 mail.send_email_html()
+                'dept head
+                Dim mail_dept As ClassSendEmail = New ClassSendEmail()
+                mail_dept.report_mark_type = "weekly_attn_head"
+                mail_dept.send_email_html()
             End If
             'monthly attendance
             If cur_datetime.Day = 1 And (Date.Parse(TETimeMonthly.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
@@ -234,7 +238,7 @@
     End Sub
 
     Private Sub BSaveWAR_Click(sender As Object, e As EventArgs) Handles BSaveWAR.Click
-        Dim query_log As String = "UPDATE tb_opt_scheduler SET day='" & LEDay.EditValue.ToString & "',`time`='" & Date.Parse(TETime.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        Dim query_log As String = "UPDATE tb_opt_scheduler SET day_weekly_attn='" & LEDay.EditValue.ToString & "',`time_weekly_attn`='" & Date.Parse(TETime.EditValue.ToString).ToString("HH:mm:ss") & "'"
         execute_non_query(query_log, True, "", "", "", "")
         MsgBox("Weekly Schedule saved.")
     End Sub
