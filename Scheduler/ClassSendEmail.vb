@@ -1,5 +1,6 @@
 ﻿Imports System.IO
 Imports System.Net.Mail
+Imports System.Threading
 
 Public Class ClassSendEmail
     Public id_report As String = "-1"
@@ -11,83 +12,37 @@ Public Class ClassSendEmail
                                     LEFT JOIN tb_m_employee emp ON emp.id_employee=opt.id_emp_headdept_toreport 
                                     LIMIT 1"
         Dim data_opt As DataTable = execute_query(query_opt, -1, True, "", "", "", "")
-        'query dept
-        Dim query_dept As String = "SELECT dept.id_departement,dept.departement,emp.id_employee,emp.email_lokal,emp.employee_name FROM tb_m_departement dept
-                                            INNER JOIN tb_m_user usr ON dept.id_user_head=usr.id_user
-                                            INNER JOIN tb_m_employee emp ON emp.id_employee=usr.id_employee
-                                    WHERE is_office_dept='1'"
+
         '
         If report_mark_type = "weekly_attn" Then
             If data_opt.Rows(0)("send_weekly_attn").ToString = "1" Then
                 'Create a new report. 
+                'query dept
+                Dim query_dept As String = "SELECT dept.id_departement,dept.departement,emp.id_employee,emp.email_lokal,emp.employee_name FROM tb_m_departement dept
+                                            INNER JOIN tb_m_user usr ON dept.id_user_head=usr.id_user
+                                            INNER JOIN tb_m_employee emp ON emp.id_employee=usr.id_employee
+                                    WHERE is_office_dept='1'"
                 Dim data_dept As DataTable = execute_query(query_dept, -1, True, "", "", "", "")
                 For i As Integer = 0 To data_dept.Rows.Count - 1
-                    ReportEmpAttn.id_dept = data_dept.Rows(i)("id_departement").ToString
-                    ReportEmpAttn.is_head_dept = "-1"
-                    Dim Report As New ReportEmpAttn()
+                    Dim ix As Integer = i
 
-                    ' Create a new memory stream and export the report into it as PDF.
-                    Dim Mem As New MemoryStream()
-                    Report.ExportToPdf(Mem)
-
-                    ' Create a new attachment and put the PDF report into it.
-                    Mem.Seek(0, System.IO.SeekOrigin.Begin)
-                    '
-                    Dim Att = New Attachment(Mem, "Weekly Attendance Report - " & data_dept.Rows(i)("departement").ToString & ".pdf", "application/pdf")
-                    '
-                    Dim mail As MailMessage = New MailMessage("system@volcom.mail", data_dept.Rows(i)("email_lokal").ToString)
-                    ' Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
-                    mail.Attachments.Add(Att)
-                    Dim client As SmtpClient = New SmtpClient()
-                    client.Port = 25
-                    client.DeliveryMethod = SmtpDeliveryMethod.Network
-                    client.UseDefaultCredentials = False
-                    client.Host = "192.168.1.4"
-                    client.Credentials = New System.Net.NetworkCredential("system@volcom.mail", "system123")
-                    mail.Subject = "Weekly Attendance Report (" & data_dept.Rows(i)("departement").ToString & ")"
-                    mail.IsBodyHtml = True
-                    mail.Body = email_temp(data_dept.Rows(i)("employee_name").ToString, False)
-                    client.Send(mail)
-                    'log
-                    Dim query_log As String = "INSERT INTo tb_scheduler_attn_log(id_log_type,`datetime`,log) VALUES('3',NOW(),'Sending Weekly Attendance Report (" & data_dept.Rows(i)("departement").ToString & ") to " & data_dept.Rows(i)("email_lokal").ToString & "')"
-                    execute_non_query(query_log, True, "", "", "", "")
+                    Dim sender_thread = New Thread(Sub() send_mail_weekly_attn(data_dept.Rows(ix)("id_departement").ToString, data_dept.Rows(ix)("departement").ToString, data_dept.Rows(ix)("employee_name").ToString, data_dept.Rows(ix)("email_lokal").ToString))
+                    sender_thread.Start()
                 Next
             End If
         ElseIf report_mark_type = "weekly_attn_head" Then
             If data_opt.Rows(0)("send_weekly_attn_headdept").ToString = "1" Then
-                ReportEmpAttn.id_dept = "dept_head"
-                ReportEmpAttn.is_head_dept = "1"
-                Dim Report As New ReportEmpAttn()
-
-                ' Create a new memory stream and export the report into it as PDF.
-                Dim Mem As New MemoryStream()
-                Report.ExportToPdf(Mem)
-
-                ' Create a new attachment and put the PDF report into it.
-                Mem.Seek(0, System.IO.SeekOrigin.Begin)
-                '
-                Dim Att = New Attachment(Mem, "Weekly Attendance Report - Department Head.pdf", "application/pdf")
-                '
-                Dim mail As MailMessage = New MailMessage("system@volcom.mail", data_opt.Rows(0)("email_lokal").ToString)
-                'Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
-                mail.Attachments.Add(Att)
-                Dim client As SmtpClient = New SmtpClient()
-                client.Port = 25
-                client.DeliveryMethod = SmtpDeliveryMethod.Network
-                client.UseDefaultCredentials = False
-                client.Host = "192.168.1.4"
-                client.Credentials = New System.Net.NetworkCredential("system@volcom.mail", "system123")
-                mail.Subject = "Weekly Attendance Report (Department Head)"
-                mail.IsBodyHtml = True
-                mail.Body = email_temp(data_opt.Rows(0)("employee_name").ToString, True)
-                client.Send(mail)
-                'log
-                Dim query_log As String = "INSERT INTo tb_scheduler_attn_log(id_log_type,`datetime`,log) VALUES('3',NOW(),'Sending Weekly Attendance Report (Department Head) to " & data_opt.Rows(0)("employee_name").ToString & "')"
-                execute_non_query(query_log, True, "", "", "", "")
+                Dim sender_thread = New Thread(Sub() send_mail_weekly_attn_head(data_opt.Rows(0)("employee_name").ToString, data_opt.Rows(0)("email_lokal").ToString))
+                sender_thread.Start()
             End If
         ElseIf report_mark_type = "monthly_leave_remaining" Then
             If data_opt.Rows(0)("send_stock_leave").ToString = "1" Then
                 ' Create a new report. 
+                'query dept
+                Dim query_dept As String = "SELECT dept.id_departement,dept.departement,emp.id_employee,emp.email_lokal,emp.employee_name FROM tb_m_departement dept
+                                            INNER JOIN tb_m_user usr ON dept.id_user_head=usr.id_user
+                                            INNER JOIN tb_m_employee emp ON emp.id_employee=usr.id_employee
+                                    WHERE is_office_dept='1'"
                 Dim data_dept As DataTable = execute_query(query_dept, -1, True, "", "", "", "")
                 For i As Integer = 0 To data_dept.Rows.Count - 1
                     ReportEmpLeaveStock.id_dept = data_dept.Rows(i)("id_departement").ToString
@@ -155,6 +110,74 @@ Public Class ClassSendEmail
                 execute_non_query(query_log, True, "", "", "", "")
             End If
         End If
+    End Sub
+    Sub send_mail_weekly_attn(ByVal id_dept As String, ByVal dept As String, ByVal dept_head As String, ByVal dept_head_email As String)
+        ReportEmpAttn.id_dept = id_dept
+        ReportEmpAttn.is_head_dept = "-1"
+        Dim Report As New ReportEmpAttn()
+
+        ' Create a new memory stream and export the report into it as PDF.
+        Dim Mem As New MemoryStream()
+        Report.ExportToPdf(Mem)
+
+        ' Create a new attachment and put the PDF report into it.
+        Mem.Seek(0, SeekOrigin.Begin)
+        '
+        Dim Att = New Attachment(Mem, "Weekly Attendance Report - " & dept & ".pdf", "application/pdf")
+        '
+        Dim mail As MailMessage = New MailMessage("system@volcom.mail", dept_head_email)
+        ' Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
+        mail.Attachments.Add(Att)
+        Dim client As SmtpClient = New SmtpClient()
+        client.Port = 25
+        client.DeliveryMethod = SmtpDeliveryMethod.Network
+        client.UseDefaultCredentials = False
+        client.Host = "192.168.1.4"
+        client.Credentials = New System.Net.NetworkCredential("system@volcom.mail", "system123")
+        mail.Subject = "Weekly Attendance Report (" & dept & ")"
+        mail.IsBodyHtml = True
+        mail.Body = email_temp(dept_head, False)
+        client.Send(mail)
+        '
+        Mem.Dispose()
+        Att.Dispose()
+        mail.Dispose()
+        client.Dispose()
+
+        'log
+        Dim query_log As String = "INSERT INTO tb_scheduler_attn_log(id_log_type,`datetime`,log) VALUES('3',NOW(),'Sending Weekly Attendance Report (" & dept & ") to " & dept_head_email & "')"
+        execute_non_query(query_log, True, "", "", "", "")
+    End Sub
+    Sub send_mail_weekly_attn_head(ByVal emp_name As String, ByVal emp_email As String)
+        ReportEmpAttn.id_dept = "dept_head"
+        ReportEmpAttn.is_head_dept = "1"
+        Dim Report As New ReportEmpAttn()
+
+        ' Create a new memory stream and export the report into it as PDF.
+        Dim Mem As New MemoryStream()
+        Report.ExportToPdf(Mem)
+
+        ' Create a new attachment and put the PDF report into it.
+        Mem.Seek(0, System.IO.SeekOrigin.Begin)
+        '
+        Dim Att = New Attachment(Mem, "Weekly Attendance Report - Department Head.pdf", "application/pdf")
+        '
+        Dim mail As MailMessage = New MailMessage("system@volcom.mail", emp_email)
+        ' Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
+        mail.Attachments.Add(Att)
+        Dim client As SmtpClient = New SmtpClient()
+        client.Port = 25
+        client.DeliveryMethod = SmtpDeliveryMethod.Network
+        client.UseDefaultCredentials = False
+        client.Host = "192.168.1.4"
+        client.Credentials = New System.Net.NetworkCredential("system@volcom.mail", "system123")
+        mail.Subject = "Weekly Attendance Report (Department Head)"
+        mail.IsBodyHtml = True
+        mail.Body = email_temp(emp_name, True)
+        client.Send(mail)
+        'log
+        Dim query_log As String = "INSERT INTo tb_scheduler_attn_log(id_log_type,`datetime`,log) VALUES('3',NOW(),'Sending Weekly Attendance Report (Department Head) to " & emp_email & "')"
+        execute_non_query(query_log, True, "", "", "", "")
     End Sub
     Function email_temp(ByVal employee_name As String, ByVal is_dept_head As Boolean)
         Dim dep As String = ""
