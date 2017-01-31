@@ -87,7 +87,6 @@
                     GROUP BY sch.id_schedule
                     ) tb"
         End If
-
         Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
         GCSchedule.DataSource = data
         GVSchedule.BestFitColumns()

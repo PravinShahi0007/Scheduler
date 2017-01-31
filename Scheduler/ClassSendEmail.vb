@@ -25,15 +25,18 @@ Public Class ClassSendEmail
                 Dim data_dept As DataTable = execute_query(query_dept, -1, True, "", "", "", "")
                 For i As Integer = 0 To data_dept.Rows.Count - 1
                     Dim ix As Integer = i
+                    send_mail_weekly_attn(data_dept.Rows(ix)("id_departement").ToString, data_dept.Rows(ix)("departement").ToString, data_dept.Rows(ix)("employee_name").ToString, data_dept.Rows(ix)("email_lokal").ToString)
 
-                    Dim sender_thread = New Thread(Sub() send_mail_weekly_attn(data_dept.Rows(ix)("id_departement").ToString, data_dept.Rows(ix)("departement").ToString, data_dept.Rows(ix)("employee_name").ToString, data_dept.Rows(ix)("email_lokal").ToString))
-                    sender_thread.Start()
+                    'Dim sender_thread = New Thread(Sub() send_mail_weekly_attn(data_dept.Rows(ix)("id_departement").ToString, data_dept.Rows(ix)("departement").ToString, data_dept.Rows(ix)("employee_name").ToString, data_dept.Rows(ix)("email_lokal").ToString))
+                    'sender_thread.Start()
                 Next
             End If
         ElseIf report_mark_type = "weekly_attn_head" Then
             If data_opt.Rows(0)("send_weekly_attn_headdept").ToString = "1" Then
-                Dim sender_thread = New Thread(Sub() send_mail_weekly_attn_head(data_opt.Rows(0)("employee_name").ToString, data_opt.Rows(0)("email_lokal").ToString))
-                sender_thread.Start()
+                send_mail_weekly_attn_head(data_opt.Rows(0)("employee_name").ToString, data_opt.Rows(0)("email_lokal").ToString)
+
+                'Dim sender_thread = New Thread(Sub() send_mail_weekly_attn_head(data_opt.Rows(0)("employee_name").ToString, data_opt.Rows(0)("email_lokal").ToString))
+                'sender_thread.Start()
             End If
         ElseIf report_mark_type = "monthly_leave_remaining" Then
             If data_opt.Rows(0)("send_stock_leave").ToString = "1" Then
@@ -125,8 +128,8 @@ Public Class ClassSendEmail
         '
         Dim Att = New Attachment(Mem, "Weekly Attendance Report - " & dept & ".pdf", "application/pdf")
         '
-        Dim mail As MailMessage = New MailMessage("system@volcom.mail", dept_head_email)
-        ' Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
+        'Dim mail As MailMessage = New MailMessage("system@volcom.mail", dept_head_email)
+        Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
         mail.Attachments.Add(Att)
         Dim client As SmtpClient = New SmtpClient()
         client.Port = 25
@@ -139,6 +142,7 @@ Public Class ClassSendEmail
         mail.Body = email_temp(dept_head, False)
         client.Send(mail)
         '
+        Report.Dispose()
         Mem.Dispose()
         Att.Dispose()
         mail.Dispose()
@@ -162,8 +166,8 @@ Public Class ClassSendEmail
         '
         Dim Att = New Attachment(Mem, "Weekly Attendance Report - Department Head.pdf", "application/pdf")
         '
-        Dim mail As MailMessage = New MailMessage("system@volcom.mail", emp_email)
-        ' Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
+        ' Dim mail As MailMessage = New MailMessage("system@volcom.mail", emp_email)
+        Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
         mail.Attachments.Add(Att)
         Dim client As SmtpClient = New SmtpClient()
         client.Port = 25
@@ -175,6 +179,13 @@ Public Class ClassSendEmail
         mail.IsBodyHtml = True
         mail.Body = email_temp(emp_name, True)
         client.Send(mail)
+        '
+        Report.Dispose()
+        Mem.Dispose()
+        Att.Dispose()
+        mail.Dispose()
+        client.Dispose()
+        '
         'log
         Dim query_log As String = "INSERT INTo tb_scheduler_attn_log(id_log_type,`datetime`,log) VALUES('3',NOW(),'Sending Weekly Attendance Report (Department Head) to " & emp_email & "')"
         execute_non_query(query_log, True, "", "", "", "")
