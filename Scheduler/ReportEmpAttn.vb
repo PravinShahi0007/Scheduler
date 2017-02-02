@@ -76,11 +76,14 @@
                     LEFT JOIN tb_emp_attn at_brin ON at_brin.id_employee=sch.id_employee AND DATE(at_brin.datetime) = sch.Date AND at_brin.type_log = 4    
                     INNER JOIN 
                     (
-	                    SELECT emp.id_employee FROM tb_m_departement dep
-	                    INNER JOIN tb_m_user usr ON usr.id_user=dep.id_user_head
-	                    INNER JOIN tb_m_employee emp ON emp.id_employee = usr.id_employee
-	                    WHERE dep.is_office_dept='1'
-	                    GROUP BY emp.id_employee
+	                    SELECT emp.id_employee 
+                        FROM tb_m_departement dep
+                        INNER JOIN tb_m_user usr ON usr.id_user=dep.id_user_head
+                        INNER JOIN tb_m_employee emp ON emp.id_employee = usr.id_employee
+                        WHERE dep.is_office_dept='1'
+                        UNION
+                        SELECT id_employee FROM tb_emp_attn_spec
+                        GROUP BY id_employee
                     ) dept_head ON dept_head.id_employee=emp.id_employee
                     WHERE emp.id_employee_active='1'
                     AND YEARWEEK(sch.`date`,1) = YEARWEEK(NOW(),1) - 1

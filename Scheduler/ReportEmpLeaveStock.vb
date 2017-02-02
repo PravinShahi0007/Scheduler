@@ -43,11 +43,14 @@
                     INNER JOIN tb_lookup_employee_active active ON active.id_employee_active=emp.id_employee_active
                     INNER JOIN 
                     (
-	                    SELECT emp.id_employee FROM tb_m_departement dep
-	                    INNER JOIN tb_m_user usr ON usr.id_user=dep.id_user_head
-	                    INNER JOIN tb_m_employee emp ON emp.id_employee = usr.id_employee
-	                    WHERE dep.is_office_dept='1'
-	                    GROUP BY emp.id_employee
+	                    SELECT emp.id_employee 
+                        FROM tb_m_departement dep
+                        INNER JOIN tb_m_user usr ON usr.id_user=dep.id_user_head
+                        INNER JOIN tb_m_employee emp ON emp.id_employee = usr.id_employee
+                        WHERE dep.is_office_dept='1'
+                        UNION
+                        SELECT id_employee FROM tb_emp_attn_spec
+                        GROUP BY id_employee
                     ) dept_head ON dept_head.id_employee=emp.id_employee
                     WHERE emp_sl.is_process_exp = '2' AND emp.id_employee_active='1'
                     GROUP BY emp_sl.id_emp,emp_sl.type,emp_sl.date_expired
@@ -62,11 +65,14 @@
                     INNER JOIN tb_lookup_employee_active active ON active.id_employee_active=emp.id_employee_active
                     INNER JOIN 
                     (
-	                    SELECT emp.id_employee FROM tb_m_departement dep
-	                    INNER JOIN tb_m_user usr ON usr.id_user=dep.id_user_head
-	                    INNER JOIN tb_m_employee emp ON emp.id_employee = usr.id_employee
-	                    WHERE dep.is_office_dept='1'
-	                    GROUP BY emp.id_employee
+	                    SELECT emp.id_employee 
+                        FROM tb_m_departement dep
+                        INNER JOIN tb_m_user usr ON usr.id_user=dep.id_user_head
+                        INNER JOIN tb_m_employee emp ON emp.id_employee = usr.id_employee
+                        WHERE dep.is_office_dept='1'
+                        UNION
+                        SELECT id_employee FROM tb_emp_attn_spec
+                        GROUP BY id_employee
                     ) dept_head ON dept_head.id_employee=emp.id_employee
                     GROUP BY id_emp
                     HAVING -(SUM(adv.qty)) < 0"

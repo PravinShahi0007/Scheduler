@@ -95,8 +95,24 @@ Partial Public Class ReportEmpAttn
         '
         'GVSchedule
         '
+        Me.GVSchedule.AppearancePrint.GroupFooter.BackColor = System.Drawing.Color.WhiteSmoke
+        Me.GVSchedule.AppearancePrint.GroupFooter.Options.UseBackColor = True
+        Me.GVSchedule.AppearancePrint.GroupRow.BackColor = System.Drawing.Color.WhiteSmoke
+        Me.GVSchedule.AppearancePrint.GroupRow.Font = New System.Drawing.Font("Tahoma", 8.25!, System.Drawing.FontStyle.Bold)
+        Me.GVSchedule.AppearancePrint.GroupRow.Options.UseBackColor = True
+        Me.GVSchedule.AppearancePrint.GroupRow.Options.UseFont = True
+        Me.GVSchedule.AppearancePrint.HeaderPanel.BackColor = System.Drawing.SystemColors.Control
+        Me.GVSchedule.AppearancePrint.HeaderPanel.BackColor2 = System.Drawing.SystemColors.Control
+        Me.GVSchedule.AppearancePrint.HeaderPanel.Font = New System.Drawing.Font("Tahoma", 9.0!, System.Drawing.FontStyle.Bold)
+        Me.GVSchedule.AppearancePrint.HeaderPanel.ForeColor = System.Drawing.Color.Black
+        Me.GVSchedule.AppearancePrint.HeaderPanel.Options.UseBackColor = True
+        Me.GVSchedule.AppearancePrint.HeaderPanel.Options.UseFont = True
+        Me.GVSchedule.AppearancePrint.HeaderPanel.Options.UseForeColor = True
+        Me.GVSchedule.AppearancePrint.HeaderPanel.Options.UseTextOptions = True
+        Me.GVSchedule.AppearancePrint.HeaderPanel.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap
         Me.GVSchedule.AppearancePrint.Row.Font = New System.Drawing.Font("Tahoma", 7.0!)
         Me.GVSchedule.AppearancePrint.Row.Options.UseFont = True
+        Me.GVSchedule.ColumnPanelRowHeight = 30
         Me.GVSchedule.Columns.AddRange(New DevExpress.XtraGrid.Columns.GridColumn() {Me.GridColumn21, Me.GridColumnIDSchedule, Me.GridColumn18, Me.GridColumn20, Me.GridColumnLevel, Me.GridColumnEmpPosition, Me.GridColumn23, Me.GridColumn38, Me.GridColumn39, Me.GridColumn1, Me.GridColumn2, Me.GridColumn4, Me.GridColumn3, Me.GridColumn5, Me.GridColumn6, Me.GridColumn7, Me.GridColumn8, Me.GridColumn9, Me.GridColumn10, Me.GridColumn11, Me.GridColumn12, Me.GridColumn13, Me.GCWorkMin, Me.GCWorkMinActual, Me.GCLate, Me.GCOver, Me.GCBalance, Me.GCOverBreak, Me.GridColumnPresent, Me.GridColumn24, Me.GridColumn25, Me.GridColumn26})
         Me.GVSchedule.GridControl = Me.GCSchedule
         Me.GVSchedule.GroupCount = 1
@@ -106,6 +122,7 @@ Partial Public Class ReportEmpAttn
         Me.GVSchedule.OptionsView.ColumnAutoWidth = False
         Me.GVSchedule.OptionsView.ShowFooter = True
         Me.GVSchedule.OptionsView.ShowGroupPanel = False
+        Me.GVSchedule.RowHeight = 22
         Me.GVSchedule.SortInfo.AddRange(New DevExpress.XtraGrid.Columns.GridColumnSortInfo() {New DevExpress.XtraGrid.Columns.GridColumnSortInfo(Me.GridColumn20, DevExpress.Data.ColumnSortOrder.Ascending), New DevExpress.XtraGrid.Columns.GridColumnSortInfo(Me.GridColumn1, DevExpress.Data.ColumnSortOrder.Ascending)})
         '
         'GridColumn21

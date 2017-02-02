@@ -176,6 +176,12 @@
     <Compile Include="FormSchedulerSet.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="FormTest.Designer.vb">
+      <DependentUpon>FormTest.vb</DependentUpon>
+    </Compile>
+    <Compile Include="FormTest.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -214,12 +220,18 @@
     <EmbeddedResource Include="FormSchedulerSet.resx">
       <DependentUpon>FormSchedulerSet.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormTest.resx">
+      <DependentUpon>FormTest.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="My Project\licenses.licx" />
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportEmpAttn.resx">
+      <DependentUpon>ReportEmpAttn.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
