@@ -128,8 +128,8 @@ Public Class ClassSendEmail
         '
         Dim Att = New Attachment(Mem, "Weekly Attendance Report - " & dept & ".pdf", "application/pdf")
         '
-        'Dim mail As MailMessage = New MailMessage("system@volcom.mail", dept_head_email)
-        Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
+        Dim mail As MailMessage = New MailMessage("system@volcom.mail", dept_head_email)
+        'Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
         mail.Attachments.Add(Att)
         Dim client As SmtpClient = New SmtpClient()
         client.Port = 25
@@ -166,8 +166,8 @@ Public Class ClassSendEmail
         '
         Dim Att = New Attachment(Mem, "Weekly Attendance Report - Department Head.pdf", "application/pdf")
         '
-        ' Dim mail As MailMessage = New MailMessage("system@volcom.mail", emp_email)
-        Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
+        Dim mail As MailMessage = New MailMessage("system@volcom.mail", emp_email)
+        'Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
         mail.Attachments.Add(Att)
         Dim client As SmtpClient = New SmtpClient()
         client.Port = 25
