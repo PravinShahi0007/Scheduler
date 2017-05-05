@@ -197,6 +197,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="ReportDuty.Designer.vb">
+      <DependentUpon>ReportDuty.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ReportDuty.vb">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ReportEmpAttn.Designer.vb">
       <DependentUpon>ReportEmpAttn.vb</DependentUpon>
     </Compile>
@@ -229,6 +235,9 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportDuty.resx">
+      <DependentUpon>ReportDuty.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ReportEmpAttn.resx">
       <DependentUpon>ReportEmpAttn.vb</DependentUpon>

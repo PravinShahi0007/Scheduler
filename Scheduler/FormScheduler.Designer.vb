@@ -50,6 +50,10 @@ Partial Class FormScheduler
         Me.BSaveMonthly = New DevExpress.XtraEditors.SimpleButton()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.TETimeMonthly = New DevExpress.XtraEditors.TimeEdit()
+        Me.XTPProduction = New DevExpress.XtraTab.XtraTabPage()
+        Me.BProdDuty = New DevExpress.XtraEditors.SimpleButton()
+        Me.Label4 = New System.Windows.Forms.Label()
+        Me.TETimeDuty = New DevExpress.XtraEditors.TimeEdit()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -65,6 +69,8 @@ Partial Class FormScheduler
         CType(Me.LEDay.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.XTPLeaveRemaining.SuspendLayout()
         CType(Me.TETimeMonthly.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.XTPProduction.SuspendLayout()
+        CType(Me.TETimeDuty.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Timer
@@ -213,7 +219,7 @@ Partial Class FormScheduler
         Me.XtraTabControl1.SelectedTabPage = Me.XTPSchedule
         Me.XtraTabControl1.Size = New System.Drawing.Size(562, 189)
         Me.XtraTabControl1.TabIndex = 6
-        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining})
+        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction})
         '
         'XTPSchedule
         '
@@ -315,6 +321,42 @@ Partial Class FormScheduler
         Me.TETimeMonthly.Size = New System.Drawing.Size(100, 20)
         Me.TETimeMonthly.TabIndex = 8
         '
+        'XTPProduction
+        '
+        Me.XTPProduction.Controls.Add(Me.BProdDuty)
+        Me.XTPProduction.Controls.Add(Me.Label4)
+        Me.XTPProduction.Controls.Add(Me.TETimeDuty)
+        Me.XTPProduction.Name = "XTPProduction"
+        Me.XTPProduction.Size = New System.Drawing.Size(556, 161)
+        Me.XTPProduction.Text = "Production"
+        '
+        'BProdDuty
+        '
+        Me.BProdDuty.Location = New System.Drawing.Point(221, 13)
+        Me.BProdDuty.Name = "BProdDuty"
+        Me.BProdDuty.Size = New System.Drawing.Size(66, 23)
+        Me.BProdDuty.TabIndex = 8
+        Me.BProdDuty.Text = "Save"
+        '
+        'Label4
+        '
+        Me.Label4.AutoSize = True
+        Me.Label4.Location = New System.Drawing.Point(11, 18)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(98, 13)
+        Me.Label4.TabIndex = 7
+        Me.Label4.Text = "Duty Reminder at :"
+        '
+        'TETimeDuty
+        '
+        Me.TETimeDuty.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
+        Me.TETimeDuty.Location = New System.Drawing.Point(115, 15)
+        Me.TETimeDuty.Name = "TETimeDuty"
+        Me.TETimeDuty.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.TETimeDuty.Properties.Mask.EditMask = "HH:mm:ss"
+        Me.TETimeDuty.Size = New System.Drawing.Size(100, 20)
+        Me.TETimeDuty.TabIndex = 6
+        '
         'FormScheduler
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -345,6 +387,9 @@ Partial Class FormScheduler
         Me.XTPLeaveRemaining.ResumeLayout(False)
         Me.XTPLeaveRemaining.PerformLayout()
         CType(Me.TETimeMonthly.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.XTPProduction.ResumeLayout(False)
+        Me.XTPProduction.PerformLayout()
+        CType(Me.TETimeDuty.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -378,4 +423,8 @@ Partial Class FormScheduler
     Friend WithEvents BSaveMonthly As DevExpress.XtraEditors.SimpleButton
     Friend WithEvents Label3 As Label
     Friend WithEvents TETimeMonthly As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents XTPProduction As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents BProdDuty As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents Label4 As Label
+    Friend WithEvents TETimeDuty As DevExpress.XtraEditors.TimeEdit
 End Class

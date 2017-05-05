@@ -64,10 +64,17 @@
             load_schedule_weekly_attn_report()
             'monthly
             load_schedule_monthly_leave_report()
-            '
+            'duty
+            load_duty_reminder()
             start_timer()
             WindowState = FormWindowState.Minimized
         End If
+    End Sub
+    Sub load_duty_reminder()
+        Dim query As String = "SELECT prod_duty_time FROM tb_opt_scheduler LIMIT 1"
+        Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+
+        TETimeDuty.EditValue = data.Rows(0)("prod_duty_time")
     End Sub
     Sub load_schedule_monthly_leave_report()
         Dim query As String = ""
@@ -95,32 +102,82 @@
     Private Sub Timer_Tick(sender As Object, e As EventArgs) Handles Timer.Tick
         Try
             Dim cur_datetime As Date = Now()
-            For i As Integer = 0 To GVSchedule.RowCount - 1
-                If (Date.Parse(GVSchedule.GetRowCellValue(i, "time_var").ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
-                    exec_process()
+            'For i As Integer = 0 To GVSchedule.RowCount - 1
+            '    If (Date.Parse(GVSchedule.GetRowCellValue(i, "time_var").ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
+            '        exec_process()
+            '    End If
+            'Next
+            ''weekly attendance
+            'If LEDay.EditValue = cur_datetime.DayOfWeek And (Date.Parse(TETime.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
+            '    Dim mail As ClassSendEmail = New ClassSendEmail()
+            '    mail.report_mark_type = "weekly_attn"
+            '    mail.send_email_html()
+            '    'dept head
+            '    Dim mail_dept As ClassSendEmail = New ClassSendEmail()
+            '    mail_dept.report_mark_type = "weekly_attn_head"
+            '    mail_dept.send_email_html()
+            'End If
+            ''monthly attendance
+            'If cur_datetime.Day = 1 And (Date.Parse(TETimeMonthly.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
+            '    Dim mail As ClassSendEmail = New ClassSendEmail()
+            '    mail.report_mark_type = "monthly_leave_remaining"
+            '    mail.send_email_html()
+            '    'dept head
+            '    Dim mail_dept As ClassSendEmail = New ClassSendEmail
+            '    mail_dept.report_mark_type = "monthly_leave_remaining_head"
+            '    mail_dept.send_email_html()
+            'End If
+            'Duty Reminder
+            If (Date.Parse(TETimeDuty.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
+                Dim query As String = "SELECT 
+                                          tb.*,
+                                          (
+                                            tb.past_due_date + tb.soon_due + tb.pr_due
+                                          ) AS total_notif 
+                                        FROM
+                                          (SELECT 
+                                            SUM(
+                                              IF(
+                                                po.duty_is_pay = '2' 
+                                                AND NOT ISNULL(po.pib_date),
+                                                IF(DATEDIFF(po.pib_date, NOW()) < 0, 1, 0),
+                                                0
+                                              )
+                                            ) AS past_due_date,
+                                            SUM(
+                                              IF(
+                                                po.duty_is_pay = '2'
+                                                AND NOT ISNULL(po.pib_date),
+                                                IF(
+                                                  DATEDIFF(po.pib_date, NOW()) <= 30 
+                                                  AND DATEDIFF(po.pib_date, NOW()) >= 0,
+                                                  1,
+                                                  0
+                                                ),
+                                                0
+                                              )
+                                            ) AS soon_due,
+                                            SUM(
+                                              IF(
+                                                po.duty_is_pay = '2'
+                                                AND po.duty_is_pr_proposed = '2' 
+                                                AND NOT ISNULL(po.pib_date),
+                                                IF(DATEDIFF(po.pib_date, NOW()) <= 60, 1, 0),
+                                                0
+                                              )
+                                            ) AS pr_due 
+                                          FROM
+                                            tb_prod_order po) AS tb "
+                Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+                If Not data.Rows(0)("total_notif").ToString = "0" Then
+                    Dim mail As ClassSendEmail = New ClassSendEmail()
+                    mail.past_due_date = data.Rows(0)("past_due_date")
+                    mail.soon_due = data.Rows(0)("soon_due")
+                    mail.pr_due = data.Rows(0)("pr_due")
+                    mail.total_notif = data.Rows(0)("total_notif")
+                    mail.send_mail_duty()
                 End If
-            Next
-            'weekly attendance
-            If LEDay.EditValue = cur_datetime.DayOfWeek And (Date.Parse(TETime.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
-                Dim mail As ClassSendEmail = New ClassSendEmail()
-                mail.report_mark_type = "weekly_attn"
-                mail.send_email_html()
-                'dept head
-                Dim mail_dept As ClassSendEmail = New ClassSendEmail()
-                mail_dept.report_mark_type = "weekly_attn_head"
-                mail_dept.send_email_html()
             End If
-            'monthly attendance
-            If cur_datetime.Day = 1 And (Date.Parse(TETimeMonthly.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
-                Dim mail As ClassSendEmail = New ClassSendEmail()
-                mail.report_mark_type = "monthly_leave_remaining"
-                mail.send_email_html()
-                'dept head
-                Dim mail_dept As ClassSendEmail = New ClassSendEmail
-                mail_dept.report_mark_type = "monthly_leave_remaining_head"
-                mail_dept.send_email_html()
-            End If
-
         Catch ex As Exception
             stop_timer()
             MsgBox(ex.ToString)
@@ -247,5 +304,11 @@
         Dim query As String = "UPDATE tb_opt_scheduler SET time_stock_leave='" & Date.Parse(TETimeMonthly.EditValue.ToString).ToString("HH:mm:ss") & "'"
         execute_non_query(query, True, "", "", "", "")
         MsgBox("Monthly Schedule saved.")
+    End Sub
+
+    Private Sub BProdDuty_Click(sender As Object, e As EventArgs) Handles BProdDuty.Click
+        Dim query As String = "UPDATE tb_opt_scheduler SET prod_duty_time='" & Date.Parse(TETimeDuty.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        execute_non_query(query, True, "", "", "", "")
+        MsgBox("Duty Reminder saved.")
     End Sub
 End Class
