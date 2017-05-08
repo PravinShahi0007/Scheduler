@@ -102,71 +102,71 @@
     Private Sub Timer_Tick(sender As Object, e As EventArgs) Handles Timer.Tick
         Try
             Dim cur_datetime As Date = Now()
-            'For i As Integer = 0 To GVSchedule.RowCount - 1
-            '    If (Date.Parse(GVSchedule.GetRowCellValue(i, "time_var").ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
-            '        exec_process()
-            '    End If
-            'Next
-            ''weekly attendance
-            'If LEDay.EditValue = cur_datetime.DayOfWeek And (Date.Parse(TETime.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
-            '    Dim mail As ClassSendEmail = New ClassSendEmail()
-            '    mail.report_mark_type = "weekly_attn"
-            '    mail.send_email_html()
-            '    'dept head
-            '    Dim mail_dept As ClassSendEmail = New ClassSendEmail()
-            '    mail_dept.report_mark_type = "weekly_attn_head"
-            '    mail_dept.send_email_html()
-            'End If
-            ''monthly attendance
-            'If cur_datetime.Day = 1 And (Date.Parse(TETimeMonthly.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
-            '    Dim mail As ClassSendEmail = New ClassSendEmail()
-            '    mail.report_mark_type = "monthly_leave_remaining"
-            '    mail.send_email_html()
-            '    'dept head
-            '    Dim mail_dept As ClassSendEmail = New ClassSendEmail
-            '    mail_dept.report_mark_type = "monthly_leave_remaining_head"
-            '    mail_dept.send_email_html()
-            'End If
+            For i As Integer = 0 To GVSchedule.RowCount - 1
+                If (Date.Parse(GVSchedule.GetRowCellValue(i, "time_var").ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
+                    exec_process()
+                End If
+            Next
+            'weekly attendance
+            If LEDay.EditValue = cur_datetime.DayOfWeek And (Date.Parse(TETime.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
+                Dim mail As ClassSendEmail = New ClassSendEmail()
+                mail.report_mark_type = "weekly_attn"
+                mail.send_email_html()
+                'dept head
+                Dim mail_dept As ClassSendEmail = New ClassSendEmail()
+                mail_dept.report_mark_type = "weekly_attn_head"
+                mail_dept.send_email_html()
+            End If
+            'monthly attendance
+            If cur_datetime.Day = 1 And (Date.Parse(TETimeMonthly.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
+                Dim mail As ClassSendEmail = New ClassSendEmail()
+                mail.report_mark_type = "monthly_leave_remaining"
+                mail.send_email_html()
+                'dept head
+                Dim mail_dept As ClassSendEmail = New ClassSendEmail
+                mail_dept.report_mark_type = "monthly_leave_remaining_head"
+                mail_dept.send_email_html()
+            End If
             'Duty Reminder
             If (Date.Parse(TETimeDuty.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
                 Dim query As String = "SELECT 
-                                          tb.*,
-                                          (
+                                            tb.*,
+                                            (
                                             tb.past_due_date + tb.soon_due + tb.pr_due
-                                          ) AS total_notif 
+                                            ) AS total_notif 
                                         FROM
-                                          (SELECT 
+                                            (SELECT 
                                             SUM(
-                                              IF(
-                                                po.duty_is_pay = '2' 
-                                                AND NOT ISNULL(po.pib_date),
-                                                IF(DATEDIFF(po.pib_date, NOW()) < 0, 1, 0),
-                                                0
-                                              )
+                                                IF(
+	                                        po.duty_is_pay = '2' 
+	                                        AND NOT ISNULL(po.pib_date),
+	                                        IF(DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) < 0, 1, 0),
+	                                        0
+                                                )
                                             ) AS past_due_date,
                                             SUM(
-                                              IF(
-                                                po.duty_is_pay = '2'
-                                                AND NOT ISNULL(po.pib_date),
                                                 IF(
-                                                  DATEDIFF(po.pib_date, NOW()) <= 30 
-                                                  AND DATEDIFF(po.pib_date, NOW()) >= 0,
-                                                  1,
-                                                  0
-                                                ),
-                                                0
-                                              )
+	                                        po.duty_is_pay = '2'
+	                                        AND NOT ISNULL(po.pib_date),
+	                                        IF(
+	                                            DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) <= 30 
+	                                            AND DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) >= 0,
+	                                            1,
+	                                            0
+	                                        ),
+	                                        0
+                                                )
                                             ) AS soon_due,
                                             SUM(
-                                              IF(
-                                                po.duty_is_pay = '2'
-                                                AND po.duty_is_pr_proposed = '2' 
-                                                AND NOT ISNULL(po.pib_date),
-                                                IF(DATEDIFF(po.pib_date, NOW()) <= 60, 1, 0),
-                                                0
-                                              )
+                                                IF(
+	                                        po.duty_is_pay = '2'
+	                                        AND po.duty_is_pr_proposed = '2' 
+	                                        AND NOT ISNULL(DATE_ADD(po.pib_date, INTERVAL 1 YEAR)),
+	                                        IF(DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) <= 60, 1, 0),
+	                                        0
+                                                )
                                             ) AS pr_due 
-                                          FROM
+                                            FROM
                                             tb_prod_order po) AS tb "
                 Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
                 If Not data.Rows(0)("total_notif").ToString = "0" Then

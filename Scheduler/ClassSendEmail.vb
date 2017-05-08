@@ -341,20 +341,20 @@ Public Class ClassSendEmail
     Sub send_mail_duty()
         Dim Report As New ReportDuty()
 
-        ' Create a new memory stream and export the report into it as PDF.
+        ' Create a new memory stream and export the report into it as XLS.
         Dim Mem As New MemoryStream()
-        Report.ExportToPdf(Mem)
+        Report.ExportToXls(Mem)
 
-        ' Create a new attachment and put the PDF report into it.
+        ' Create a new attachment and put the XLS report into it.
         Mem.Seek(0, SeekOrigin.Begin)
         '
-        Dim Att = New Attachment(Mem, "Duty List.pdf", "application/pdf")
+        Dim Att = New Attachment(Mem, "Duty List (" & Now.ToString("dd MMMM yyyy") & ").xls", "application/ms-excel")
         '
         Dim query_email As String = "SELECT opt.id_emp_duty_toreport,emp.employee_name,emp.email_lokal FROM tb_opt_scheduler opt INNER JOIN tb_m_employee emp ON emp.id_employee=opt.id_emp_duty_toreport"
         Dim data_mail As DataTable = execute_query(query_email, -1, True, "", "", "", "")
         '
-        'Dim mail As MailMessage = New MailMessage("system@volcom.mail", data_mail.Rows(0)("email_lokal").ToString)
-        Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
+        Dim mail As MailMessage = New MailMessage("system@volcom.mail", data_mail.Rows(0)("email_lokal").ToString)
+        'Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
         mail.Attachments.Add(Att)
         Dim client As SmtpClient = New SmtpClient()
         client.Port = 25
