@@ -715,6 +715,7 @@ Partial Public Class ReportDuty
         Me.BandedGridColumnDiffAmoRoyS.FieldName = "diff_roys_amo"
         Me.BandedGridColumnDiffAmoRoyS.Name = "BandedGridColumnDiffAmoRoyS"
         Me.BandedGridColumnDiffAmoRoyS.UnboundExpression = "[amount_royalty_sales_final] - [amount_royalty_sales_est]"
+        Me.BandedGridColumnDiffAmoRoyS.UnboundType = DevExpress.Data.UnboundColumnType.[Decimal]
         Me.BandedGridColumnDiffAmoRoyS.Visible = True
         '
         'BandedGridColumnDiffAmoRoyD
