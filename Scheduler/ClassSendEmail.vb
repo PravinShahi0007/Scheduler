@@ -31,9 +31,16 @@ Public Class ClassSendEmail
                 For i As Integer = 0 To data_dept.Rows.Count - 1
                     Dim ix As Integer = i
                     send_mail_weekly_attn(data_dept.Rows(ix)("id_departement").ToString, data_dept.Rows(ix)("departement").ToString, data_dept.Rows(ix)("employee_name").ToString, data_dept.Rows(ix)("email_lokal").ToString)
-
-                    'Dim sender_thread = New Thread(Sub() send_mail_weekly_attn(data_dept.Rows(ix)("id_departement").ToString, data_dept.Rows(ix)("departement").ToString, data_dept.Rows(ix)("employee_name").ToString, data_dept.Rows(ix)("email_lokal").ToString))
-                    'sender_thread.Start()
+                Next
+                'query dept kk unit
+                Dim query_dept_kkunit As String = "SELECT dept.id_departement,dept.departement,emp.id_employee,emp.email_lokal,emp.employee_name FROM tb_m_departement dept
+                                            INNER JOIN tb_m_user usr ON dept.id_user_head=usr.id_user
+                                            INNER JOIN tb_m_employee emp ON emp.id_employee=usr.id_employee
+                                    WHERE is_office_dept='2' AND is_kk_unit='1'"
+                Dim data_dept_kkunit As DataTable = execute_query(query_dept_kkunit, -1, True, "", "", "", "")
+                For i As Integer = 0 To data_dept.Rows.Count - 1
+                    Dim ix As Integer = i
+                    send_mail_weekly_attn(data_dept_kkunit.Rows(ix)("id_departement").ToString, data_dept_kkunit.Rows(ix)("departement").ToString, data_opt.Rows(0)("employee_name").ToString, data_opt.Rows(0)("email_lokal").ToString)
                 Next
             End If
         ElseIf report_mark_type = "weekly_attn_head" Then
