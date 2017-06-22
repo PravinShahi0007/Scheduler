@@ -130,7 +130,9 @@ Public Class ClassSendEmail
         '
         Dim Att = New Attachment(Mem, "Weekly Attendance Report - " & dept & ".pdf", "application/pdf")
         '
-        Dim mail As MailMessage = New MailMessage("system@volcom.mail", dept_head_email)
+        Dim mail_from As MailAddress = New MailAddress("system@volcom.mail", get_setup_field("app_name").ToString)
+        Dim mail_to As MailAddress = New MailAddress(dept_head_email, dept_head)
+        Dim mail As MailMessage = New MailMessage(mail_from, mail_to)
         'Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
         mail.Attachments.Add(Att)
         Dim client As SmtpClient = New SmtpClient()
@@ -165,6 +167,20 @@ Public Class ClassSendEmail
         Dim query_log As String = "INSERT INTO tb_scheduler_attn_log(id_log_type,`datetime`,log) VALUES('3',NOW(),'Sending Weekly Attendance Report (" & dept & ") to " & dept_head_email & "')"
         execute_non_query(query_log, True, "", "", "", "")
     End Sub
+    Function get_setup_field(ByVal field As String)
+        'opt as var choose field
+        Dim ret_var, query As String
+        ret_var = ""
+
+        Try
+            query = "SELECT " & field & " FROM tb_opt LIMIT 1"
+            ret_var = execute_query(query, 0, True, "", "", "", "")
+        Catch ex As Exception
+            ret_var = ""
+        End Try
+
+        Return ret_var
+    End Function
     Sub send_mail_weekly_attn_head(ByVal emp_name As String, ByVal emp_email As String)
         ReportEmpAttn.id_dept = "dept_head"
         ReportEmpAttn.is_head_dept = "1"
@@ -179,7 +195,9 @@ Public Class ClassSendEmail
         '
         Dim Att = New Attachment(Mem, "Weekly Attendance Report - Department Head.pdf", "application/pdf")
         '
-        Dim mail As MailMessage = New MailMessage("system@volcom.mail", emp_email)
+        Dim mail_from As MailAddress = New MailAddress("system@volcom.mail", get_setup_field("app_name").ToString)
+        Dim mail_to As MailAddress = New MailAddress(emp_email, emp_name)
+        Dim mail As MailMessage = New MailMessage(mail_from, mail_to)
         'Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
         mail.Attachments.Add(Att)
         Dim client As SmtpClient = New SmtpClient()
