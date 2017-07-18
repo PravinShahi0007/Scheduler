@@ -29,6 +29,7 @@ Partial Public Class ReportEmpAttn
         Me.GridColumn20 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumnLevel = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumnEmpPosition = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.GridColumnIDEmployeeActive = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn23 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn38 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn39 = New DevExpress.XtraGrid.Columns.GridColumn()
@@ -39,6 +40,7 @@ Partial Public Class ReportEmpAttn
         Me.GridColumn5 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn6 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn7 = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.GridColumnIDScheduleType = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn8 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn9 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn10 = New DevExpress.XtraGrid.Columns.GridColumn()
@@ -113,7 +115,7 @@ Partial Public Class ReportEmpAttn
         Me.GVSchedule.AppearancePrint.Row.Font = New System.Drawing.Font("Tahoma", 7.0!)
         Me.GVSchedule.AppearancePrint.Row.Options.UseFont = True
         Me.GVSchedule.ColumnPanelRowHeight = 30
-        Me.GVSchedule.Columns.AddRange(New DevExpress.XtraGrid.Columns.GridColumn() {Me.GridColumn21, Me.GridColumnIDSchedule, Me.GridColumn18, Me.GridColumn20, Me.GridColumnLevel, Me.GridColumnEmpPosition, Me.GridColumn23, Me.GridColumn38, Me.GridColumn39, Me.GridColumn1, Me.GridColumn2, Me.GridColumn4, Me.GridColumn3, Me.GridColumn5, Me.GridColumn6, Me.GridColumn7, Me.GridColumn8, Me.GridColumn9, Me.GridColumn10, Me.GridColumn11, Me.GridColumn12, Me.GridColumn13, Me.GCWorkMin, Me.GCWorkMinActual, Me.GCLate, Me.GCOver, Me.GCBalance, Me.GCOverBreak, Me.GridColumnPresent, Me.GridColumn24, Me.GridColumn25, Me.GridColumn26})
+        Me.GVSchedule.Columns.AddRange(New DevExpress.XtraGrid.Columns.GridColumn() {Me.GridColumn21, Me.GridColumnIDSchedule, Me.GridColumn18, Me.GridColumn20, Me.GridColumnLevel, Me.GridColumnEmpPosition, Me.GridColumnIDEmployeeActive, Me.GridColumn23, Me.GridColumn38, Me.GridColumn39, Me.GridColumn1, Me.GridColumn2, Me.GridColumn4, Me.GridColumn3, Me.GridColumn5, Me.GridColumn6, Me.GridColumn7, Me.GridColumnIDScheduleType, Me.GridColumn8, Me.GridColumn9, Me.GridColumn10, Me.GridColumn11, Me.GridColumn12, Me.GridColumn13, Me.GCWorkMin, Me.GCWorkMinActual, Me.GCLate, Me.GCOver, Me.GCBalance, Me.GCOverBreak, Me.GridColumnPresent, Me.GridColumn24, Me.GridColumn25, Me.GridColumn26})
         Me.GVSchedule.GridControl = Me.GCSchedule
         Me.GVSchedule.GroupCount = 1
         Me.GVSchedule.GroupSummary.AddRange(New DevExpress.XtraGrid.GridSummaryItem() {New DevExpress.XtraGrid.GridGroupSummaryItem(DevExpress.Data.SummaryItemType.Sum, "work_hour", Me.GCWorkMin, "{0:0.##}"), New DevExpress.XtraGrid.GridGroupSummaryItem(DevExpress.Data.SummaryItemType.Sum, "actual_work_hour", Me.GCWorkMinActual, "{0:0.##}"), New DevExpress.XtraGrid.GridGroupSummaryItem(DevExpress.Data.SummaryItemType.Sum, "late", Me.GCLate, "{0:0.##}"), New DevExpress.XtraGrid.GridGroupSummaryItem(DevExpress.Data.SummaryItemType.Sum, "over", Me.GCOver, "{0:0.##}"), New DevExpress.XtraGrid.GridGroupSummaryItem(DevExpress.Data.SummaryItemType.Sum, "balance", Me.GCBalance, "{0:0.##}"), New DevExpress.XtraGrid.GridGroupSummaryItem(DevExpress.Data.SummaryItemType.Sum, "over_break", Me.GCOverBreak, "{0:0.##}"), New DevExpress.XtraGrid.GridGroupSummaryItem(DevExpress.Data.SummaryItemType.Sum, "present", Me.GridColumnPresent, "{0:0.##}")})
@@ -163,6 +165,12 @@ Partial Public Class ReportEmpAttn
         Me.GridColumnEmpPosition.Caption = "Position"
         Me.GridColumnEmpPosition.FieldName = "employee_position"
         Me.GridColumnEmpPosition.Name = "GridColumnEmpPosition"
+        '
+        'GridColumnIDEmployeeActive
+        '
+        Me.GridColumnIDEmployeeActive.Caption = "ID Employee Active"
+        Me.GridColumnIDEmployeeActive.FieldName = "id_employee_active"
+        Me.GridColumnIDEmployeeActive.Name = "GridColumnIDEmployeeActive"
         '
         'GridColumn23
         '
@@ -238,6 +246,12 @@ Partial Public Class ReportEmpAttn
         Me.GridColumn7.Caption = "Note"
         Me.GridColumn7.FieldName = "note"
         Me.GridColumn7.Name = "GridColumn7"
+        '
+        'GridColumnIDScheduleType
+        '
+        Me.GridColumnIDScheduleType.Caption = "ID Schedule Type"
+        Me.GridColumnIDScheduleType.FieldName = "id_schedule_type"
+        Me.GridColumnIDScheduleType.Name = "GridColumnIDScheduleType"
         '
         'GridColumn8
         '
@@ -549,4 +563,6 @@ Partial Public Class ReportEmpAttn
     Friend WithEvents GridColumn24 As DevExpress.XtraGrid.Columns.GridColumn
     Friend WithEvents GridColumn25 As DevExpress.XtraGrid.Columns.GridColumn
     Friend WithEvents GridColumn26 As DevExpress.XtraGrid.Columns.GridColumn
+    Friend WithEvents GridColumnIDEmployeeActive As DevExpress.XtraGrid.Columns.GridColumn
+    Friend WithEvents GridColumnIDScheduleType As DevExpress.XtraGrid.Columns.GridColumn
 End Class

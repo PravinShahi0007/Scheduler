@@ -27,6 +27,7 @@
                         IF(sch.id_schedule_type='1',MAX(at_out.datetime),MAX(at_out_hol.datetime)) AS `att_out`, 
                         sch.break_out,MIN(at_brout.datetime) AS start_break, 
                         sch.break_in,MAX(at_brin.datetime) AS end_break, 
+                        scht.id_schedule_type,
                         scht.schedule_type,note ,
                         sch.minutes_work,
                         IF(IF(MIN(at_in.datetime)>sch.in_tolerance,TIMESTAMPDIFF(MINUTE,sch.in_tolerance,MIN(at_in.datetime)),0) - IF(lv.is_full_day=1 OR ISNULL(lv.datetime_until),0,IF(lv.datetime_until=sch.out,0,lv.minutes_total+60))<0,0,IF(MIN(at_in.datetime)>sch.in_tolerance,TIMESTAMPDIFF(MINUTE,sch.in_tolerance,MIN(at_in.datetime)),0) - IF(lv.is_full_day=1 OR ISNULL(lv.datetime_until),0,IF(lv.datetime_until=sch.out,0,lv.minutes_total+60))) AS late ,
@@ -69,6 +70,7 @@
                         IF(sch.id_schedule_type='1',MAX(at_out.datetime),MAX(at_out_hol.datetime)) AS `att_out`, 
                         sch.break_out,MIN(at_brout.datetime) AS start_break, 
                         sch.break_in,MAX(at_brin.datetime) AS end_break, 
+                        scht.id_schedule_type,
                         scht.schedule_type,note ,
                         sch.minutes_work,
                         IF(IF(MIN(at_in.datetime)>sch.in_tolerance,TIMESTAMPDIFF(MINUTE,sch.in_tolerance,MIN(at_in.datetime)),0) - IF(lv.is_full_day=1 OR ISNULL(lv.datetime_until),0,IF(lv.datetime_until=sch.out,0,lv.minutes_total+60))<0,0,IF(MIN(at_in.datetime)>sch.in_tolerance,TIMESTAMPDIFF(MINUTE,sch.in_tolerance,MIN(at_in.datetime)),0) - IF(lv.is_full_day=1 OR ISNULL(lv.datetime_until),0,IF(lv.datetime_until=sch.out,0,lv.minutes_total+60))) AS late ,
@@ -136,5 +138,11 @@
 
     Private Sub ReportEmpAttn_BeforePrint(sender As Object, e As Printing.PrintEventArgs) Handles MyBase.BeforePrint
         load_report()
+    End Sub
+
+    Private Sub GVSchedule_RowCellStyle(sender As Object, e As DevExpress.XtraGrid.Views.Grid.RowCellStyleEventArgs) Handles GVSchedule.RowCellStyle
+        If GVSchedule.GetRowCellValue(e.RowHandle, "id_employee_active").ToString = "1" And GVSchedule.GetRowCellValue(e.RowHandle, "id_schedule_type").ToString = "1" And Date.Parse(GVSchedule.GetRowCellValue(e.RowHandle, "date").ToString).Date < Now.Date And GVSchedule.GetRowCellValue(e.RowHandle, "present").ToString = "0" And GVSchedule.GetRowCellValue(e.RowHandle, "id_leave_type").ToString = "" Then
+            e.Appearance.BackColor = Color.Yellow
+        End If
     End Sub
 End Class
