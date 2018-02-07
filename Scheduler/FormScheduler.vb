@@ -283,7 +283,9 @@
 
             fp.disconnect()
 
-            fp.maintenance_datetime()
+            If data.Rows(i)("is_maintenance").ToString = "1" Then
+                fp.maintenance_datetime()
+            End If
         Next
 
         If Not string_err = "" Then
