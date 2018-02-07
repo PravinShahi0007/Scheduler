@@ -282,6 +282,8 @@
             End If
 
             fp.disconnect()
+
+            fp.maintenance_datetime()
         Next
 
         If Not string_err = "" Then

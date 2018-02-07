@@ -76,7 +76,7 @@
         Else
             axCZKEM1.GetLastError(idwErrorCode)
             If idwErrorCode > 0 Then
-                MsgBox("Reading data from terminal failed, ErrorCode = " & idwErrorCode)
+                log_fp("Reading data from terminal failed, ErrorCode = " & idwErrorCode)
             End If
         End If
 
@@ -91,7 +91,7 @@
             axCZKEM1.RefreshData(iMachineNumber) 'the data in the device should be refreshed
         Else
             axCZKEM1.GetLastError(idwErrorCode)
-            MsgBox("Operation failed, ErrorCode = " & idwErrorCode)
+            log_fp("Operation failed,ErrorCode=" & idwErrorCode.ToString())
         End If
 
         enable_fp()
@@ -290,7 +290,7 @@
                         axCZKEM1.SetUserTmpExStr(iMachineNumber, sdwEnrollNumber, idwFingerIndex, iflag, sTmpData) 'upload templates information to the device
                     Else
                         axCZKEM1.GetLastError(idwErrorCode)
-                        MsgBox("Operation failed,ErrorCode=" & idwErrorCode.ToString(), MsgBoxStyle.Exclamation, "Error")
+                        log_fp("Operation failed,ErrorCode=" & idwErrorCode.ToString())
                         enable_fp()
                         Return
                     End If
@@ -348,7 +348,7 @@
                         axCZKEM1.SetUserFaceStr(iMachineNumber, sUserID, iFaceIndex, sTmpData, iLength) 'upload face templates information to the device
                     Else
                         axCZKEM1.GetLastError(idwErrorCode)
-                        MsgBox("Operation failed,ErrorCode=" & idwErrorCode.ToString(), MsgBoxStyle.Exclamation, "Error")
+                        log_fp("Operation failed,ErrorCode=" & idwErrorCode.ToString())
                         axCZKEM1.EnableDevice(iMachineNumber, True)
                         Return
                     End If
@@ -397,7 +397,7 @@
                 axCZKEM1.SetUserTmpExStr(iMachineNumber, sdwEnrollNumber, idwFingerIndex, iflag, sTmpData) 'upload templates information to the device
             Else
                 axCZKEM1.GetLastError(idwErrorCode)
-                MsgBox("Operation failed,ErrorCode=" & idwErrorCode.ToString(), MsgBoxStyle.Exclamation, "Error")
+                log_fp("Operation failed,ErrorCode=" & idwErrorCode.ToString())
                 enable_fp()
                 Return
             End If
@@ -446,7 +446,7 @@
                 axCZKEM1.SetUserFaceStr(iMachineNumber, sUserID, iFaceIndex, sTmpData, iLength) 'upload face templates information to the device
             Else
                 axCZKEM1.GetLastError(idwErrorCode)
-                MsgBox("Operation failed,ErrorCode=" & idwErrorCode.ToString(), MsgBoxStyle.Exclamation, "Error")
+                log_fp("Operation failed,ErrorCode=" & idwErrorCode.ToString())
                 axCZKEM1.EnableDevice(iMachineNumber, True)
                 Return
             End If
@@ -461,7 +461,7 @@
         Dim idwErrorCode As Integer
         If axCZKEM1.RestartDevice(iMachineNumber) = False Then
             axCZKEM1.GetLastError(idwErrorCode)
-            MsgBox("Operation failed,ErrorCode=" & idwErrorCode.ToString(), MsgBoxStyle.Exclamation, "Error")
+            log_fp("Operation failed,ErrorCode=" & idwErrorCode.ToString())
         End If
         disconnect()
     End Sub
@@ -471,8 +471,25 @@
         Dim idwErrorCode As Integer
         If axCZKEM1.PowerOffDevice(iMachineNumber) = False Then
             axCZKEM1.GetLastError(idwErrorCode)
-            MsgBox("Operation failed,ErrorCode=" & idwErrorCode.ToString(), MsgBoxStyle.Exclamation, "Error")
+            log_fp("Operation failed,ErrorCode=" & idwErrorCode.ToString())
         End If
         disconnect()
+    End Sub
+
+    Sub maintenance_datetime()
+        connect()
+
+        Dim idwErrorCode As Integer
+        If axCZKEM1.SetDeviceTime(iMachineNumber) = False Then
+            axCZKEM1.GetLastError(idwErrorCode)
+            log_fp("Operation failed,ErrorCode=" & idwErrorCode.ToString())
+        End If
+
+        disconnect()
+    End Sub
+
+    Sub log_fp(ByVal log As String)
+        Dim query_log As String = "INSERT INTO tb_scheduler_attn_log(datetime,log) VALUES(NOW(),'" & log & "')"
+        execute_non_query(query_log, True, "", "", "", "")
     End Sub
 End Class
