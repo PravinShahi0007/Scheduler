@@ -12,7 +12,7 @@ Public Class ClassSendEmail
     Public pr_due As Integer = 0
     '
     Sub send_email_html()
-        Dim query_opt As String = "SELECT send_weekly_attn,send_stock_leave,send_weekly_attn_headdept,send_stock_leave_headdept,emp.employee_name,emp.email_lokal
+        Dim query_opt As String = "SELECT opt.management_mail,send_weekly_attn,send_stock_leave,send_weekly_attn_headdept,send_stock_leave_headdept,emp.employee_name,emp.email_lokal
                                     FROM tb_opt_scheduler opt 
                                     LEFT JOIN tb_m_employee emp ON emp.id_employee=opt.id_emp_headdept_toreport 
                                     LIMIT 1"
@@ -65,6 +65,11 @@ Public Class ClassSendEmail
                     '
                     Dim mail As MailMessage = New MailMessage("system@volcom.mail", data_dept.Rows(i)("email_lokal").ToString)
                     'Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
+                    Dim cc_mail_management As MailAddress = New MailAddress(data_opt.Rows(0)("management_mail").ToString, "Management")
+                    Dim cc_mail_hr As MailAddress = New MailAddress(data_opt.Rows(0)("email_lokal").ToString, "HR")
+                    mail.CC.Add(cc_mail_management)
+                    mail.CC.Add(cc_mail_hr)
+                    '
                     mail.Attachments.Add(Att)
                     Dim client As SmtpClient = New SmtpClient()
                     client.Port = 25
@@ -98,6 +103,8 @@ Public Class ClassSendEmail
                 Dim Att = New Attachment(Mem, "Monthly Remaining Leave Report -  Department Head.pdf", "application/pdf")
                 '
                 Dim mail As MailMessage = New MailMessage("system@volcom.mail", data_opt.Rows(0)("email_lokal").ToString)
+                Dim cc_mail As MailAddress = New MailAddress(data_opt.Rows(0)("management_mail").ToString, "Management")
+                mail.CC.Add(cc_mail)
                 'Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
                 mail.Attachments.Add(Att)
                 Dim client As SmtpClient = New SmtpClient()

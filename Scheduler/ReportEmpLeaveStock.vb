@@ -20,6 +20,7 @@
                     WHERE emp_sl.is_process_exp = '2' AND emp.id_employee_active='1'
                     AND emp.id_departement='" & id_dept & "'
                     GROUP BY emp_sl.id_emp,emp_sl.type,emp_sl.date_expired
+                    HAVING SUM(IF(emp_sl.plus_minus=1,emp_sl.qty,-emp_sl.qty)) > 0
                     UNION
                     SELECT emp.id_employee,emp.employee_position,emp.employee_code,emp.employee_name,emp.id_departement,dep.departement,lvl.employee_level,active.employee_active
                     ,-(SUM(adv.qty)) AS qty_leave
@@ -54,6 +55,7 @@
                     ) dept_head ON dept_head.id_employee=emp.id_employee
                     WHERE emp_sl.is_process_exp = '2' AND emp.id_employee_active='1'
                     GROUP BY emp_sl.id_emp,emp_sl.type,emp_sl.date_expired
+                    HAVING SUM(IF(emp_sl.plus_minus=1,emp_sl.qty,-emp_sl.qty)) > 0
                     UNION
                     SELECT emp.id_employee,emp.employee_position,emp.employee_code,emp.employee_name,emp.id_departement,dep.departement,lvl.employee_level,active.employee_active
                     ,-(SUM(adv.qty)) AS qty_leave
