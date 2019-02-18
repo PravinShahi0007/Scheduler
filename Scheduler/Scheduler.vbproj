@@ -155,6 +155,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClassCashAdvance.vb" />
     <Compile Include="ClassEmpPerAppraisal.vb" />
     <Compile Include="ClassFingerPrint.vb" />
     <Compile Include="ClassSendEmail.vb" />

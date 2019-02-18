@@ -58,6 +58,10 @@ Partial Class FormScheduler
         Me.SBEmpPerApp = New DevExpress.XtraEditors.SimpleButton()
         Me.Label5 = New System.Windows.Forms.Label()
         Me.TEEmpPerApp = New DevExpress.XtraEditors.TimeEdit()
+        Me.XTPCashAdvance = New DevExpress.XtraTab.XtraTabPage()
+        Me.SBCashAdvance = New DevExpress.XtraEditors.SimpleButton()
+        Me.Label6 = New System.Windows.Forms.Label()
+        Me.TECashAdvance = New DevExpress.XtraEditors.TimeEdit()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -77,6 +81,8 @@ Partial Class FormScheduler
         CType(Me.TETimeDuty.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.XTPEmpAppraisal.SuspendLayout()
         CType(Me.TEEmpPerApp.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.XTPCashAdvance.SuspendLayout()
+        CType(Me.TECashAdvance.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Timer
@@ -118,7 +124,7 @@ Partial Class FormScheduler
         Me.PanelControl1.Dock = System.Windows.Forms.DockStyle.Bottom
         Me.PanelControl1.Location = New System.Drawing.Point(0, 189)
         Me.PanelControl1.Name = "PanelControl1"
-        Me.PanelControl1.Size = New System.Drawing.Size(730, 36)
+        Me.PanelControl1.Size = New System.Drawing.Size(878, 36)
         Me.PanelControl1.TabIndex = 3
         '
         'Linfo
@@ -132,7 +138,7 @@ Partial Class FormScheduler
         'BCancel
         '
         Me.BCancel.Dock = System.Windows.Forms.DockStyle.Right
-        Me.BCancel.Location = New System.Drawing.Point(585, 2)
+        Me.BCancel.Location = New System.Drawing.Point(733, 2)
         Me.BCancel.Name = "BCancel"
         Me.BCancel.Size = New System.Drawing.Size(71, 32)
         Me.BCancel.TabIndex = 1
@@ -141,7 +147,7 @@ Partial Class FormScheduler
         'BSave
         '
         Me.BSave.Dock = System.Windows.Forms.DockStyle.Right
-        Me.BSave.Location = New System.Drawing.Point(656, 2)
+        Me.BSave.Location = New System.Drawing.Point(804, 2)
         Me.BSave.Name = "BSave"
         Me.BSave.Size = New System.Drawing.Size(72, 32)
         Me.BSave.TabIndex = 0
@@ -154,13 +160,13 @@ Partial Class FormScheduler
         Me.PanelControl2.Dock = System.Windows.Forms.DockStyle.Top
         Me.PanelControl2.Location = New System.Drawing.Point(0, 0)
         Me.PanelControl2.Name = "PanelControl2"
-        Me.PanelControl2.Size = New System.Drawing.Size(724, 30)
+        Me.PanelControl2.Size = New System.Drawing.Size(872, 30)
         Me.PanelControl2.TabIndex = 4
         '
         'BDelete
         '
         Me.BDelete.Dock = System.Windows.Forms.DockStyle.Right
-        Me.BDelete.Location = New System.Drawing.Point(640, 2)
+        Me.BDelete.Location = New System.Drawing.Point(788, 2)
         Me.BDelete.Name = "BDelete"
         Me.BDelete.Size = New System.Drawing.Size(42, 26)
         Me.BDelete.TabIndex = 1
@@ -169,7 +175,7 @@ Partial Class FormScheduler
         'BAdd
         '
         Me.BAdd.Dock = System.Windows.Forms.DockStyle.Right
-        Me.BAdd.Location = New System.Drawing.Point(682, 2)
+        Me.BAdd.Location = New System.Drawing.Point(830, 2)
         Me.BAdd.Name = "BAdd"
         Me.BAdd.Size = New System.Drawing.Size(40, 26)
         Me.BAdd.TabIndex = 0
@@ -181,7 +187,7 @@ Partial Class FormScheduler
         Me.GCSchedule.Location = New System.Drawing.Point(0, 30)
         Me.GCSchedule.MainView = Me.GVSchedule
         Me.GCSchedule.Name = "GCSchedule"
-        Me.GCSchedule.Size = New System.Drawing.Size(724, 131)
+        Me.GCSchedule.Size = New System.Drawing.Size(872, 131)
         Me.GCSchedule.TabIndex = 5
         Me.GCSchedule.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.GVSchedule})
         '
@@ -223,16 +229,16 @@ Partial Class FormScheduler
         Me.XtraTabControl1.Location = New System.Drawing.Point(0, 0)
         Me.XtraTabControl1.Name = "XtraTabControl1"
         Me.XtraTabControl1.SelectedTabPage = Me.XTPSchedule
-        Me.XtraTabControl1.Size = New System.Drawing.Size(730, 189)
+        Me.XtraTabControl1.Size = New System.Drawing.Size(878, 189)
         Me.XtraTabControl1.TabIndex = 6
-        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal})
+        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance})
         '
         'XTPSchedule
         '
         Me.XTPSchedule.Controls.Add(Me.GCSchedule)
         Me.XTPSchedule.Controls.Add(Me.PanelControl2)
         Me.XTPSchedule.Name = "XTPSchedule"
-        Me.XTPSchedule.Size = New System.Drawing.Size(724, 161)
+        Me.XTPSchedule.Size = New System.Drawing.Size(872, 161)
         Me.XTPSchedule.Text = "Attendance Fingerprint Data"
         '
         'XTPAttendance
@@ -399,11 +405,47 @@ Partial Class FormScheduler
         Me.TEEmpPerApp.Size = New System.Drawing.Size(100, 20)
         Me.TEEmpPerApp.TabIndex = 9
         '
+        'XTPCashAdvance
+        '
+        Me.XTPCashAdvance.Controls.Add(Me.SBCashAdvance)
+        Me.XTPCashAdvance.Controls.Add(Me.Label6)
+        Me.XTPCashAdvance.Controls.Add(Me.TECashAdvance)
+        Me.XTPCashAdvance.Name = "XTPCashAdvance"
+        Me.XTPCashAdvance.Size = New System.Drawing.Size(724, 161)
+        Me.XTPCashAdvance.Text = "Cash Advance"
+        '
+        'SBCashAdvance
+        '
+        Me.SBCashAdvance.Location = New System.Drawing.Point(222, 10)
+        Me.SBCashAdvance.Name = "SBCashAdvance"
+        Me.SBCashAdvance.Size = New System.Drawing.Size(66, 23)
+        Me.SBCashAdvance.TabIndex = 14
+        Me.SBCashAdvance.Text = "Save"
+        '
+        'Label6
+        '
+        Me.Label6.AutoSize = True
+        Me.Label6.Location = New System.Drawing.Point(12, 15)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(98, 13)
+        Me.Label6.TabIndex = 13
+        Me.Label6.Text = "Daily Reminder at :"
+        '
+        'TECashAdvance
+        '
+        Me.TECashAdvance.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
+        Me.TECashAdvance.Location = New System.Drawing.Point(116, 12)
+        Me.TECashAdvance.Name = "TECashAdvance"
+        Me.TECashAdvance.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.TECashAdvance.Properties.Mask.EditMask = "HH:mm:ss"
+        Me.TECashAdvance.Size = New System.Drawing.Size(100, 20)
+        Me.TECashAdvance.TabIndex = 12
+        '
         'FormScheduler
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(730, 225)
+        Me.ClientSize = New System.Drawing.Size(878, 225)
         Me.Controls.Add(Me.XtraTabControl1)
         Me.Controls.Add(Me.PanelControl1)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
@@ -435,6 +477,9 @@ Partial Class FormScheduler
         Me.XTPEmpAppraisal.ResumeLayout(False)
         Me.XTPEmpAppraisal.PerformLayout()
         CType(Me.TEEmpPerApp.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.XTPCashAdvance.ResumeLayout(False)
+        Me.XTPCashAdvance.PerformLayout()
+        CType(Me.TECashAdvance.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -476,4 +521,8 @@ Partial Class FormScheduler
     Friend WithEvents SBEmpPerApp As DevExpress.XtraEditors.SimpleButton
     Friend WithEvents Label5 As Label
     Friend WithEvents TEEmpPerApp As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents XTPCashAdvance As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents SBCashAdvance As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents Label6 As Label
+    Friend WithEvents TECashAdvance As DevExpress.XtraEditors.TimeEdit
 End Class

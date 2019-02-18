@@ -68,6 +68,8 @@
             load_duty_reminder()
             'employee performance appraisal
             load_emp_per_app()
+            'cash advance
+            load_cash_advance()
             start_timer()
             WindowState = FormWindowState.Minimized
         End If
@@ -105,6 +107,12 @@
         Dim time As String = execute_query(query, 0, True, "", "", "", "")
 
         TEEmpPerApp.EditValue = time
+    End Sub
+    Sub load_cash_advance()
+        Dim query As String = "SELECT cash_advance_time FROM tb_opt_scheduler LIMIT 1"
+        Dim time As String = execute_query(query, 0, True, "", "", "", "")
+
+        TECashAdvance.EditValue = time
     End Sub
 
     Private Sub Timer_Tick(sender As Object, e As EventArgs) Handles Timer.Tick
@@ -185,8 +193,14 @@
                     mail.total_notif = data.Rows(0)("total_notif")
                     mail.send_mail_duty()
                 End If
-            ElseIf (Date.Parse(TEEmpPerApp.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
+            End If
+            'Employee performance appraisal
+            If Date.Parse(TEEmpPerApp.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
                 ClassEmpPerAppraisal.check_evaluation()
+            End If
+            'Cash Advance
+            If Date.Parse(TECashAdvance.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                ClassCashAdvance.check_cash_advance()
             End If
         Catch ex As Exception
             stop_timer()
@@ -330,5 +344,11 @@
         Dim query As String = "UPDATE tb_opt_scheduler SET emp_per_app_time='" & Date.Parse(TEEmpPerApp.EditValue.ToString).ToString("HH:mm:ss") & "'"
         execute_non_query(query, True, "", "", "", "")
         MsgBox("Employee Performance Appraisal Reminder saved.")
+    End Sub
+
+    Private Sub SBCashAdvance_Click(sender As Object, e As EventArgs) Handles SBCashAdvance.Click
+        Dim query As String = "UPDATE tb_opt_scheduler SET cash_advance_time='" & Date.Parse(TECashAdvance.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        execute_non_query(query, True, "", "", "", "")
+        MsgBox("Cash Advance Reminder saved.")
     End Sub
 End Class
