@@ -66,6 +66,8 @@
             load_schedule_monthly_leave_report()
             'duty
             load_duty_reminder()
+            'employee performance appraisal
+            load_emp_per_app()
             start_timer()
             WindowState = FormWindowState.Minimized
         End If
@@ -97,6 +99,12 @@
         Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
 
         GCSchedule.DataSource = data
+    End Sub
+    Sub load_emp_per_app()
+        Dim query As String = "SELECT emp_per_app_time FROM tb_opt_scheduler LIMIT 1"
+        Dim time As String = execute_query(query, 0, True, "", "", "", "")
+
+        TEEmpPerApp.EditValue = time
     End Sub
 
     Private Sub Timer_Tick(sender As Object, e As EventArgs) Handles Timer.Tick
@@ -177,6 +185,8 @@
                     mail.total_notif = data.Rows(0)("total_notif")
                     mail.send_mail_duty()
                 End If
+            ElseIf (Date.Parse(TEEmpPerApp.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
+                ClassEmpPerAppraisal.check_evaluation()
             End If
         Catch ex As Exception
             stop_timer()
@@ -314,5 +324,11 @@
         Dim query As String = "UPDATE tb_opt_scheduler SET prod_duty_time='" & Date.Parse(TETimeDuty.EditValue.ToString).ToString("HH:mm:ss") & "'"
         execute_non_query(query, True, "", "", "", "")
         MsgBox("Duty Reminder saved.")
+    End Sub
+
+    Private Sub SBEmpPerApp_Click(sender As Object, e As EventArgs) Handles SBEmpPerApp.Click
+        Dim query As String = "UPDATE tb_opt_scheduler SET emp_per_app_time='" & Date.Parse(TEEmpPerApp.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        execute_non_query(query, True, "", "", "", "")
+        MsgBox("Employee Performance Appraisal Reminder saved.")
     End Sub
 End Class
