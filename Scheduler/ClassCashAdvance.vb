@@ -17,9 +17,9 @@ Public Class ClassCashAdvance
 	            SELECT id_cash_advance, IF(id_cash_advance_type = 1, report_back_date + INTERVAL 7 DAY, report_back_due_date) AS report_notification_date
 	            FROM tb_cash_advance
             ) AS can ON ca.id_cash_advance = can.id_cash_advance
-            WHERE cas.total IS NULL
+            WHERE cas.total IS NULL AND ca.id_report_status = 6 AND can.report_notification_date = CURDATE()
         "
-        ' AND can.report_notification_date = CURDATE()
+
         Dim dataCashAdvance As DataTable = execute_query(query, -1, True, "", "", "", "")
 
         For i = 0 To dataCashAdvance.Rows.Count - 1
