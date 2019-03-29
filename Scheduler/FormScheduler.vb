@@ -59,21 +59,45 @@
 
         If connection_problem = False Then
             load_schedule()
+
             'weekly
             load_days()
             load_schedule_weekly_attn_report()
+
             'monthly
             load_schedule_monthly_leave_report()
+
             'duty
             load_duty_reminder()
-            'employee performance appraisal
-            load_emp_per_app()
+
+
             'cash advance
             load_cash_advance()
+
+
+            'employee performance appraisal
+            load_emp_per_app()
+
             start_timer()
             WindowState = FormWindowState.Minimized
         End If
     End Sub
+
+    Function get_opt_scheduler_field(ByVal field As String)
+        'opt as var choose field
+        Dim ret_var, query As String
+        ret_var = ""
+
+        Try
+            query = "SELECT " & field & " FROM tb_opt_scheduler LIMIT 1"
+            ret_var = execute_query(query, 0, True, "", "", "", "")
+        Catch ex As Exception
+            ret_var = ""
+        End Try
+
+        Return ret_var
+    End Function
+
     Sub load_duty_reminder()
         Dim query As String = "SELECT prod_duty_time FROM tb_opt_scheduler LIMIT 1"
         Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
@@ -194,14 +218,21 @@
                     mail.send_mail_duty()
                 End If
             End If
-            'Employee performance appraisal
-            If Date.Parse(TEEmpPerApp.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
-                ClassEmpPerAppraisal.check_evaluation()
+
+            If get_opt_scheduler_field("is_active_notif_cash_advance").ToString = "1" Then
+                'Cash Advance
+                If Date.Parse(TECashAdvance.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                    ClassCashAdvance.check_cash_advance()
+                End If
             End If
-            'Cash Advance
-            If Date.Parse(TECashAdvance.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
-                ClassCashAdvance.check_cash_advance()
+
+            If get_opt_scheduler_field("is_active_notif_emp_per_app").ToString = "1" Then
+                'Employee performance appraisal
+                If Date.Parse(TEEmpPerApp.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                    ClassEmpPerAppraisal.check_evaluation()
+                End If
             End If
+
         Catch ex As Exception
             stop_timer()
             MsgBox(ex.ToString)

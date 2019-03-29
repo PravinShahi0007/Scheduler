@@ -12,7 +12,24 @@ Public Class ClassSendEmail
     Public pr_due As Integer = 0
     '
     Sub send_email_html()
-        Dim query_opt As String = "SELECT opt.management_mail,send_weekly_attn,send_stock_leave,send_weekly_attn_headdept,send_stock_leave_headdept,emp.employee_name,emp.email_lokal
+        Dim is_ssl = get_setup_field("system_email_is_ssl").ToString
+        Dim client As SmtpClient = New SmtpClient()
+        If is_ssl = "1" Then
+            client.Port = get_setup_field("system_email_ssl_port").ToString
+            client.DeliveryMethod = SmtpDeliveryMethod.Network
+            client.UseDefaultCredentials = False
+            client.Host = get_setup_field("system_email_ssl_server").ToString
+            client.EnableSsl = True
+            client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email_ssl").ToString, get_setup_field("system_email_ssl_pass").ToString)
+        Else
+            client.Port = get_setup_field("system_email_port").ToString
+            client.DeliveryMethod = SmtpDeliveryMethod.Network
+            client.UseDefaultCredentials = False
+            client.Host = get_setup_field("system_email_server").ToString
+            client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email").ToString, get_setup_field("system_email_pass").ToString)
+        End If
+
+        Dim query_opt As String = "SELECT opt.management_mail,send_weekly_attn,send_stock_leave,send_weekly_attn_headdept,send_stock_leave_headdept,emp.employee_name,emp.email_external
                                     FROM tb_opt_scheduler opt 
                                     LEFT JOIN tb_m_employee emp ON emp.id_employee=opt.id_emp_headdept_toreport 
                                     LIMIT 1"
@@ -23,28 +40,28 @@ Public Class ClassSendEmail
             If data_opt.Rows(0)("send_weekly_attn").ToString = "1" Then
                 'Create a new report. 
                 'query dept
-                Dim query_dept As String = "SELECT dept.id_departement,dept.departement,emp.id_employee,emp.email_lokal,emp.employee_name FROM tb_m_departement dept
+                Dim query_dept As String = "SELECT dept.id_departement,dept.departement,emp.id_employee,emp.email_external,emp.employee_name FROM tb_m_departement dept
                                             INNER JOIN tb_m_user usr ON dept.id_user_head=usr.id_user
                                             INNER JOIN tb_m_employee emp ON emp.id_employee=usr.id_employee
                                     WHERE is_office_dept='1'"
                 Dim data_dept As DataTable = execute_query(query_dept, -1, True, "", "", "", "")
                 For i As Integer = 0 To data_dept.Rows.Count - 1
                     Dim ix As Integer = i
-                    send_mail_weekly_attn(data_dept.Rows(ix)("id_departement").ToString, data_dept.Rows(ix)("departement").ToString, data_dept.Rows(ix)("employee_name").ToString, data_dept.Rows(ix)("email_lokal").ToString)
+                    send_mail_weekly_attn(data_dept.Rows(ix)("id_departement").ToString, data_dept.Rows(ix)("departement").ToString, data_dept.Rows(ix)("employee_name").ToString, data_dept.Rows(ix)("email_external").ToString)
                 Next
             End If
         ElseIf report_mark_type = "weekly_attn_head" Then
             If data_opt.Rows(0)("send_weekly_attn_headdept").ToString = "1" Then
-                send_mail_weekly_attn_head(data_opt.Rows(0)("employee_name").ToString, data_opt.Rows(0)("email_lokal").ToString)
+                send_mail_weekly_attn_head(data_opt.Rows(0)("employee_name").ToString, data_opt.Rows(0)("email_external").ToString)
 
-                'Dim sender_thread = New Thread(Sub() send_mail_weekly_attn_head(data_opt.Rows(0)("employee_name").ToString, data_opt.Rows(0)("email_lokal").ToString))
+                'Dim sender_thread = New Thread(Sub() send_mail_weekly_attn_head(data_opt.Rows(0)("employee_name").ToString, data_opt.Rows(0)("email_external").ToString))
                 'sender_thread.Start()
             End If
         ElseIf report_mark_type = "monthly_leave_remaining" Then
             If data_opt.Rows(0)("send_stock_leave").ToString = "1" Then
                 ' Create a new report. 
                 'query dept
-                Dim query_dept As String = "SELECT dept.id_departement,dept.departement,emp.id_employee,emp.email_lokal,emp.employee_name FROM tb_m_departement dept
+                Dim query_dept As String = "SELECT dept.id_departement,dept.departement,emp.id_employee,emp.email_external,emp.employee_name FROM tb_m_departement dept
                                             INNER JOIN tb_m_user usr ON dept.id_user_head=usr.id_user
                                             INNER JOIN tb_m_employee emp ON emp.id_employee=usr.id_employee
                                     WHERE is_office_dept='1'"
@@ -63,26 +80,21 @@ Public Class ClassSendEmail
                     '
                     Dim Att = New Attachment(Mem, "Monthly Remaining Leave Report - " & data_dept.Rows(i)("departement").ToString & ".pdf", "application/pdf")
                     '
-                    Dim mail As MailMessage = New MailMessage("system@volcom.mail", data_dept.Rows(i)("email_lokal").ToString)
-                    'Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
+                    Dim mail As MailMessage = New MailMessage("system@volcom.co.id", data_dept.Rows(i)("email_external").ToString)
+                    'Dim mail As MailMessage = New MailMessage("system@volcom.co.id", "septian@volcom.co.id")
                     Dim cc_mail_management As MailAddress = New MailAddress(data_opt.Rows(0)("management_mail").ToString, "Management")
-                    Dim cc_mail_hr As MailAddress = New MailAddress(data_opt.Rows(0)("email_lokal").ToString, "HR")
+                    Dim cc_mail_hr As MailAddress = New MailAddress(data_opt.Rows(0)("email_external").ToString, "HR")
                     mail.CC.Add(cc_mail_management)
                     mail.CC.Add(cc_mail_hr)
                     '
                     mail.Attachments.Add(Att)
-                    Dim client As SmtpClient = New SmtpClient()
-                    client.Port = 25
-                    client.DeliveryMethod = SmtpDeliveryMethod.Network
-                    client.UseDefaultCredentials = False
-                    client.Host = "192.168.1.4"
-                    client.Credentials = New System.Net.NetworkCredential("system@volcom.mail", "system123")
+
                     mail.Subject = "Monthly Remaining Leave Report (" & data_dept.Rows(i)("departement").ToString & ")"
                     mail.IsBodyHtml = True
                     mail.Body = email_temp_monthly(data_dept.Rows(i)("employee_name").ToString, False)
                     client.Send(mail)
                     'log
-                    Dim query_log As String = "INSERT INTo tb_scheduler_attn_log(id_log_type,`datetime`,log) VALUES('3',NOW(),'Sending Monthly Remaining Leave Report (" & data_dept.Rows(i)("departement").ToString & ") to " & data_dept.Rows(i)("email_lokal").ToString & "')"
+                    Dim query_log As String = "INSERT INTo tb_scheduler_attn_log(id_log_type,`datetime`,log) VALUES('3',NOW(),'Sending Monthly Remaining Leave Report (" & data_dept.Rows(i)("departement").ToString & ") to " & data_dept.Rows(i)("email_external").ToString & "')"
                     execute_non_query(query_log, True, "", "", "", "")
                 Next
             End If
@@ -102,17 +114,12 @@ Public Class ClassSendEmail
                 '
                 Dim Att = New Attachment(Mem, "Monthly Remaining Leave Report -  Department Head.pdf", "application/pdf")
                 '
-                Dim mail As MailMessage = New MailMessage("system@volcom.mail", data_opt.Rows(0)("email_lokal").ToString)
+                Dim mail As MailMessage = New MailMessage("system@volcom.co.id", data_opt.Rows(0)("email_external").ToString)
                 Dim cc_mail As MailAddress = New MailAddress(data_opt.Rows(0)("management_mail").ToString, "Management")
                 mail.CC.Add(cc_mail)
-                'Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
+                'Dim mail As MailMessage = New MailMessage("system@volcom.co.id", "septian@volcom.co.id")
                 mail.Attachments.Add(Att)
-                Dim client As SmtpClient = New SmtpClient()
-                client.Port = 25
-                client.DeliveryMethod = SmtpDeliveryMethod.Network
-                client.UseDefaultCredentials = False
-                client.Host = "192.168.1.4"
-                client.Credentials = New System.Net.NetworkCredential("system@volcom.mail", "system123")
+
                 mail.Subject = "Monthly Remaining Leave Report (Department Head)"
                 mail.IsBodyHtml = True
                 mail.Body = email_temp_monthly(data_opt.Rows(0)("employee_name").ToString, True)
@@ -124,6 +131,23 @@ Public Class ClassSendEmail
         End If
     End Sub
     Sub send_mail_weekly_attn(ByVal id_dept As String, ByVal dept As String, ByVal dept_head As String, ByVal dept_head_email As String)
+        Dim is_ssl = get_setup_field("system_email_is_ssl").ToString
+        Dim client As SmtpClient = New SmtpClient()
+        If is_ssl = "1" Then
+            client.Port = get_setup_field("system_email_ssl_port").ToString
+            client.DeliveryMethod = SmtpDeliveryMethod.Network
+            client.UseDefaultCredentials = False
+            client.Host = get_setup_field("system_email_ssl_server").ToString
+            client.EnableSsl = True
+            client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email_ssl").ToString, get_setup_field("system_email_ssl_pass").ToString)
+        Else
+            client.Port = get_setup_field("system_email_port").ToString
+            client.DeliveryMethod = SmtpDeliveryMethod.Network
+            client.UseDefaultCredentials = False
+            client.Host = get_setup_field("system_email_server").ToString
+            client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email").ToString, get_setup_field("system_email_pass").ToString)
+        End If
+
         ReportEmpAttn.id_dept = id_dept
         ReportEmpAttn.is_head_dept = "-1"
         Dim Report As New ReportEmpAttn()
@@ -137,28 +161,23 @@ Public Class ClassSendEmail
         '
         Dim Att = New Attachment(Mem, "Weekly Attendance Report - " & dept & ".pdf", "application/pdf")
         '
-        Dim mail_from As MailAddress = New MailAddress("system@volcom.mail", get_setup_field("app_name").ToString)
+        Dim mail_from As MailAddress = New MailAddress("system@volcom.co.id", get_setup_field("app_name").ToString)
         Dim mail_to As MailAddress = New MailAddress(dept_head_email, dept_head)
         Dim mail As MailMessage = New MailMessage(mail_from, mail_to)
-        'Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
+        'Dim mail As MailMessage = New MailMessage("system@volcom.co.id", "septian@volcom.co.id")
         mail.Attachments.Add(Att)
-        Dim client As SmtpClient = New SmtpClient()
-        client.Port = 25
-        client.DeliveryMethod = SmtpDeliveryMethod.Network
-        client.UseDefaultCredentials = False
-        client.Host = "192.168.1.4"
-        client.Credentials = New System.Net.NetworkCredential("system@volcom.mail", "system123")
+
         mail.Subject = "Weekly Attendance Report (" & dept & ")"
         mail.IsBodyHtml = True
         mail.Body = email_temp(dept_head, False)
         'cc
-        Dim query_cc As String = "SELECT emp.`email_lokal` as email,emp.employee_name FROM tb_m_departement_cc cc
+        Dim query_cc As String = "SELECT emp.`email_external` as email,emp.employee_name FROM tb_m_departement_cc cc
                                   INNER JOIN tb_m_employee emp ON cc.`id_employee`=emp.`id_employee` WHERE cc.id_departement='" & id_dept & "'"
         Dim data_cc As DataTable = execute_query(query_cc, -1, True, "", "", "", "")
 
         For i As Integer = 0 To data_cc.Rows.Count - 1
             Dim copy As MailAddress = New MailAddress(data_cc.Rows(i)("email").ToString, data_cc.Rows(i)("employee_name").ToString)
-            'Dim copy As MailAddress = New MailAddress("septian@volcom.mail", data_cc.Rows(i)("email").ToString & " - " & data_cc.Rows(i)("employee_name").ToString)
+            'Dim copy As MailAddress = New MailAddress("septian@volcom.co.id", data_cc.Rows(i)("email").ToString & " - " & data_cc.Rows(i)("employee_name").ToString)
             mail.CC.Add(copy)
         Next
         '
@@ -189,6 +208,23 @@ Public Class ClassSendEmail
         Return ret_var
     End Function
     Sub send_mail_weekly_attn_head(ByVal emp_name As String, ByVal emp_email As String)
+        Dim is_ssl = get_setup_field("system_email_is_ssl").ToString
+        Dim client As SmtpClient = New SmtpClient()
+        If is_ssl = "1" Then
+            client.Port = get_setup_field("system_email_ssl_port").ToString
+            client.DeliveryMethod = SmtpDeliveryMethod.Network
+            client.UseDefaultCredentials = False
+            client.Host = get_setup_field("system_email_ssl_server").ToString
+            client.EnableSsl = True
+            client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email_ssl").ToString, get_setup_field("system_email_ssl_pass").ToString)
+        Else
+            client.Port = get_setup_field("system_email_port").ToString
+            client.DeliveryMethod = SmtpDeliveryMethod.Network
+            client.UseDefaultCredentials = False
+            client.Host = get_setup_field("system_email_server").ToString
+            client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email").ToString, get_setup_field("system_email_pass").ToString)
+        End If
+
         ReportEmpAttn.id_dept = "dept_head"
         ReportEmpAttn.is_head_dept = "1"
         Dim Report As New ReportEmpAttn()
@@ -202,17 +238,12 @@ Public Class ClassSendEmail
         '
         Dim Att = New Attachment(Mem, "Weekly Attendance Report - Department Head.pdf", "application/pdf")
         '
-        Dim mail_from As MailAddress = New MailAddress("system@volcom.mail", get_setup_field("app_name").ToString)
+        Dim mail_from As MailAddress = New MailAddress("system@volcom.co.id", get_setup_field("app_name").ToString)
         Dim mail_to As MailAddress = New MailAddress(emp_email, emp_name)
         Dim mail As MailMessage = New MailMessage(mail_from, mail_to)
-        'Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
+        'Dim mail As MailMessage = New MailMessage("system@volcom.co.id", "septian@volcom.co.id")
         mail.Attachments.Add(Att)
-        Dim client As SmtpClient = New SmtpClient()
-        client.Port = 25
-        client.DeliveryMethod = SmtpDeliveryMethod.Network
-        client.UseDefaultCredentials = False
-        client.Host = "192.168.1.4"
-        client.Credentials = New System.Net.NetworkCredential("system@volcom.mail", "system123")
+
         mail.Subject = "Weekly Attendance Report (Department Head)"
         mail.IsBodyHtml = True
         mail.Body = email_temp(emp_name, True)
@@ -383,18 +414,18 @@ Public Class ClassSendEmail
         '
         Dim Att = New Attachment(Mem, "Duty List (" & Now.ToString("dd MMMM yyyy") & ").xls", "application/ms-excel")
         '
-        Dim query_email As String = "SELECT opt.id_emp_duty_toreport,emp.employee_name,emp.email_lokal FROM tb_opt_scheduler opt INNER JOIN tb_m_employee emp ON emp.id_employee=opt.id_emp_duty_toreport"
+        Dim query_email As String = "SELECT opt.id_emp_duty_toreport,emp.employee_name,emp.email_external FROM tb_opt_scheduler opt INNER JOIN tb_m_employee emp ON emp.id_employee=opt.id_emp_duty_toreport"
         Dim data_mail As DataTable = execute_query(query_email, -1, True, "", "", "", "")
         '
-        Dim mail As MailMessage = New MailMessage("system@volcom.mail", data_mail.Rows(0)("email_lokal").ToString)
-        'Dim mail As MailMessage = New MailMessage("system@volcom.mail", "septian@volcom.mail")
+        Dim mail As MailMessage = New MailMessage("system@volcom.co.id", data_mail.Rows(0)("email_external").ToString)
+        'Dim mail As MailMessage = New MailMessage("system@volcom.co.id", "septian@volcom.co.id")
         mail.Attachments.Add(Att)
         Dim client As SmtpClient = New SmtpClient()
         client.Port = 25
         client.DeliveryMethod = SmtpDeliveryMethod.Network
         client.UseDefaultCredentials = False
         client.Host = "192.168.1.4"
-        client.Credentials = New System.Net.NetworkCredential("system@volcom.mail", "system123")
+        client.Credentials = New System.Net.NetworkCredential("system@volcom.co.id", "system123")
         mail.Subject = "Duty Reminder"
         mail.IsBodyHtml = True
         mail.Body = email_temp_duty(data_mail.Rows(0)("employee_name").ToString)
