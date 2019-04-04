@@ -403,6 +403,23 @@ Public Class ClassSendEmail
         Return body_temp
     End Function
     Sub send_mail_duty()
+        Dim is_ssl = get_setup_field("system_email_is_ssl").ToString
+        Dim client As SmtpClient = New SmtpClient()
+        If is_ssl = "1" Then
+            client.Port = get_setup_field("system_email_ssl_port").ToString
+            client.DeliveryMethod = SmtpDeliveryMethod.Network
+            client.UseDefaultCredentials = False
+            client.Host = get_setup_field("system_email_ssl_server").ToString
+            client.EnableSsl = True
+            client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email_ssl").ToString, get_setup_field("system_email_ssl_pass").ToString)
+        Else
+            client.Port = get_setup_field("system_email_port").ToString
+            client.DeliveryMethod = SmtpDeliveryMethod.Network
+            client.UseDefaultCredentials = False
+            client.Host = get_setup_field("system_email_server").ToString
+            client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email").ToString, get_setup_field("system_email_pass").ToString)
+        End If
+
         Dim Report As New ReportDuty()
 
         ' Create a new memory stream and export the report into it as XLS.
@@ -418,14 +435,7 @@ Public Class ClassSendEmail
         Dim data_mail As DataTable = execute_query(query_email, -1, True, "", "", "", "")
         '
         Dim mail As MailMessage = New MailMessage("system@volcom.co.id", data_mail.Rows(0)("email_external").ToString)
-        'Dim mail As MailMessage = New MailMessage("system@volcom.co.id", "septian@volcom.co.id")
         mail.Attachments.Add(Att)
-        Dim client As SmtpClient = New SmtpClient()
-        client.Port = 25
-        client.DeliveryMethod = SmtpDeliveryMethod.Network
-        client.UseDefaultCredentials = False
-        client.Host = "192.168.1.4"
-        client.Credentials = New System.Net.NetworkCredential("system@volcom.co.id", "system123")
         mail.Subject = "Duty Reminder"
         mail.IsBodyHtml = True
         mail.Body = email_temp_duty(data_mail.Rows(0)("employee_name").ToString)
