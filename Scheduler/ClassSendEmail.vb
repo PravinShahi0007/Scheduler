@@ -93,6 +93,12 @@ Public Class ClassSendEmail
                     mail.IsBodyHtml = True
                     mail.Body = email_temp_monthly(data_dept.Rows(i)("employee_name").ToString, False)
                     client.Send(mail)
+
+                    Report.Dispose()
+                    Mem.Dispose()
+                    Att.Dispose()
+                    mail.Dispose()
+
                     'log
                     Dim query_log As String = "INSERT INTo tb_scheduler_attn_log(id_log_type,`datetime`,log) VALUES('3',NOW(),'Sending Monthly Remaining Leave Report (" & data_dept.Rows(i)("departement").ToString & ") to " & data_dept.Rows(i)("email_external").ToString & "')"
                     execute_non_query(query_log, True, "", "", "", "")
@@ -124,11 +130,18 @@ Public Class ClassSendEmail
                 mail.IsBodyHtml = True
                 mail.Body = email_temp_monthly(data_opt.Rows(0)("employee_name").ToString, True)
                 client.Send(mail)
+
+                Report.Dispose()
+                Mem.Dispose()
+                Att.Dispose()
+                mail.Dispose()
+
                 'log
                 Dim query_log As String = "INSERT INTo tb_scheduler_attn_log(id_log_type,`datetime`,log) VALUES('3',NOW(),'Sending Monthly Remaining Leave Report (Department Head) to " & data_opt.Rows(0)("employee_name").ToString & "')"
                 execute_non_query(query_log, True, "", "", "", "")
             End If
         End If
+        client.Dispose()
     End Sub
     Sub send_mail_weekly_attn(ByVal id_dept As String, ByVal dept As String, ByVal dept_head As String, ByVal dept_head_email As String)
         Dim is_ssl = get_setup_field("system_email_is_ssl").ToString

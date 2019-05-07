@@ -234,6 +234,9 @@ Public Class ClassCashAdvance
         mail.Body = email
         client.Send(mail)
 
+        mail.Dispose()
+        client.Dispose()
+
         'log
         Dim query_log As String = "INSERT INTO tb_cash_advance_log (`id_cash_advance`, `datetime`) VALUES (" + id_cash_advance + ", NOW())"
         execute_non_query(query_log, True, "", "", "", "")

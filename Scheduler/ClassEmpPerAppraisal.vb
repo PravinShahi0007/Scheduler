@@ -273,6 +273,9 @@ Public Class ClassEmpPerAppraisal
         mail.Body = email
         client.Send(mail)
 
+        mail.Dispose()
+        client.Dispose()
+
         'log
         Dim query_log As String = "INSERT INTO tb_question_log (`id_employee`, `datetime`, `to`, `cc`, `late`) VALUES (" + log_id_employee + ", NOW(), '" + log_to + "', '" + log_cc + "', " + log_late + ")"
         execute_non_query(query_log, True, "", "", "", "")
