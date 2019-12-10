@@ -246,14 +246,7 @@
 
             'AR evaluation
             If Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
-                MsgBox("eval")
-                '    Dim mail As ClassSendEmail = New ClassSendEmail()
-                '    mail.report_mark_type = "weekly_attn"
-                '    mail.send_email_html()
-                '    'dept head
-                '    Dim mail_dept As ClassSendEmail = New ClassSendEmail()
-                '    mail_dept.report_mark_type = "weekly_attn_head"
-                '    mail_dept.send_email_html()
+
             End If
 
         Catch ex As Exception
