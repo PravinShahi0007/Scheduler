@@ -4,6 +4,7 @@
     Public dom As String = "-1"
 
 
+
     Private Sub FormScheduler_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Cursor = Cursors.WaitCursor
         load_form()
@@ -78,6 +79,9 @@
             'employee performance appraisal
             load_emp_per_app()
 
+            'evaluation ar time
+            load_evaluation_time()
+
             start_timer()
             WindowState = FormWindowState.Minimized
         End If
@@ -139,9 +143,16 @@
         TECashAdvance.EditValue = time
     End Sub
 
+    Sub load_evaluation_time()
+        Dim query As String = "SELECT evaluation_ar_time FROM tb_opt_scheduler LIMIT 1"
+        Dim time As String = execute_query(query, 0, True, "", "", "", "")
+
+        TEEvaluationAR.EditValue = time
+    End Sub
+
     Private Sub Timer_Tick(sender As Object, e As EventArgs) Handles Timer.Tick
         Try
-            'Dim cur_datetime As Date = Now()
+            Dim cur_datetime As Date = Now()
             'For i As Integer = 0 To GVSchedule.RowCount - 1
             '    If (Date.Parse(GVSchedule.GetRowCellValue(i, "time_var").ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
             '        exec_process()
@@ -232,6 +243,18 @@
             '        ClassEmpPerAppraisal.check_evaluation()
             '    End If
             'End If
+
+            'AR evaluation
+            If Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                MsgBox("eval")
+                '    Dim mail As ClassSendEmail = New ClassSendEmail()
+                '    mail.report_mark_type = "weekly_attn"
+                '    mail.send_email_html()
+                '    'dept head
+                '    Dim mail_dept As ClassSendEmail = New ClassSendEmail()
+                '    mail_dept.report_mark_type = "weekly_attn_head"
+                '    mail_dept.send_email_html()
+            End If
 
         Catch ex As Exception
             stop_timer()
@@ -381,5 +404,11 @@
         Dim query As String = "UPDATE tb_opt_scheduler SET cash_advance_time='" & Date.Parse(TECashAdvance.EditValue.ToString).ToString("HH:mm:ss") & "'"
         execute_non_query(query, True, "", "", "", "")
         MsgBox("Cash Advance Reminder saved.")
+    End Sub
+
+    Private Sub BtnEvaluationAR_Click(sender As Object, e As EventArgs) Handles BtnEvaluationAR.Click
+        Dim query As String = "UPDATE tb_opt_scheduler SET evaluation_ar_time='" & Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        execute_non_query(query, True, "", "", "", "")
+        MsgBox("Evaluation AR Time saved.")
     End Sub
 End Class
