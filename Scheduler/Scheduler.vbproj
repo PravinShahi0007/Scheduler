@@ -160,7 +160,9 @@
     <Compile Include="ClassCashAdvance.vb" />
     <Compile Include="ClassEmpPerAppraisal.vb" />
     <Compile Include="ClassFingerPrint.vb" />
+    <Compile Include="ClassMailManage.vb" />
     <Compile Include="ClassSendEmail.vb" />
+    <Compile Include="Common.vb" />
     <Compile Include="database.vb" />
     <Compile Include="FormDatabase.Designer.vb">
       <DependentUpon>FormDatabase.vb</DependentUpon>

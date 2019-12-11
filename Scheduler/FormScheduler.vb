@@ -249,9 +249,22 @@
                 Dim qgd As String = "SELECT * FROM tb_ar_eval_setup_date WHERE ar_eval_setup_date='" + cur_datetime.ToString("yyyy-MM-dd") + "' "
                 Dim dgd As DataTable = execute_query(qgd, -1, True, "", "", "", "")
                 If dgd.Rows.Count > 0 Then 'ketemu tanggal evaluasi 
-                    'jalankan 
-                    Dim qins As String = "CALL getEvaluationAR('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "'); "
-                    execute_non_query(qins, True, "", "", "", "")
+                    Try
+                        'jalankan evaluasi
+                        Dim qins As String = "CALL getEvaluationAR('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "'); "
+                        execute_non_query(qins, True, "", "", "", "")
+
+                        'log
+                        Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
+                        VALUES('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "', NOW(), 'Evaluation Success'); "
+                        execute_non_query(query_log, True, "", "", "", "")
+                    Catch ex As Exception
+                        'log
+                        Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
+                        VALUES('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "', NOW(), 'Evaluation Failed : " + addSlashes(ex.ToString) + "'); "
+                        execute_non_query(query_log, True, "", "", "", "")
+                    End Try
+
 
                     'push email
                     Dim em As New ClassSendEmail()

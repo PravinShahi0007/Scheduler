@@ -37,12 +37,9 @@
         Dim id_trans As String = execute_query(query_get_id, 0, True, "", "", "", "")
 
         If rmt = "228" Then
-            Dim query As String = "SELECT '' AS `no`, sp.id_sales_pos AS `id_report`, sp.sales_pos_number AS `report_number`,
-            CONCAT(c.comp_number, ' - ', c.comp_name) AS `store`,g.description AS `group_store`,
-            CONCAT(DATE_FORMAT(sp.sales_pos_start_period,'%d-%m-%y'),' s/d ', DATE_FORMAT(sp.sales_pos_end_period,'%d-%m-%y')) AS `period`,
-            DATE_FORMAT(sp.sales_pos_due_date,'%d-%m-%y') AS `sales_pos_due_date`,
-            CAST(IF(typ.`is_receive_payment`=2,-1,1) * ((sp.`sales_pos_total`*((100-sp.sales_pos_discount)/100))-sp.`sales_pos_potongan`) AS DECIMAL(15,2))-IFNULL(pyd.`value`,0.00) AS `amount`,
-            sp.report_mark_type
+            Dim query As String = "SELECT  g.id_comp_group,g.description AS `group_store`,
+            DATE_FORMAT(sp.sales_pos_due_date,'%d %M %Y') AS `sales_pos_due_date`,
+            SUM(CAST(IF(typ.`is_receive_payment`=2,-1,1) * ((sp.`sales_pos_total`*((100-sp.sales_pos_discount)/100))-sp.`sales_pos_potongan`) AS DECIMAL(15,2))-IFNULL(pyd.`value`,0.00)) AS `amount`
             FROM tb_sales_pos sp 
             INNER JOIN tb_m_comp_contact cc ON cc.`id_comp_contact`= IF(sp.id_memo_type=8 OR sp.id_memo_type=9, sp.id_comp_contact_bill,sp.`id_store_contact_from`)
             INNER JOIN tb_m_comp c ON c.`id_comp`=cc.`id_comp`
@@ -57,9 +54,22 @@
                 WHERE py.`id_report_status`=6
                 GROUP BY pyd.id_report, pyd.report_mark_type
             ) pyd ON pyd.id_report = sp.id_sales_pos AND pyd.report_mark_type = sp.report_mark_type
-            WHERE sp.id_sales_pos IN (" + id_trans + ") "
+            WHERE sp.id_sales_pos IN (" + id_trans + ") 
+            GROUP BY g.id_comp_group, sp.sales_pos_due_date
+            ORDER BY g.id_comp_group ASC, sp.id_sales_pos ASC "
             dt = execute_query(query, -1, True, "", "", "", "")
         End If
         Return dt
+    End Function
+
+    Function queryInsertLog(ByVal id_status_par As String, ByVal note_par As String) As String
+        Dim query As String = ""
+        If id_mail_manage <> "-1" Then
+            query = "UPDATE tb_mail_manage SET updated_date=NOW(), updated_by=NULL, 
+            id_mail_status=" + id_status_par + ", mail_status_note='" + addSlashes(note_par) + "' WHERE id_mail_manage='" + id_mail_manage + "'; 
+            INSERT INTO tb_mail_manage_log(id_mail_manage, log_date, id_user, id_mail_status, note) VALUES 
+            ('" + id_mail_manage + "', NOW(),NULL, '" + id_status_par + "', '" + addSlashes(note_par) + "'); "
+        End If
+        Return query
     End Function
 End Class

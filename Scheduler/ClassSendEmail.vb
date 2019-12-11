@@ -144,46 +144,71 @@ Public Class ClassSendEmail
             End If
         ElseIf report_mark_type = "228" Then
             '--- on hold delivery
-            'cek rows
-            Dim query_cek_eval As String = "SELECT COUNT(e.id_ar_eval) AS jum_eval FROM tb_ar_eval e WHERE e.eval_date='" + par1 + "' "
-            Dim data_cek_eval As DataTable = execute_query(query_cek_eval, -1, True, "", "", "", "")
-            If data_cek_eval.Rows(0)("jum_eval") > 0 Then
-                'create mail manage
-                Dim mail_subject As String = get_setup_field("mail_subject_on_hold") + " - " + par2.ToString
-                Dim mail_title As String = get_setup_field("mail_title_on_hold")
-                Dim mm As New ClassMailManage()
-                mm.rmt = report_mark_type
-                mm.mail_subject = mail_subject
-                mm.mail_title = mail_title
-                mm.createEmail()
-                Dim id_mail As String = mm.id_mail_manage
+            Dim mm As New ClassMailManage()
+            Dim id_mail As String = "-1"
+            Try
+                'cek rows
+                Dim query_cek_eval As String = "SELECT COUNT(e.id_ar_eval) AS jum_eval FROM tb_ar_eval e WHERE e.eval_date='" + par1 + "' "
+                Dim data_cek_eval As DataTable = execute_query(query_cek_eval, -1, True, "", "", "", "")
+                If data_cek_eval.Rows(0)("jum_eval") > 0 Then
+                    'create mail manage
+                    Dim mail_subject As String = get_setup_field("mail_subject_on_hold") + " - " + par2.ToString
+                    Dim mail_title As String = get_setup_field("mail_title_on_hold")
+                    Dim mail_content As String = get_setup_field("mail_content_on_hold")
 
-                'send email
-                Dim mail As MailMessage = New MailMessage("system@volcom.co.id", mail_title)
-                Dim query_send_to As String = "SELECT  m.id_mail_member_type,m.mail_address, IF(ISNULL(m.id_comp_contact), e.employee_name, cc.contact_person) AS `display_name`
-                FROM tb_mail_manage_member m 
-                LEFT JOIN tb_m_comp_contact cc ON cc.id_comp_contact = m.id_comp_contact
-                LEFT JOIN tb_m_user u ON u.id_user = m.id_user
-                LEFT JOIN tb_m_employee e ON e.id_employee = u.id_employee
-                WHERE m.id_mail_manage=" + id_mail + " AND m.id_mail_member_type>1 
-                ORDER BY m.id_mail_member_type ASC,m.id_mail_manage_member ASC "
-                Dim data_send_to As DataTable = execute_query(query_send_to, -1, True, "", "", "", "")
-                For i As Integer = 0 To data_send_to.Rows.Count - 1
-                    Dim to_mail As MailAddress = New MailAddress(data_send_to.Rows(i)("mail_address").ToString, data_send_to.Rows(i)("display_name").ToString)
-                    If data_send_to.Rows(i)("id_mail_member_type").ToString = "2" Then
-                        mail.To.Add(to_mail)
-                    ElseIf data_send_to.Rows(i)("id_mail_member_type").ToString = "3" Then
-                        mail.CC.Add(to_mail)
-                    End If
-                Next
-                mail.Subject = mail_subject
-                mail.IsBodyHtml = True
-                mail.Body = emailOnHold(id_mail)
-                client.Send(mail)
+                    'send paramenter class
+                    mm.rmt = report_mark_type
+                    mm.mail_subject = mail_subject
+                    mm.mail_title = mail_title
+                    mm.par1 = par1
+                    mm.createEmail()
+                    id_mail = mm.id_mail_manage
 
-                data_cek_eval.Dispose()
-                mail.Dispose()
-            End If
+                    'send email
+                    Dim from_mail As MailAddress = New MailAddress("system@volcom.co.id", mail_title)
+                    Dim mail As MailMessage = New MailMessage()
+                    mail.From = from_mail
+                    Dim query_send_to As String = "SELECT  m.id_mail_member_type,m.mail_address, IF(ISNULL(m.id_comp_contact), e.employee_name, cc.contact_person) AS `display_name`
+                    FROM tb_mail_manage_member m 
+                    LEFT JOIN tb_m_comp_contact cc ON cc.id_comp_contact = m.id_comp_contact
+                    LEFT JOIN tb_m_user u ON u.id_user = m.id_user
+                    LEFT JOIN tb_m_employee e ON e.id_employee = u.id_employee
+                    WHERE m.id_mail_manage=" + id_mail + " AND m.id_mail_member_type>1 
+                    ORDER BY m.id_mail_member_type ASC,m.id_mail_manage_member ASC "
+                    Dim data_send_to As DataTable = execute_query(query_send_to, -1, True, "", "", "", "")
+                    For i As Integer = 0 To data_send_to.Rows.Count - 1
+                        Dim to_mail As MailAddress = New MailAddress(data_send_to.Rows(i)("mail_address").ToString, data_send_to.Rows(i)("display_name").ToString)
+                        If data_send_to.Rows(i)("id_mail_member_type").ToString = "2" Then
+                            mail.To.Add(to_mail)
+                        ElseIf data_send_to.Rows(i)("id_mail_member_type").ToString = "3" Then
+                            mail.CC.Add(to_mail)
+                        End If
+                    Next
+                    mail.Subject = mail_subject
+                    mail.IsBodyHtml = True
+                    mail.Body = emailOnHold(mail_content, mm.getDetailData())
+                    client.Send(mail)
+
+                    'log
+                    Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
+                    VALUES('" + par1 + "', NOW(), 'Email Sent successfully'); " + mm.queryInsertLog("2", "Sent successfully")
+                    execute_non_query(query_log, True, "", "", "", "")
+
+                    'dispose memory
+                    mail.Dispose()
+                    data_cek_eval.Dispose()
+                End If
+            Catch ex As Exception
+                'Log
+                Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
+                VALUES('" + par1 + "', NOW(), 'Failed send email : " + addSlashes(ex.ToString) + "'); " + mm.queryInsertLog("3", addSlashes(ex.ToString))
+                execute_non_query(query_log, True, "", "", "", "")
+            End Try
+            mm.id_mail_manage = "-1"
+            mm.mail_subject = ""
+            mm.mail_title = ""
+            mm.rmt = "-1"
+            mm.par1 = ""
         End If
         client.Dispose()
     End Sub
@@ -586,7 +611,7 @@ Public Class ClassSendEmail
         Return body_temp
     End Function
 
-    Function emailOnHold(ByVal content_par As String, ByVal dt_par As String)
+    Function emailOnHold(ByVal content_par As String, ByVal dt_par As DataTable)
         Dim body_temp As String = "<table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='100%' style='width:100.0%;background:#eeeeee'>
             <tbody><tr>
               <td style='padding:30.0pt 30.0pt 30.0pt 30.0pt'>
@@ -643,15 +668,51 @@ Public Class ClassSendEmail
                   <td style='padding:1.0pt 15.0pt 15.0pt 15.0pt' colspan='3'>
                     <table width='100%' class='m_1811720018273078822MsoNormalTable' border='1' cellspacing='0' cellpadding='5' style='background:white; font-size: 12px; font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>
                     <tr>
-                      <th>No</th>
-                      <th>Invoive Number</th>
-                      <th>Store</th>
-                      <th>Period</th>
                       <th>Due Date</th>
                       <th>Amount</th>
                     </tr> "
 
+        Dim id_grp As String = ""
+        Dim total_grp As Decimal = 0.00
+        Dim total As Decimal = 0.00
+        For i As Integer = 0 To dt_par.Rows.Count - 1
+            If id_grp <> dt_par.Rows(i)("id_comp_group").ToString Then
+                'group span
+                id_grp = dt_par.Rows(i)("id_comp_group").ToString
+                body_temp += "<tr>"
+                body_temp += "<td colspan='2'><b>" + dt_par.Rows(i)("group_store").ToString.ToUpper + "</b></td>"
+                body_temp += "</tr>"
+                total_grp = 0.00
+            End If
 
+            'data
+            body_temp += "<tr>"
+            body_temp += "<td>" + dt_par.Rows(i)("sales_pos_due_date").ToString + "</td>"
+            body_temp += "<td>" + Decimal.Parse(dt_par.Rows(i)("amount").ToString).ToString("N2") + "</td>"
+            body_temp += "</tr>"
+            total_grp += dt_par.Rows(i)("amount")
+            total += dt_par.Rows(i)("amount")
+
+
+            'cek footer
+            If i = dt_par.Rows.Count - 1 Then 'last row
+                body_temp += "<tr> 
+                    <td><b>SUB TOTAL " + dt_par.Rows(i)("group_store").ToString.ToUpper + "</b></td>
+                    <td ><b>" + Decimal.Parse(total_grp.ToString).ToString("N2") + "</b></td> 
+                </tr>"
+                body_temp += "<tr> 
+                    <td><b>TOTAL</b></td>
+                    <td ><b>" + Decimal.Parse(total.ToString).ToString("N2") + "</b></td> 
+                </tr>"
+            Else
+                If id_grp <> dt_par.Rows(i + 1)("id_comp_group").ToString Then
+                    body_temp += "<tr> 
+                        <td><b>SUB TOTAL " + dt_par.Rows(i)("group_store").ToString.ToUpper + "</b></td>
+                        <td ><b>" + Decimal.Parse(total_grp.ToString).ToString("N2") + "</b></td> 
+                    </tr>"
+                End If
+            End If
+        Next
         body_temp += "</table>
                   </td>
 
