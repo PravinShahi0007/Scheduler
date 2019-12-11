@@ -246,9 +246,17 @@
 
             'AR evaluation
             If Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                Dim qgd As String = "SELECT * FROM tb_ar_eval_setup_date WHERE ar_eval_setup_date='" + cur_datetime.ToString("yyyy-MM-dd") + "' "
+                Dim dgd As DataTable = execute_query(qgd, -1, True, "", "", "", "")
+                If dgd.Rows.Count > 0 Then 'ketemu tanggal evaluasi 
+                    'jalankan 
+                    Dim qins As String = "CALL getEvaluationAR('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "'); "
+                    execute_non_query(qins, True, "", "", "", "")
 
+                    'push email
+
+                End If
             End If
-
         Catch ex As Exception
             stop_timer()
             MsgBox(ex.ToString)
