@@ -254,7 +254,11 @@
                     execute_non_query(qins, True, "", "", "", "")
 
                     'push email
-
+                    Dim em As New ClassSendEmail()
+                    em.report_mark_type = "228"
+                    em.par1 = cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss")
+                    em.par2 = cur_datetime.ToString("dd MMMM yyyy")
+                    em.send_email_html()
                 End If
             End If
         Catch ex As Exception
