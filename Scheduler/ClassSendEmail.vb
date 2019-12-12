@@ -155,6 +155,10 @@ Public Class ClassSendEmail
                     Dim mail_subject As String = get_setup_field("mail_subject_on_hold") + " - " + par2.ToString
                     Dim mail_title As String = get_setup_field("mail_title_on_hold")
                     Dim mail_content As String = get_setup_field("mail_content_on_hold")
+                    Dim query_mail_content_to As String = "SELECT CONCAT(e.employee_name, ' (',e.employee_position,')') AS `to_content_mail`
+                    FROM tb_opt o
+                    INNER JOIN tb_m_employee e ON e.id_employee = o.id_emp_wh_manager "
+                    Dim mail_content_to As String = execute_query(query_mail_content_to, 0, True, "", "", "", "")
 
                     'send paramenter class
                     mm.rmt = report_mark_type
@@ -186,7 +190,7 @@ Public Class ClassSendEmail
                     Next
                     mail.Subject = mail_subject
                     mail.IsBodyHtml = True
-                    mail.Body = emailOnHold(mail_content, mm.getDetailData())
+                    mail.Body = emailOnHold(mail_content_to, mail_content, mm.getDetailData())
                     client.Send(mail)
 
                     'log
@@ -611,7 +615,7 @@ Public Class ClassSendEmail
         Return body_temp
     End Function
 
-    Function emailOnHold(ByVal content_par As String, ByVal dt_par As DataTable)
+    Function emailOnHold(ByVal to_par As String, ByVal content_par As String, ByVal dt_par As DataTable)
         Dim body_temp As String = "<table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='100%' style='width:100.0%;background:#eeeeee'>
             <tbody><tr>
               <td style='padding:30.0pt 30.0pt 30.0pt 30.0pt'>
@@ -650,13 +654,17 @@ Public Class ClassSendEmail
                 <tr>
                   <td style='padding:15.0pt 15.0pt 0.0pt 15.0pt' colspan='3'>
                   <div>
-                    <b><span class='MsoNormal' style='line-height:14.25pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>ON HOLD DELIVERY</span></b>
+                    <b><span class='MsoNormal' style='line-height:14.25pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>Hold Delivery - Nama Toko Sesuai List</span></b>
                   </div>
                   </td>
                  </tr>
 
                  <tr>
                   <td style='padding:15.0pt 15.0pt 15.0pt 15.0pt' colspan='3'>
+                  <div style='margin-bottom: 5pt;'>
+                    <span class='MsoNormal' style='line-height:15.25pt; font-size: 10pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>Kepada : " + to_par + " </span>
+                  </div>
+
                   <div>
                     <span class='MsoNormal' style='line-height:15.25pt; font-size: 10pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>" + content_par + "</span>
                   </div>
@@ -665,58 +673,16 @@ Public Class ClassSendEmail
                
          
                  <tr>
-                  <td style='padding:1.0pt 15.0pt 15.0pt 15.0pt' colspan='3'>
-                    <table width='100%' class='m_1811720018273078822MsoNormalTable' border='1' cellspacing='0' cellpadding='5' style='background:white; font-size: 12px; font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>
-                    <tr>
-                      <th>Due Date</th>
-                      <th>Amount</th>
-                    </tr> "
+                  <td style='padding:0.0pt 0.0pt 0.0pt 5.0pt' colspan='3'>
+                  	<ol > "
 
-        Dim id_grp As String = ""
-        Dim total_grp As Decimal = 0.00
-        Dim total As Decimal = 0.00
         For i As Integer = 0 To dt_par.Rows.Count - 1
-            If id_grp <> dt_par.Rows(i)("id_comp_group").ToString Then
-                'group span
-                id_grp = dt_par.Rows(i)("id_comp_group").ToString
-                body_temp += "<tr>"
-                body_temp += "<td colspan='2'><b>" + dt_par.Rows(i)("group_store").ToString.ToUpper + "</b></td>"
-                body_temp += "</tr>"
-                total_grp = 0.00
-            End If
-
             'data
-            body_temp += "<tr>"
-            body_temp += "<td>" + dt_par.Rows(i)("sales_pos_due_date").ToString + "</td>"
-            body_temp += "<td>" + Decimal.Parse(dt_par.Rows(i)("amount").ToString).ToString("N2") + "</td>"
-            body_temp += "</tr>"
-            total_grp += dt_par.Rows(i)("amount")
-            total += dt_par.Rows(i)("amount")
-
-
-            'cek footer
-            If i = dt_par.Rows.Count - 1 Then 'last row
-                body_temp += "<tr> 
-                    <td><b>SUB TOTAL " + dt_par.Rows(i)("group_store").ToString.ToUpper + "</b></td>
-                    <td ><b>" + Decimal.Parse(total_grp.ToString).ToString("N2") + "</b></td> 
-                </tr>"
-                body_temp += "<tr> 
-                    <td><b>TOTAL</b></td>
-                    <td ><b>" + Decimal.Parse(total.ToString).ToString("N2") + "</b></td> 
-                </tr>"
-            Else
-                If id_grp <> dt_par.Rows(i + 1)("id_comp_group").ToString Then
-                    body_temp += "<tr> 
-                        <td><b>SUB TOTAL " + dt_par.Rows(i)("group_store").ToString.ToUpper + "</b></td>
-                        <td ><b>" + Decimal.Parse(total_grp.ToString).ToString("N2") + "</b></td> 
-                    </tr>"
-                End If
-            End If
+            body_temp += "<li class='MsoNormal' style='line-height:15.25pt; font-size: 10pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>" + dt_par.Rows(i)("group_store").ToString + "</li>"
         Next
-        body_temp += "</table>
-                  </td>
-
-                 </tr>
+        body_temp += "</ol>
+                    </td>
+                 </tr> 
 
          
           <tr>
