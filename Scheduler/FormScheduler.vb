@@ -4,6 +4,7 @@
     Public dom As String = "-1"
 
 
+
     Private Sub FormScheduler_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Cursor = Cursors.WaitCursor
         load_form()
@@ -78,6 +79,9 @@
             'employee performance appraisal
             load_emp_per_app()
 
+            'evaluation ar time
+            load_evaluation_time()
+
             start_timer()
             WindowState = FormWindowState.Minimized
         End If
@@ -139,6 +143,13 @@
         TECashAdvance.EditValue = time
     End Sub
 
+    Sub load_evaluation_time()
+        Dim query As String = "SELECT evaluation_ar_time FROM tb_opt_scheduler LIMIT 1"
+        Dim time As String = execute_query(query, 0, True, "", "", "", "")
+
+        TEEvaluationAR.EditValue = time
+    End Sub
+
     Private Sub Timer_Tick(sender As Object, e As EventArgs) Handles Timer.Tick
         Try
             Dim cur_datetime As Date = Now()
@@ -178,32 +189,32 @@
                                             (SELECT 
                                             SUM(
                                                 IF(
-	                                        po.duty_is_pay = '2' 
-	                                        AND NOT ISNULL(po.pib_date),
-	                                        IF(DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) < 0, 1, 0),
-	                                        0
+                                         po.duty_is_pay = '2' 
+                                         AND NOT ISNULL(po.pib_date),
+                                         IF(DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) < 0, 1, 0),
+                                         0
                                                 )
                                             ) AS past_due_date,
                                             SUM(
                                                 IF(
-	                                        po.duty_is_pay = '2'
-	                                        AND NOT ISNULL(po.pib_date),
-	                                        IF(
-	                                            DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) <= 30 
-	                                            AND DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) >= 0,
-	                                            1,
-	                                            0
-	                                        ),
-	                                        0
+                                         po.duty_is_pay = '2'
+                                         AND NOT ISNULL(po.pib_date),
+                                         IF(
+                                             DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) <= 30 
+                                             AND DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) >= 0,
+                                             1,
+                                             0
+                                         ),
+                                         0
                                                 )
                                             ) AS soon_due,
                                             SUM(
                                                 IF(
-	                                        po.duty_is_pay = '2'
-	                                        AND po.duty_is_pr_proposed = '2' 
-	                                        AND NOT ISNULL(DATE_ADD(po.pib_date, INTERVAL 1 YEAR)),
-	                                        IF(DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) <= 60, 1, 0),
-	                                        0
+                                         po.duty_is_pay = '2'
+                                         AND po.duty_is_pr_proposed = '2' 
+                                         AND NOT ISNULL(DATE_ADD(po.pib_date, INTERVAL 1 YEAR)),
+                                         IF(DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) <= 60, 1, 0),
+                                         0
                                                 )
                                             ) AS pr_due 
                                             FROM
@@ -233,6 +244,36 @@
                 End If
             End If
 
+            'AR evaluation
+            If Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                Dim qgd As String = "SELECT * FROM tb_ar_eval_setup_date WHERE ar_eval_setup_date='" + cur_datetime.ToString("yyyy-MM-dd") + "' "
+                Dim dgd As DataTable = execute_query(qgd, -1, True, "", "", "", "")
+                If dgd.Rows.Count > 0 Then 'ketemu tanggal evaluasi 
+                    Try
+                        'jalankan evaluasi
+                        Dim qins As String = "CALL getEvaluationAR('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "'); "
+                        execute_non_query(qins, True, "", "", "", "")
+
+                        'log
+                        Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
+                        VALUES('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "', NOW(), 'Evaluation Success'); "
+                        execute_non_query(query_log, True, "", "", "", "")
+                    Catch ex As Exception
+                        'log
+                        Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
+                        VALUES('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "', NOW(), 'Evaluation Failed : " + addSlashes(ex.ToString) + "'); "
+                        execute_non_query(query_log, True, "", "", "", "")
+                    End Try
+
+
+                    'push email
+                    Dim em As New ClassSendEmail()
+                    em.report_mark_type = "228"
+                    em.par1 = cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss")
+                    em.par2 = cur_datetime.ToString("dd MMMM yyyy")
+                    em.send_email_html()
+                End If
+            End If
         Catch ex As Exception
             stop_timer()
             MsgBox(ex.ToString)
@@ -381,5 +422,11 @@
         Dim query As String = "UPDATE tb_opt_scheduler SET cash_advance_time='" & Date.Parse(TECashAdvance.EditValue.ToString).ToString("HH:mm:ss") & "'"
         execute_non_query(query, True, "", "", "", "")
         MsgBox("Cash Advance Reminder saved.")
+    End Sub
+
+    Private Sub BtnEvaluationAR_Click(sender As Object, e As EventArgs) Handles BtnEvaluationAR.Click
+        Dim query As String = "UPDATE tb_opt_scheduler SET evaluation_ar_time='" & Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        execute_non_query(query, True, "", "", "", "")
+        MsgBox("Evaluation AR Time saved.")
     End Sub
 End Class

@@ -62,6 +62,10 @@ Partial Class FormScheduler
         Me.SBCashAdvance = New DevExpress.XtraEditors.SimpleButton()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.TECashAdvance = New DevExpress.XtraEditors.TimeEdit()
+        Me.XTPEvaulationAR = New DevExpress.XtraTab.XtraTabPage()
+        Me.BtnEvaluationAR = New DevExpress.XtraEditors.SimpleButton()
+        Me.Label7 = New System.Windows.Forms.Label()
+        Me.TEEvaluationAR = New DevExpress.XtraEditors.TimeEdit()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -83,6 +87,8 @@ Partial Class FormScheduler
         CType(Me.TEEmpPerApp.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.XTPCashAdvance.SuspendLayout()
         CType(Me.TECashAdvance.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.XTPEvaulationAR.SuspendLayout()
+        CType(Me.TEEvaluationAR.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Timer
@@ -231,7 +237,7 @@ Partial Class FormScheduler
         Me.XtraTabControl1.SelectedTabPage = Me.XTPSchedule
         Me.XtraTabControl1.Size = New System.Drawing.Size(878, 189)
         Me.XtraTabControl1.TabIndex = 6
-        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance})
+        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR})
         '
         'XTPSchedule
         '
@@ -249,7 +255,7 @@ Partial Class FormScheduler
         Me.XTPAttendance.Controls.Add(Me.LEDay)
         Me.XTPAttendance.Controls.Add(Me.Label1)
         Me.XTPAttendance.Name = "XTPAttendance"
-        Me.XTPAttendance.Size = New System.Drawing.Size(724, 161)
+        Me.XTPAttendance.Size = New System.Drawing.Size(872, 161)
         Me.XTPAttendance.Text = "Weekly Attendance Report"
         '
         'BSaveWAR
@@ -303,7 +309,7 @@ Partial Class FormScheduler
         Me.XTPLeaveRemaining.Controls.Add(Me.Label3)
         Me.XTPLeaveRemaining.Controls.Add(Me.TETimeMonthly)
         Me.XTPLeaveRemaining.Name = "XTPLeaveRemaining"
-        Me.XTPLeaveRemaining.Size = New System.Drawing.Size(724, 161)
+        Me.XTPLeaveRemaining.Size = New System.Drawing.Size(872, 161)
         Me.XTPLeaveRemaining.Text = "Leave Remaining"
         '
         'BSaveMonthly
@@ -339,7 +345,7 @@ Partial Class FormScheduler
         Me.XTPProduction.Controls.Add(Me.Label4)
         Me.XTPProduction.Controls.Add(Me.TETimeDuty)
         Me.XTPProduction.Name = "XTPProduction"
-        Me.XTPProduction.Size = New System.Drawing.Size(724, 161)
+        Me.XTPProduction.Size = New System.Drawing.Size(872, 161)
         Me.XTPProduction.Text = "Production"
         '
         'BProdDuty
@@ -375,7 +381,7 @@ Partial Class FormScheduler
         Me.XTPEmpAppraisal.Controls.Add(Me.Label5)
         Me.XTPEmpAppraisal.Controls.Add(Me.TEEmpPerApp)
         Me.XTPEmpAppraisal.Name = "XTPEmpAppraisal"
-        Me.XTPEmpAppraisal.Size = New System.Drawing.Size(724, 161)
+        Me.XTPEmpAppraisal.Size = New System.Drawing.Size(872, 161)
         Me.XTPEmpAppraisal.Text = "Employee Performance Appraisal "
         '
         'SBEmpPerApp
@@ -411,7 +417,7 @@ Partial Class FormScheduler
         Me.XTPCashAdvance.Controls.Add(Me.Label6)
         Me.XTPCashAdvance.Controls.Add(Me.TECashAdvance)
         Me.XTPCashAdvance.Name = "XTPCashAdvance"
-        Me.XTPCashAdvance.Size = New System.Drawing.Size(724, 161)
+        Me.XTPCashAdvance.Size = New System.Drawing.Size(872, 161)
         Me.XTPCashAdvance.Text = "Cash Advance"
         '
         'SBCashAdvance
@@ -440,6 +446,42 @@ Partial Class FormScheduler
         Me.TECashAdvance.Properties.Mask.EditMask = "HH:mm:ss"
         Me.TECashAdvance.Size = New System.Drawing.Size(100, 20)
         Me.TECashAdvance.TabIndex = 12
+        '
+        'XTPEvaulationAR
+        '
+        Me.XTPEvaulationAR.Controls.Add(Me.BtnEvaluationAR)
+        Me.XTPEvaulationAR.Controls.Add(Me.Label7)
+        Me.XTPEvaulationAR.Controls.Add(Me.TEEvaluationAR)
+        Me.XTPEvaulationAR.Name = "XTPEvaulationAR"
+        Me.XTPEvaulationAR.Size = New System.Drawing.Size(872, 161)
+        Me.XTPEvaulationAR.Text = "Evaluation AR"
+        '
+        'BtnEvaluationAR
+        '
+        Me.BtnEvaluationAR.Location = New System.Drawing.Point(196, 16)
+        Me.BtnEvaluationAR.Name = "BtnEvaluationAR"
+        Me.BtnEvaluationAR.Size = New System.Drawing.Size(66, 23)
+        Me.BtnEvaluationAR.TabIndex = 17
+        Me.BtnEvaluationAR.Text = "Save"
+        '
+        'Label7
+        '
+        Me.Label7.AutoSize = True
+        Me.Label7.Location = New System.Drawing.Point(14, 21)
+        Me.Label7.Name = "Label7"
+        Me.Label7.Size = New System.Drawing.Size(70, 13)
+        Me.Label7.TabIndex = 16
+        Me.Label7.Text = "Evaluation at"
+        '
+        'TEEvaluationAR
+        '
+        Me.TEEvaluationAR.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
+        Me.TEEvaluationAR.Location = New System.Drawing.Point(90, 18)
+        Me.TEEvaluationAR.Name = "TEEvaluationAR"
+        Me.TEEvaluationAR.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.TEEvaluationAR.Properties.Mask.EditMask = "HH:mm:ss"
+        Me.TEEvaluationAR.Size = New System.Drawing.Size(100, 20)
+        Me.TEEvaluationAR.TabIndex = 15
         '
         'FormScheduler
         '
@@ -480,6 +522,9 @@ Partial Class FormScheduler
         Me.XTPCashAdvance.ResumeLayout(False)
         Me.XTPCashAdvance.PerformLayout()
         CType(Me.TECashAdvance.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.XTPEvaulationAR.ResumeLayout(False)
+        Me.XTPEvaulationAR.PerformLayout()
+        CType(Me.TEEvaluationAR.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -525,4 +570,8 @@ Partial Class FormScheduler
     Friend WithEvents SBCashAdvance As DevExpress.XtraEditors.SimpleButton
     Friend WithEvents Label6 As Label
     Friend WithEvents TECashAdvance As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents XTPEvaulationAR As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents BtnEvaluationAR As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents Label7 As Label
+    Friend WithEvents TEEvaluationAR As DevExpress.XtraEditors.TimeEdit
 End Class

@@ -10,6 +10,8 @@ Public Class ClassSendEmail
     Public past_due_date As Integer = 0
     Public soon_due As Integer = 0
     Public pr_due As Integer = 0
+    Public par1 As String = "-1"
+    Public par2 As String = "-1"
     '
     Sub send_email_html()
         Dim is_ssl = get_setup_field("system_email_is_ssl").ToString
@@ -140,6 +142,77 @@ Public Class ClassSendEmail
                 Dim query_log As String = "INSERT INTo tb_scheduler_attn_log(id_log_type,`datetime`,log) VALUES('3',NOW(),'Sending Monthly Remaining Leave Report (Department Head) to " & data_opt.Rows(0)("employee_name").ToString & "')"
                 execute_non_query(query_log, True, "", "", "", "")
             End If
+        ElseIf report_mark_type = "228" Then
+            '--- on hold delivery
+            Dim mm As New ClassMailManage()
+            Dim id_mail As String = "-1"
+            Try
+                'cek rows
+                Dim query_cek_eval As String = "SELECT COUNT(e.id_ar_eval) AS jum_eval FROM tb_ar_eval e WHERE e.eval_date='" + par1 + "' "
+                Dim data_cek_eval As DataTable = execute_query(query_cek_eval, -1, True, "", "", "", "")
+                If data_cek_eval.Rows(0)("jum_eval") > 0 Then
+                    'create mail manage
+                    Dim mail_subject As String = get_setup_field("mail_subject_on_hold") + " - " + par2.ToString
+                    Dim mail_title As String = get_setup_field("mail_title_on_hold")
+                    Dim mail_content As String = get_setup_field("mail_content_on_hold")
+                    Dim query_mail_content_to As String = "SELECT CONCAT(e.employee_name, ' (',e.employee_position,')') AS `to_content_mail`
+                    FROM tb_opt o
+                    INNER JOIN tb_m_employee e ON e.id_employee = o.id_emp_wh_manager "
+                    Dim mail_content_to As String = execute_query(query_mail_content_to, 0, True, "", "", "", "")
+
+                    'send paramenter class
+                    mm.rmt = report_mark_type
+                    mm.mail_subject = mail_subject
+                    mm.mail_title = mail_title
+                    mm.par1 = par1
+                    mm.createEmail()
+                    id_mail = mm.id_mail_manage
+
+                    'send email
+                    Dim from_mail As MailAddress = New MailAddress("system@volcom.co.id", mail_title)
+                    Dim mail As MailMessage = New MailMessage()
+                    mail.From = from_mail
+                    Dim query_send_to As String = "SELECT  m.id_mail_member_type,m.mail_address, IF(ISNULL(m.id_comp_contact), e.employee_name, cc.contact_person) AS `display_name`
+                    FROM tb_mail_manage_member m 
+                    LEFT JOIN tb_m_comp_contact cc ON cc.id_comp_contact = m.id_comp_contact
+                    LEFT JOIN tb_m_user u ON u.id_user = m.id_user
+                    LEFT JOIN tb_m_employee e ON e.id_employee = u.id_employee
+                    WHERE m.id_mail_manage=" + id_mail + " AND m.id_mail_member_type>1 
+                    ORDER BY m.id_mail_member_type ASC,m.id_mail_manage_member ASC "
+                    Dim data_send_to As DataTable = execute_query(query_send_to, -1, True, "", "", "", "")
+                    For i As Integer = 0 To data_send_to.Rows.Count - 1
+                        Dim to_mail As MailAddress = New MailAddress(data_send_to.Rows(i)("mail_address").ToString, data_send_to.Rows(i)("display_name").ToString)
+                        If data_send_to.Rows(i)("id_mail_member_type").ToString = "2" Then
+                            mail.To.Add(to_mail)
+                        ElseIf data_send_to.Rows(i)("id_mail_member_type").ToString = "3" Then
+                            mail.CC.Add(to_mail)
+                        End If
+                    Next
+                    mail.Subject = mail_subject
+                    mail.IsBodyHtml = True
+                    mail.Body = emailOnHold(mail_content_to, mail_content, mm.getDetailData())
+                    client.Send(mail)
+
+                    'log
+                    Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
+                    VALUES('" + par1 + "', NOW(), 'Email Sent successfully'); " + mm.queryInsertLog("2", "Sent successfully")
+                    execute_non_query(query_log, True, "", "", "", "")
+
+                    'dispose memory
+                    mail.Dispose()
+                    data_cek_eval.Dispose()
+                End If
+            Catch ex As Exception
+                'Log
+                Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
+                VALUES('" + par1 + "', NOW(), 'Failed send email : " + addSlashes(ex.ToString) + "'); " + mm.queryInsertLog("3", addSlashes(ex.ToString))
+                execute_non_query(query_log, True, "", "", "", "")
+            End Try
+            mm.id_mail_manage = "-1"
+            mm.mail_subject = ""
+            mm.mail_title = ""
+            mm.rmt = "-1"
+            mm.par1 = ""
         End If
         client.Dispose()
     End Sub
@@ -539,6 +612,112 @@ Public Class ClassSendEmail
                       </td>
                      </tr>
                     </tbody></table>"
+        Return body_temp
+    End Function
+
+    Function emailOnHold(ByVal to_par As String, ByVal content_par As String, ByVal dt_par As DataTable)
+        Dim body_temp As String = "<table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='100%' style='width:100.0%;background:#eeeeee'>
+            <tbody><tr>
+              <td style='padding:30.0pt 30.0pt 30.0pt 30.0pt'>
+              <div align='center'>
+
+              <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:6.25in;background:white'>
+               <tbody><tr>
+                <td style='padding:0in 0in 0in 0in'></td>
+               </tr>
+               <tr>
+                <td style='padding:0in 0in 0in 0in'>
+                <p class='MsoNormal' align='center' style='text-align:center'><a href='http://www.volcom.co.id/' title='Volcom' target='_blank' data-saferedirecturl='https://www.google.com/url?hl=en&amp;q=http://www.volcom.co.id/&amp;source=gmail&amp;ust=1480121870771000&amp;usg=AFQjCNEjXvEZWgDdR-Wlke7nn0fmc1ZUuA'><span style='text-decoration:none'><img border='0' width='180' id='m_1811720018273078822_x0000_i1025' src='https://ci3.googleusercontent.com/proxy/x-zXDZUS-2knkEkbTh3HzgyAAusw1Wz7dqV-lbnl39W_4F6T97fJ2_b9doP3nYi0B6KHstdb-tK8VAF_kOaLt2OH=s0-d-e1-ft#http://www.volcom.co.id/enews/img/volcom.jpg' alt='Volcom' class='CToWUd'></span></a><u></u><u></u></p>
+                </td>
+               </tr>
+               <tr>
+                <td style='padding:0in 0in 0in 0in'></td>
+               </tr>
+               <tr>
+                <td style='padding:0in 0in 0in 0in'>
+                <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:6.25in;background:white'>
+                 <tbody><tr>
+                  <td style='padding:0in 0in 0in 0in'>
+
+                  </td>
+                 </tr>
+                </tbody></table>
+
+
+                <p class='MsoNormal' style='background-color:#eff0f1'><span style='display:block;background-color:#eff0f1;height: 5px;'><u></u>&nbsp;<u></u></span></p>
+                <p class='MsoNormal'><span style='display:none'><u></u>&nbsp;<u></u></span></p>
+                
+
+                <!-- start body -->
+                <table width='100%' class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' style='background:white'>
+                 <tbody>
+                <tr>
+                  <td style='padding:15.0pt 15.0pt 0.0pt 15.0pt' colspan='3'>
+                  <div>
+                    <b><span class='MsoNormal' style='line-height:14.25pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>Hold Delivery - Nama Toko Sesuai List</span></b>
+                  </div>
+                  </td>
+                 </tr>
+
+                 <tr>
+                  <td style='padding:15.0pt 15.0pt 15.0pt 15.0pt' colspan='3'>
+                  <div style='margin-bottom: 5pt;'>
+                    <span class='MsoNormal' style='line-height:15.25pt; font-size: 10pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>Kepada : " + to_par + " </span>
+                  </div>
+
+                  <div>
+                    <span class='MsoNormal' style='line-height:15.25pt; font-size: 10pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>" + content_par + "</span>
+                  </div>
+                  </td>
+                 </tr>
+               
+         
+                 <tr>
+                  <td style='padding:0.0pt 0.0pt 0.0pt 5.0pt' colspan='3'>
+                  	<ol > "
+
+        For i As Integer = 0 To dt_par.Rows.Count - 1
+            'data
+            body_temp += "<li class='MsoNormal' style='line-height:15.25pt; font-size: 10pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>" + dt_par.Rows(i)("group_store").ToString + "</li>"
+        Next
+        body_temp += "</ol>
+                    </td>
+                 </tr> 
+
+         
+          <tr>
+                  <td style='padding:15.0pt 15.0pt 15.0pt 15.0pt' colspan='3'>
+                  <div>
+                  <p class='MsoNormal' style='line-height:14.25pt'><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'>Thank you<br /><b>Volcom ERP</b><u></u><u></u></span></p>
+
+                  </div>
+                  </td>
+                 </tr>
+                </tbody>
+              </table>
+              <!-- end body -->
+
+
+                <p class='MsoNormal' style='background-color:#eff0f1'><span style='display:block;height: 10px;'><u></u>&nbsp;<u></u></span></p>
+                <p class='MsoNormal'><span style='display:none'><u></u>&nbsp;<u></u></span></p>
+                <div align='center'>
+                <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' style='background:white'>
+                 <tbody><tr>
+                  <td style='padding:6.0pt 6.0pt 6.0pt 6.0pt;text-align:center;'>
+                    <span style='text-align:center;font-size:7.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#a0a0a0;letter-spacing:.4pt;'>This email send directly from system. Do not reply.</b><u></u><u></u></span>
+                  <p class='MsoNormal' align='center' style='margin-bottom:12.0pt;text-align:center;padding-top:0px;'><img border='0' width='300' id='m_1811720018273078822_x0000_i1028' src='https://ci6.googleusercontent.com/proxy/xq6o45mp_D9Z7DHCK5WT7GKuQ2QDaLg1hyMxoHX5ofUIv_m7GwasoczpbAOn6l6Ze-UfLuIUAndSokPvO633nnO9=s0-d-e1-ft#http://www.volcom.co.id/enews/img/footer.jpg' class='CToWUd'><u></u><u></u></p>
+                  </td>
+                 </tr>
+                </tbody></table>
+                </div>
+                </td>
+               </tr>
+              </tbody></table>	
+              </div>
+              </td>
+             </tr>
+            </tbody>
+        </table> "
         Return body_temp
     End Function
 End Class
