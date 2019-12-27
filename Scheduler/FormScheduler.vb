@@ -82,6 +82,9 @@
             'evaluation ar time
             load_evaluation_time()
 
+            'email notice ar
+            load_notice_ar_time()
+
             start_timer()
             WindowState = FormWindowState.Minimized
         End If
@@ -148,6 +151,13 @@
         Dim time As String = execute_query(query, 0, True, "", "", "", "")
 
         TEEvaluationAR.EditValue = time
+    End Sub
+
+    Sub load_notice_ar_time()
+        Dim query As String = "SELECT notice_email_ar_time FROM tb_opt_scheduler LIMIT 1"
+        Dim time As String = execute_query(query, 0, True, "", "", "", "")
+
+        TEEmailNoticeAR.EditValue = time
     End Sub
 
     Private Sub Timer_Tick(sender As Object, e As EventArgs) Handles Timer.Tick
@@ -245,33 +255,47 @@
             'End If
 
             'AR evaluation
-            If Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
-                Dim qgd As String = "SELECT * FROM tb_ar_eval_setup_date WHERE ar_eval_setup_date='" + cur_datetime.ToString("yyyy-MM-dd") + "' "
-                Dim dgd As DataTable = execute_query(qgd, -1, True, "", "", "", "")
-                If dgd.Rows.Count > 0 Then 'ketemu tanggal evaluasi 
-                    Try
-                        'jalankan evaluasi
-                        Dim qins As String = "CALL getEvaluationAR('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "'); "
-                        execute_non_query(qins, True, "", "", "", "")
+            If get_opt_scheduler_field("is_active_evaluation_ar").ToString = "1" Then
+                If Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                    Dim qgd As String = "SELECT * FROM tb_ar_eval_setup_date WHERE ar_eval_setup_date='" + cur_datetime.ToString("yyyy-MM-dd") + "' "
+                    Dim dgd As DataTable = execute_query(qgd, -1, True, "", "", "", "")
+                    If dgd.Rows.Count > 0 Then 'ketemu tanggal evaluasi 
+                        Try
+                            'jalankan evaluasi
+                            Dim qins As String = "CALL getEvaluationAR('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "'); "
+                            execute_non_query(qins, True, "", "", "", "")
 
-                        'log
-                        Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
+                            'log
+                            Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
                         VALUES('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "', NOW(), 'Evaluation Success'); "
-                        execute_non_query(query_log, True, "", "", "", "")
-                    Catch ex As Exception
-                        'log
-                        Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
+                            execute_non_query(query_log, True, "", "", "", "")
+                        Catch ex As Exception
+                            'log
+                            Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
                         VALUES('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "', NOW(), 'Evaluation Failed : " + addSlashes(ex.ToString) + "'); "
-                        execute_non_query(query_log, True, "", "", "", "")
-                    End Try
+                            execute_non_query(query_log, True, "", "", "", "")
+                        End Try
 
 
-                    'push email
-                    Dim em As New ClassSendEmail()
-                    em.report_mark_type = "228"
-                    em.par1 = cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss")
-                    em.par2 = cur_datetime.ToString("dd MMMM yyyy")
-                    em.send_email_html()
+                        'push email
+                        Dim em As New ClassSendEmail()
+                        em.report_mark_type = "228"
+                        em.par1 = cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss")
+                        em.par2 = cur_datetime.ToString("dd MMMM yyyy")
+                        em.send_email_html()
+                    End If
+                End If
+            End If
+
+            'Email Pemberitahuan - AR
+            If get_opt_scheduler_field("is_active_email_notice_ar").ToString = "1" Then
+                If Date.Parse(TEEmailNoticeAR.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                    'list group store
+                    Dim ar As New ClassAREvaluation()
+                    Dim dt_grp As DataTable = ar.listNoticeInvoice("2")
+                    If dt_grp.Rows.Count > 0 Then
+
+                    End If
                 End If
             End If
         Catch ex As Exception
@@ -428,5 +452,11 @@
         Dim query As String = "UPDATE tb_opt_scheduler SET evaluation_ar_time='" & Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") & "'"
         execute_non_query(query, True, "", "", "", "")
         MsgBox("Evaluation AR Time saved.")
+    End Sub
+
+    Private Sub BtnEmailNoticeAR_Click(sender As Object, e As EventArgs) Handles BtnEmailNoticeAR.Click
+        Dim query As String = "UPDATE tb_opt_scheduler SET notice_email_ar_time='" & Date.Parse(TEEmailNoticeAR.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        execute_non_query(query, True, "", "", "", "")
+        MsgBox("Email Notice AR Time saved.")
     End Sub
 End Class
