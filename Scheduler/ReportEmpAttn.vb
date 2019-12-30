@@ -56,7 +56,7 @@
                     LEFT JOIN tb_emp_attn at_out_hol ON at_out_hol.id_employee = sch.id_employee AND DATE(at_out_hol.datetime) = sch.Date AND at_out_hol.type_log = 2  
                     WHERE emp.id_departement Like '" & dept & "' 
                     AND emp.id_employee_active='1'
-                    AND YEARWEEK(sch.`date`,1) = YEARWEEK(NOW(),1) - 1
+                    AND YEARWEEK(sch.`date`,1) = SELECT YEARWEEK(DATE_SUB(NOW(), INTERVAL 1 WEEK), 1)
                     GROUP BY sch.id_schedule
                     ) tb"
             'this is last week from monday till sunday
