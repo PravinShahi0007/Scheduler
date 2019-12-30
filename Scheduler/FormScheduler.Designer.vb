@@ -66,6 +66,10 @@ Partial Class FormScheduler
         Me.BtnEvaluationAR = New DevExpress.XtraEditors.SimpleButton()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.TEEvaluationAR = New DevExpress.XtraEditors.TimeEdit()
+        Me.XTPNoticeEmail = New DevExpress.XtraTab.XtraTabPage()
+        Me.BtnEmailNoticeAR = New DevExpress.XtraEditors.SimpleButton()
+        Me.Label8 = New System.Windows.Forms.Label()
+        Me.TEEmailNoticeAR = New DevExpress.XtraEditors.TimeEdit()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -89,6 +93,8 @@ Partial Class FormScheduler
         CType(Me.TECashAdvance.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.XTPEvaulationAR.SuspendLayout()
         CType(Me.TEEvaluationAR.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.XTPNoticeEmail.SuspendLayout()
+        CType(Me.TEEmailNoticeAR.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Timer
@@ -237,7 +243,7 @@ Partial Class FormScheduler
         Me.XtraTabControl1.SelectedTabPage = Me.XTPSchedule
         Me.XtraTabControl1.Size = New System.Drawing.Size(878, 189)
         Me.XtraTabControl1.TabIndex = 6
-        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR})
+        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail})
         '
         'XTPSchedule
         '
@@ -454,7 +460,7 @@ Partial Class FormScheduler
         Me.XTPEvaulationAR.Controls.Add(Me.TEEvaluationAR)
         Me.XTPEvaulationAR.Name = "XTPEvaulationAR"
         Me.XTPEvaulationAR.Size = New System.Drawing.Size(872, 161)
-        Me.XTPEvaulationAR.Text = "Evaluation AR"
+        Me.XTPEvaulationAR.Text = "AR - Evaluation"
         '
         'BtnEvaluationAR
         '
@@ -482,6 +488,42 @@ Partial Class FormScheduler
         Me.TEEvaluationAR.Properties.Mask.EditMask = "HH:mm:ss"
         Me.TEEvaluationAR.Size = New System.Drawing.Size(100, 20)
         Me.TEEvaluationAR.TabIndex = 15
+        '
+        'XTPNoticeEmail
+        '
+        Me.XTPNoticeEmail.Controls.Add(Me.BtnEmailNoticeAR)
+        Me.XTPNoticeEmail.Controls.Add(Me.Label8)
+        Me.XTPNoticeEmail.Controls.Add(Me.TEEmailNoticeAR)
+        Me.XTPNoticeEmail.Name = "XTPNoticeEmail"
+        Me.XTPNoticeEmail.Size = New System.Drawing.Size(872, 161)
+        Me.XTPNoticeEmail.Text = "AR - Email Pemberitahuan"
+        '
+        'BtnEmailNoticeAR
+        '
+        Me.BtnEmailNoticeAR.Location = New System.Drawing.Point(173, 14)
+        Me.BtnEmailNoticeAR.Name = "BtnEmailNoticeAR"
+        Me.BtnEmailNoticeAR.Size = New System.Drawing.Size(66, 23)
+        Me.BtnEmailNoticeAR.TabIndex = 20
+        Me.BtnEmailNoticeAR.Text = "Save"
+        '
+        'Label8
+        '
+        Me.Label8.AutoSize = True
+        Me.Label8.Location = New System.Drawing.Point(17, 19)
+        Me.Label8.Name = "Label8"
+        Me.Label8.Size = New System.Drawing.Size(44, 13)
+        Me.Label8.TabIndex = 19
+        Me.Label8.Text = "Email at"
+        '
+        'TEEmailNoticeAR
+        '
+        Me.TEEmailNoticeAR.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
+        Me.TEEmailNoticeAR.Location = New System.Drawing.Point(67, 16)
+        Me.TEEmailNoticeAR.Name = "TEEmailNoticeAR"
+        Me.TEEmailNoticeAR.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.TEEmailNoticeAR.Properties.Mask.EditMask = "HH:mm:ss"
+        Me.TEEmailNoticeAR.Size = New System.Drawing.Size(100, 20)
+        Me.TEEmailNoticeAR.TabIndex = 18
         '
         'FormScheduler
         '
@@ -525,6 +567,9 @@ Partial Class FormScheduler
         Me.XTPEvaulationAR.ResumeLayout(False)
         Me.XTPEvaulationAR.PerformLayout()
         CType(Me.TEEvaluationAR.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.XTPNoticeEmail.ResumeLayout(False)
+        Me.XTPNoticeEmail.PerformLayout()
+        CType(Me.TEEmailNoticeAR.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -574,4 +619,8 @@ Partial Class FormScheduler
     Friend WithEvents BtnEvaluationAR As DevExpress.XtraEditors.SimpleButton
     Friend WithEvents Label7 As Label
     Friend WithEvents TEEvaluationAR As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents XTPNoticeEmail As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents BtnEmailNoticeAR As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents Label8 As Label
+    Friend WithEvents TEEmailNoticeAR As DevExpress.XtraEditors.TimeEdit
 End Class
