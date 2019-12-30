@@ -13,7 +13,7 @@
         End If
 
         Dim query_mail_manage As String = "INSERT INTO tb_mail_manage(number, created_date, created_by, updated_date, updated_by, report_mark_type, id_mail_status, mail_status_note, mail_subject, mail_parameter) 
-        VALUES('', NOW(), NULL, NOW(), NULL, 228, 1, 'Draft', '" + mail_subject + "', '" + par1 + "'); SELECT LAST_INSERT_ID(); "
+        VALUES('', NOW(), NULL, NOW(), NULL, " + rmt + ", 1, 'Draft', '" + mail_subject + "', '" + par2 + "'); SELECT LAST_INSERT_ID(); "
         id_mail_manage = execute_query(query_mail_manage, 0, True, "", "", "", "")
         'update number mail
         execute_non_query("CALL gen_number(" + id_mail_manage + ", 228);", True, "", "", "", "")
@@ -35,8 +35,8 @@
         /*detil*/
         INSERT INTO tb_mail_manage_det(id_mail_manage, report_mark_type, id_report, report_number,id_report_ref, report_mark_type_ref, report_number_ref) "
         If rmt = "226" Then
-            query_mail_detail += "SELECT " + id_mail_manage + " As `id_mail_manage`, e.report_mark_type, e.id_sales_pos, e.report_number
-            FROM tb_ar_eval e WHERE e.eval_date='" + par1 + "'; "
+            Dim arv As New ClassAREvaluation()
+            query_mail_detail += arv.querylistNoticeInvoice("1", par1, id_mail_manage)
         ElseIf rmt = "228" Then
             query_mail_detail += "SELECT " + id_mail_manage + " As `id_mail_manage`, e.report_mark_type, e.id_sales_pos, e.report_number, " + id_report_ref + ", " + report_mark_type_ref + ", '" + report_number_ref + "'
             FROM tb_ar_eval e WHERE e.eval_date='" + par1 + "'; "
@@ -68,7 +68,11 @@
         Return dt
     End Function
 
-    Function queryInsertLog(ByVal id_status_par As String, ByVal note_par As String) As String
+    Function queryInsertLog(ByVal id_user_par As String, ByVal id_status_par As String, ByVal note_par As String) As String
+        If id_user_par = "0" Then
+            id_user_par = "NULL"
+        End If
+
         Dim query As String = ""
         If id_mail_manage <> "-1" Then
             query = "UPDATE tb_mail_manage SET updated_date=NOW(), updated_by=NULL, 

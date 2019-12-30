@@ -259,7 +259,7 @@ Public Class ClassSendEmail
 
                     'log
                     Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
-                    VALUES('" + par1 + "', NOW(), 'Email Sent successfully'); " + mm.queryInsertLog("2", "Sent successfully")
+                    VALUES('" + par1 + "', NOW(), 'Email Sent successfully'); " + mm.queryInsertLog("0", "2", "Sent successfully")
                     execute_non_query(query_log, True, "", "", "", "")
 
                     'dispose memory
@@ -269,7 +269,7 @@ Public Class ClassSendEmail
             Catch ex As Exception
                 'Log
                 Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
-                VALUES('" + par1 + "', NOW(), 'Failed send email : " + addSlashes(ex.ToString) + "'); " + mm.queryInsertLog("3", addSlashes(ex.ToString))
+                VALUES('" + par1 + "', NOW(), 'Failed send email : " + addSlashes(ex.ToString) + "'); " + mm.queryInsertLog("0", "3", addSlashes(ex.ToString))
                 execute_non_query(query_log, True, "", "", "", "")
             End Try
             mm.id_mail_manage = "-1"
