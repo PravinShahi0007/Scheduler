@@ -103,7 +103,7 @@
                         FROM tb_m_departement dep
                         INNER JOIN tb_m_user usr ON usr.id_user=dep.id_user_head
                         INNER JOIN tb_m_employee emp ON emp.id_employee = usr.id_employee
-                        WHERE dep.is_office_dept='1'
+                        WHERE dep.is_office_dept='1' AND dep.is_store='2'
                         UNION
                         SELECT id_employee FROM tb_emp_attn_spec
                         GROUP BY id_employee
