@@ -342,8 +342,7 @@
                                    GROUP BY pyd.id_report, pyd.report_mark_type
                                 ) pyd ON pyd.id_report = sp.id_sales_pos AND pyd.report_mark_type = sp.report_mark_type
                                 LEFT JOIN tb_propose_delay_payment m ON m.id_propose_delay_payment = sp.id_propose_delay_payment
-                                WHERE md.id_mail_manage=" + id_mail + " 
-                                HAVING amount>0 "
+                                WHERE md.id_mail_manage=" + id_mail + " "
                                 Dim dcont As DataTable = execute_query(qcont, -1, True, "", "", "", "")
                                 Dim tot_amo As Double = dt_grp.Rows(g)("amount").ToString
 
