@@ -82,4 +82,21 @@
         End If
         Return query
     End Function
+
+
+    Sub insertLogFollowUp(ByVal follow_up_remark As String)
+        If rmt = "225" Or rmt = "226" Or rmt = "227" Then
+            Dim query As String = "INSERT INTO tb_follow_up_ar(id_comp_group, due_date, follow_up, follow_up_result, follow_up_date, follow_up_input) 
+            SELECT c.id_comp_group, sp.sales_pos_due_date, CONCAT(rmt.report_mark_type_name, '" + follow_up_remark + "'), '', DATE(mm.updated_date), NOW()
+            FROM tb_mail_manage_det mmd
+            INNER JOIN tb_mail_manage mm ON mm.id_mail_manage = mmd.id_mail_manage
+            INNER JOIN tb_sales_pos sp ON sp.id_sales_pos = mmd.id_report AND sp.report_mark_type = mmd.report_mark_type
+            INNER JOIN tb_m_comp_contact cc ON cc.`id_comp_contact`= IF(sp.id_memo_type=8 OR sp.id_memo_type=9, sp.id_comp_contact_bill,sp.`id_store_contact_from`)
+            INNER JOIN tb_m_comp c ON c.`id_comp`=cc.`id_comp`
+            INNER JOIN tb_lookup_report_mark_type rmt ON rmt.report_mark_type = mm.report_mark_type
+            WHERE mmd.id_mail_manage=" + id_mail_manage + "
+            GROUP BY sp.sales_pos_due_date "
+            execute_non_query(query, True, "", "", "", "")
+        End If
+    End Sub
 End Class
