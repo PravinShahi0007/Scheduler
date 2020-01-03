@@ -314,7 +314,7 @@
                                 mm.rmt = "226"
                                 mm.par1 = "AND cg.id_comp_group=" + dt_grp.Rows(g)("id_comp_group").ToString + " "
                                 mm.par2 = dt_grp.Rows(g)("id_comp_group").ToString
-                                mm.createEmail("0", "NULL", "NULL", "")
+                                mm.createEmail(dt_grp.Rows(g)("id_comp_group").ToString, "0", "NULL", "NULL", "")
                                 id_mail = mm.id_mail_manage
 
                                 'data send email

@@ -234,7 +234,7 @@ Public Class ClassSendEmail
                     mm.mail_subject = mail_subject
                     mm.mail_title = mail_title
                     mm.par1 = par1
-                    mm.createEmail(0, "NULL", "NULL", "")
+                    mm.createEmail("-1", 0, "NULL", "NULL", "")
                     id_mail = mm.id_mail_manage
 
                     'send email

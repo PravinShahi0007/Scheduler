@@ -7,9 +7,15 @@
     Public par2 As String = ""
 
 
-    Sub createEmail(ByVal id_user_created As String, ByVal id_report_ref As String, ByVal report_mark_type_ref As String, ByVal report_number_ref As String)
+    Sub createEmail(ByVal id_comp_group_par As String, ByVal id_user_created As String, ByVal id_report_ref As String, ByVal report_mark_type_ref As String, ByVal report_number_ref As String)
         If id_user_created = "0" Then
             id_user_created = "NULL"
+        End If
+
+        'group toko
+        Dim cond_internal_group As String = ""
+        If id_comp_group_par <> "-1" Then
+            cond_internal_group = "OR m.id_comp_group='" + id_comp_group_par + "' "
         End If
 
         Dim query_mail_manage As String = "INSERT INTO tb_mail_manage(number, created_date, created_by, updated_date, updated_by, report_mark_type, id_mail_status, mail_status_note, mail_subject, mail_parameter) 
@@ -27,11 +33,11 @@
             WHERE m.report_mark_type=" + rmt + " AND m.id_comp_group=" + par2 + "
             UNION "
         End If
-        query_mail_detail +="Select " + id_mail_manage + " As `id_mail_manage`, m.id_mail_member_type, m.id_user, NULL As `id_comp_contact`, e.email_external As `mail_address`
+        query_mail_detail += "Select " + id_mail_manage + " As `id_mail_manage`, m.id_mail_member_type, m.id_user, NULL As `id_comp_contact`, e.email_external As `mail_address`
         FROM tb_mail_manage_mapping_intern m
         INNER JOIN tb_m_user u ON u.id_user = m.id_user
         INNER JOIN tb_m_employee e ON e.id_employee = u.id_employee
-        WHERE m.report_mark_type=" + rmt + ";
+        WHERE m.report_mark_type=" + rmt + " AND (ISNULL(m.id_comp_group) " + cond_internal_group + "); 
         /*detil*/
         INSERT INTO tb_mail_manage_det(id_mail_manage, report_mark_type, id_report, report_number,id_report_ref, report_mark_type_ref, report_number_ref) "
         If rmt = "226" Then
