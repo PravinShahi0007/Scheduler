@@ -314,7 +314,7 @@
                                 mm.rmt = "226"
                                 mm.par1 = "AND cg.id_comp_group=" + dt_grp.Rows(g)("id_comp_group").ToString + " "
                                 mm.par2 = dt_grp.Rows(g)("id_comp_group").ToString
-                                mm.createEmail("0", "NULL", "NULL", "")
+                                mm.createEmail(dt_grp.Rows(g)("id_comp_group").ToString, "0", "NULL", "NULL", "")
                                 id_mail = mm.id_mail_manage
 
                                 'data send email
@@ -342,8 +342,7 @@
                                    GROUP BY pyd.id_report, pyd.report_mark_type
                                 ) pyd ON pyd.id_report = sp.id_sales_pos AND pyd.report_mark_type = sp.report_mark_type
                                 LEFT JOIN tb_propose_delay_payment m ON m.id_propose_delay_payment = sp.id_propose_delay_payment
-                                WHERE md.id_mail_manage=" + id_mail + " 
-                                HAVING amount>0 "
+                                WHERE md.id_mail_manage=" + id_mail + " "
                                 Dim dcont As DataTable = execute_query(qcont, -1, True, "", "", "", "")
                                 Dim tot_amo As Double = dt_grp.Rows(g)("amount").ToString
 
@@ -365,6 +364,9 @@
                                 Dim querylog As String = "INSERT INTO tb_ar_notice_log(`id_comp_group`, `group`, `log_time`, `log`, `is_success`) 
                                 VALUES('" + dt_grp.Rows(g)("id_comp_group").ToString + "', '" + addSlashes(dt_grp.Rows(g)("group").ToString) + "', NOW(), '" + addSlashes(dt_grp.Rows(g)("group").ToString) + " - Email Sent successfully',1); " + mm.queryInsertLog("0", "2", "" + addSlashes(dt_grp.Rows(g)("group").ToString) + " - Sent successfully") + "; "
                                 execute_non_query(querylog, True, "", "", "", "")
+
+                                'foolow up
+                                mm.insertLogFollowUp("")
                             Catch ex As Exception
                                 'Log
                                 Dim query_log As String = "INSERT INTO tb_ar_notice_log(`id_comp_group`, `group`, `log_time`, `log`, `is_success`) 

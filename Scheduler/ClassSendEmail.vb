@@ -177,6 +177,11 @@ Public Class ClassSendEmail
                     mail.CC.Add(to_mail)
                 End If
             Next
+            'include email management
+            Dim management_mail As String = getMailManagement(report_mark_type)
+            If management_mail <> "" Then
+                mail.CC.Add(management_mail)
+            End If
 
             '-- start attachment 
             '-- sementara nonaktif
@@ -229,7 +234,7 @@ Public Class ClassSendEmail
                     mm.mail_subject = mail_subject
                     mm.mail_title = mail_title
                     mm.par1 = par1
-                    mm.createEmail(0, "NULL", "NULL", "")
+                    mm.createEmail("-1", 0, "NULL", "NULL", "")
                     id_mail = mm.id_mail_manage
 
                     'send email
@@ -252,6 +257,12 @@ Public Class ClassSendEmail
                             mail.CC.Add(to_mail)
                         End If
                     Next
+                    'include email management
+                    Dim management_mail As String = getMailManagement(report_mark_type)
+                    If management_mail <> "" Then
+                        mail.CC.Add(management_mail)
+                    End If
+
                     mail.Subject = mail_subject
                     mail.IsBodyHtml = True
                     mail.Body = emailOnHold(mail_content_to, mail_content, mm.getDetailData())

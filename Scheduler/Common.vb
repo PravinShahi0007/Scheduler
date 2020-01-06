@@ -22,4 +22,17 @@
         End Try
         Return Result
     End Function
+
+    Public Function getMailManagement(ByVal rmt As String) As String
+        Dim qmm As String = "SELECT o.management_mail 
+        FROM tb_lookup_report_mark_type rmt 
+        JOIN tb_opt_scheduler o
+        WHERE rmt.report_mark_type=" + rmt + " AND rmt.is_mail_management=1 "
+        Dim data As DataTable = execute_query(qmm, -1, True, "", "", "", "")
+        Dim management_mail As String = ""
+        If data.Rows.Count > 0 Then
+            management_mail = data.Rows(0)("management_mail").ToString
+        End If
+        Return management_mail
+    End Function
 End Module
