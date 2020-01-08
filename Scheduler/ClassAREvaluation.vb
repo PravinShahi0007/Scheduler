@@ -42,7 +42,7 @@
         LEFT JOIN tb_propose_delay_payment m ON m.id_propose_delay_payment = sp.id_propose_delay_payment
         WHERE sp.`id_report_status`='6' AND sp.is_close_rec_payment=2 
         " + cond + "
-        AND DATEDIFF(NOW(),IF(ISNULL(sp.propose_delay_payment_due_date),sp.sales_pos_due_date,sp.propose_delay_payment_due_date))=-5
+        AND DATEDIFF(NOW(),sp.sales_pos_due_date)=-5
         GROUP BY " + q_group_by + "
         ORDER BY id_sales_pos ASC "
         Return query
