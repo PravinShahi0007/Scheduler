@@ -350,7 +350,7 @@
                                 sm.id_report = id_mail
                                 sm.report_mark_type = "226"
                                 sm.head = mail_head
-                                sm.subj = mail_subject
+                                sm.subj = mail_subject + " " + dcont.Rows(0)("sales_pos_due_date").ToString + " - " + dcont.Rows(0)("group_company").ToString
                                 sm.titl = mail_title
                                 sm.par1 = mail_content_head + " " + dcont.Rows(0)("group_company").ToString
                                 sm.par2 = mail_content
