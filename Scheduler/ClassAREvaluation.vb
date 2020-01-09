@@ -41,6 +41,7 @@
         ) pyd ON pyd.id_report = sp.id_sales_pos AND pyd.report_mark_type = sp.report_mark_type
         LEFT JOIN tb_propose_delay_payment m ON m.id_propose_delay_payment = sp.id_propose_delay_payment
         WHERE sp.`id_report_status`='6' AND sp.is_close_rec_payment=2 
+        AND sp.sales_pos_total>0
         " + cond + "
         AND DATEDIFF(NOW(),sp.sales_pos_due_date)=-5
         GROUP BY " + q_group_by + "
