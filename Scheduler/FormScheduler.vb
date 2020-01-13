@@ -330,7 +330,7 @@
                                 INNER JOIN tb_lookup_report_mark_type rmt ON rmt.report_mark_type=sp.report_mark_type
                                 INNER JOIN tb_m_comp c ON c.`id_comp`=cc.`id_comp`
                                 INNER JOIN tb_m_comp_group cg ON cg.id_comp_group = c.id_comp_group
-                                INNER JOIN tb_m_comp cgho ON cgho.id_comp = cg.id_comp
+                                INNER JOIN tb_m_comp cgho ON cgho.id_comp = c.id_store_company
                                 INNER JOIN tb_lookup_memo_type typ ON typ.`id_memo_type`=sp.`id_memo_type`
                                 LEFT JOIN (
                                    SELECT pyd.id_report, pyd.report_mark_type, 
