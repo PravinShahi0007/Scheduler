@@ -315,6 +315,7 @@
                                 mm.par1 = "AND cg.id_comp_group=" + dt_grp.Rows(g)("id_comp_group").ToString + " AND c.id_store_company=" + dt_grp.Rows(g)("id_store_company").ToString + " "
                                 mm.par2 = dt_grp.Rows(g)("id_comp_group").ToString
                                 mm.par3 = dt_grp.Rows(g)("id_store_company").ToString
+                                mm.mail_subject = mail_subject
                                 mm.createEmail(dt_grp.Rows(g)("id_comp_group").ToString, "0", "NULL", "NULL", "")
                                 id_mail = mm.id_mail_manage
 
