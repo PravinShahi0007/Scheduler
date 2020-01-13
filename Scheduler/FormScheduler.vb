@@ -304,7 +304,7 @@
                                 FROM tb_opt "
                                 Dim dopt As DataTable = execute_query(qopt, -1, True, "", "", "", "")
                                 Dim mail_head As String = dopt.Rows(0)("mail_head_pemberitahuan").ToString
-                                Dim mail_subject As String = dopt.Rows(0)("mail_subject_pemberitahuan").ToString
+                                Dim mail_subject As String = dopt.Rows(0)("mail_subject_pemberitahuan").ToString + " " + dt_grp.Rows(g)("sales_pos_due_date").ToString + " - " + dt_grp.Rows(g)("group").ToString
                                 Dim mail_title As String = dopt.Rows(0)("mail_title_pemberitahuan").ToString
                                 Dim mail_content_head As String = dopt.Rows(0)("mail_content_head_pemberitahuan").ToString
                                 Dim mail_content As String = dopt.Rows(0)("mail_content_pemberitahuan").ToString
@@ -312,8 +312,10 @@
 
                                 'send paramenter class
                                 mm.rmt = "226"
-                                mm.par1 = "AND cg.id_comp_group=" + dt_grp.Rows(g)("id_comp_group").ToString + " "
+                                mm.par1 = "AND cg.id_comp_group=" + dt_grp.Rows(g)("id_comp_group").ToString + " AND c.id_store_company=" + dt_grp.Rows(g)("id_store_company").ToString + " "
                                 mm.par2 = dt_grp.Rows(g)("id_comp_group").ToString
+                                mm.par3 = dt_grp.Rows(g)("id_store_company").ToString
+                                mm.mail_subject = mail_subject
                                 mm.createEmail(dt_grp.Rows(g)("id_comp_group").ToString, "0", "NULL", "NULL", "")
                                 id_mail = mm.id_mail_manage
 
@@ -329,7 +331,7 @@
                                 INNER JOIN tb_lookup_report_mark_type rmt ON rmt.report_mark_type=sp.report_mark_type
                                 INNER JOIN tb_m_comp c ON c.`id_comp`=cc.`id_comp`
                                 INNER JOIN tb_m_comp_group cg ON cg.id_comp_group = c.id_comp_group
-                                INNER JOIN tb_m_comp cgho ON cgho.id_comp = cg.id_comp
+                                INNER JOIN tb_m_comp cgho ON cgho.id_comp = c.id_store_company
                                 INNER JOIN tb_lookup_memo_type typ ON typ.`id_memo_type`=sp.`id_memo_type`
                                 LEFT JOIN (
                                    SELECT pyd.id_report, pyd.report_mark_type, 

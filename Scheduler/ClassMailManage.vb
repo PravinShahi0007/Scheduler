@@ -5,6 +5,7 @@
     Public rmt As String = "-1"
     Public par1 As String = ""
     Public par2 As String = ""
+    Public par3 As String = ""
 
 
     Sub createEmail(ByVal id_comp_group_par As String, ByVal id_user_created As String, ByVal id_report_ref As String, ByVal report_mark_type_ref As String, ByVal report_number_ref As String)
@@ -30,7 +31,7 @@
             query_mail_detail += "SELECT " + id_mail_manage + " AS `id_mail_manage`, m.id_mail_member_type, NULL AS `id_user`, m.id_comp_contact, cc.email AS `mail_address`
             FROM tb_mail_manage_mapping m
             INNER JOIN tb_m_comp_contact cc ON cc.id_comp_contact = m.id_comp_contact
-            WHERE m.report_mark_type=" + rmt + " AND m.id_comp_group=" + par2 + "
+            WHERE m.report_mark_type=" + rmt + " AND m.id_comp_group=" + par2 + " AND cc.id_comp=" + par3 + "
             UNION "
         End If
         query_mail_detail += "Select " + id_mail_manage + " As `id_mail_manage`, m.id_mail_member_type, m.id_user, NULL As `id_comp_contact`, e.email_external As `mail_address`
