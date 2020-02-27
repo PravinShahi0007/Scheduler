@@ -161,6 +161,7 @@
     <Compile Include="ClassCashAdvance.vb" />
     <Compile Include="ClassEmpPerAppraisal.vb" />
     <Compile Include="ClassFingerPrint.vb" />
+    <Compile Include="ClassLateWarning.vb" />
     <Compile Include="ClassMailManage.vb" />
     <Compile Include="ClassSendEmail.vb" />
     <Compile Include="Common.vb" />

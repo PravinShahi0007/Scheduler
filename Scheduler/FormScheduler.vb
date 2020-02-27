@@ -85,6 +85,9 @@
             'email notice ar
             load_notice_ar_time()
 
+            'warning late
+            load_warning_late_time()
+
             start_timer()
             WindowState = FormWindowState.Minimized
         End If
@@ -158,6 +161,13 @@
         Dim time As String = execute_query(query, 0, True, "", "", "", "")
 
         TEEmailNoticeAR.EditValue = time
+    End Sub
+
+    Sub load_warning_late_time()
+        Dim query As String = "SELECT warning_late FROM tb_opt_scheduler LIMIT 1"
+        Dim time As String = execute_query(query, 0, True, "", "", "", "")
+
+        TEWaningLate.EditValue = time
     End Sub
 
     Private Sub Timer_Tick(sender As Object, e As EventArgs) Handles Timer.Tick
@@ -378,6 +388,13 @@
                     End If
                 End If
             End If
+
+            If get_opt_scheduler_field("is_active_warning_late").ToString = "1" Then
+                'Warning Late
+                If Date.Parse(TEWaningLate.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                    ClassLateWarning.check_late()
+                End If
+            End If
         Catch ex As Exception
             stop_timer()
             MsgBox(ex.ToString)
@@ -538,5 +555,11 @@
         Dim query As String = "UPDATE tb_opt_scheduler SET notice_email_ar_time='" & Date.Parse(TEEmailNoticeAR.EditValue.ToString).ToString("HH:mm:ss") & "'"
         execute_non_query(query, True, "", "", "", "")
         MsgBox("Email Notice AR Time saved.")
+    End Sub
+
+    Private Sub SBWarningLate_Click(sender As Object, e As EventArgs) Handles SBWarningLate.Click
+        Dim query As String = "UPDATE tb_opt_scheduler SET warning_late='" & Date.Parse(TEWaningLate.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        execute_non_query(query, True, "", "", "", "")
+        MsgBox("Warning Late Time saved.")
     End Sub
 End Class
