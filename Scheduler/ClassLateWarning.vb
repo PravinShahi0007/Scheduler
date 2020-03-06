@@ -121,11 +121,11 @@
 
             Dim messages As String = ""
 
-            'Try
-            '    client.Send(mail)
-            'Catch ex As Exception
-            '    messages = ex.ToString
-            'End Try
+            Try
+                client.Send(mail)
+            Catch ex As Exception
+                messages = ex.ToString
+            End Try
 
             Dim insert_query As String = "INSERT INTO tb_emp_late_warning (id_warning_type, id_employee, from_date, to_date, sent_date, messages) VALUES (" + id_warning_type + ", " + employee_late.Rows(i)("id_employee").ToString + ", '" + Date.Parse(employee_late.Rows(i)("from_date").ToString).ToString("yyyy-MM-dd") + "', '" + Date.Parse(employee_late.Rows(i)("to_date").ToString).ToString("yyyy-MM-dd") + "', NOW(), '" + addSlashes(messages) + "')"
 

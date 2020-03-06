@@ -25,6 +25,7 @@
                                UNION SELECT '6' AS id_day, 'Saturday' AS day_name
                                UNION SELECT '0' AS id_day, 'Sunday' AS day_name"
         viewLookupQuery(LEDay, query, 0, "day_name", "id_day")
+        viewLookupQuery(LEDayKurs, query, 0, "day_name", "id_day")
     End Sub
     Public Sub viewLookupQuery(ByVal LE As DevExpress.XtraEditors.LookUpEdit, ByVal query As String, ByVal index_selected As Integer, ByVal display As String, ByVal value As String)
         Try
@@ -87,6 +88,9 @@
 
             'warning late
             load_warning_late_time()
+
+            'kurs
+            load_kurs()
 
             start_timer()
             WindowState = FormWindowState.Minimized
@@ -395,6 +399,10 @@
                     ClassLateWarning.check_late()
                 End If
             End If
+
+            If LEDayKurs.EditValue = cur_datetime.DayOfWeek And (Date.Parse(TETimeKurs.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
+                ClassGetKurs.get_kurs()
+            End If
         Catch ex As Exception
             stop_timer()
             MsgBox(ex.ToString)
@@ -561,5 +569,20 @@
         Dim query As String = "UPDATE tb_opt_scheduler SET warning_late='" & Date.Parse(TEWaningLate.EditValue.ToString).ToString("HH:mm:ss") & "'"
         execute_non_query(query, True, "", "", "", "")
         MsgBox("Warning Late Time saved.")
+    End Sub
+
+    Sub load_kurs()
+        Dim query As String = ""
+        query = "SELECT get_kurs_day, get_kurs_time FROM tb_opt_scheduler LIMIT 1"
+        Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+
+        LEDayKurs.ItemIndex = LEDay.Properties.GetDataSourceRowIndex("id_day", data.Rows(0)("get_kurs_day").ToString)
+        TETimeKurs.EditValue = data.Rows(0)("get_kurs_time")
+    End Sub
+
+    Private Sub BSaveKurs_Click(sender As Object, e As EventArgs) Handles BSaveKurs.Click
+        Dim query_log As String = "UPDATE tb_opt_scheduler SET get_kurs_day='" & LEDayKurs.EditValue.ToString & "',`get_kurs_time`='" & Date.Parse(TETimeKurs.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        execute_non_query(query_log, True, "", "", "", "")
+        MsgBox("Kurs Schedule saved.")
     End Sub
 End Class
