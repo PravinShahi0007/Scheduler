@@ -70,6 +70,16 @@ Partial Class FormScheduler
         Me.BtnEmailNoticeAR = New DevExpress.XtraEditors.SimpleButton()
         Me.Label8 = New System.Windows.Forms.Label()
         Me.TEEmailNoticeAR = New DevExpress.XtraEditors.TimeEdit()
+        Me.XTPWarningLate = New DevExpress.XtraTab.XtraTabPage()
+        Me.SBWarningLate = New DevExpress.XtraEditors.SimpleButton()
+        Me.Label9 = New System.Windows.Forms.Label()
+        Me.TEWaningLate = New DevExpress.XtraEditors.TimeEdit()
+        Me.XTPGetKurs = New DevExpress.XtraTab.XtraTabPage()
+        Me.BSaveKurs = New DevExpress.XtraEditors.SimpleButton()
+        Me.Label10 = New System.Windows.Forms.Label()
+        Me.TETimeKurs = New DevExpress.XtraEditors.TimeEdit()
+        Me.LEDayKurs = New DevExpress.XtraEditors.LookUpEdit()
+        Me.Label11 = New System.Windows.Forms.Label()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -95,6 +105,11 @@ Partial Class FormScheduler
         CType(Me.TEEvaluationAR.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.XTPNoticeEmail.SuspendLayout()
         CType(Me.TEEmailNoticeAR.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.XTPWarningLate.SuspendLayout()
+        CType(Me.TEWaningLate.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.XTPGetKurs.SuspendLayout()
+        CType(Me.TETimeKurs.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.LEDayKurs.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Timer
@@ -243,7 +258,7 @@ Partial Class FormScheduler
         Me.XtraTabControl1.SelectedTabPage = Me.XTPSchedule
         Me.XtraTabControl1.Size = New System.Drawing.Size(878, 189)
         Me.XtraTabControl1.TabIndex = 6
-        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail})
+        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail, Me.XTPWarningLate, Me.XTPGetKurs})
         '
         'XTPSchedule
         '
@@ -525,6 +540,98 @@ Partial Class FormScheduler
         Me.TEEmailNoticeAR.Size = New System.Drawing.Size(100, 20)
         Me.TEEmailNoticeAR.TabIndex = 18
         '
+        'XTPWarningLate
+        '
+        Me.XTPWarningLate.Controls.Add(Me.SBWarningLate)
+        Me.XTPWarningLate.Controls.Add(Me.Label9)
+        Me.XTPWarningLate.Controls.Add(Me.TEWaningLate)
+        Me.XTPWarningLate.Name = "XTPWarningLate"
+        Me.XTPWarningLate.Size = New System.Drawing.Size(872, 161)
+        Me.XTPWarningLate.Text = "Warning Late"
+        '
+        'SBWarningLate
+        '
+        Me.SBWarningLate.Location = New System.Drawing.Point(221, 10)
+        Me.SBWarningLate.Name = "SBWarningLate"
+        Me.SBWarningLate.Size = New System.Drawing.Size(66, 23)
+        Me.SBWarningLate.TabIndex = 14
+        Me.SBWarningLate.Text = "Save"
+        '
+        'Label9
+        '
+        Me.Label9.AutoSize = True
+        Me.Label9.Location = New System.Drawing.Point(11, 15)
+        Me.Label9.Name = "Label9"
+        Me.Label9.Size = New System.Drawing.Size(98, 13)
+        Me.Label9.TabIndex = 13
+        Me.Label9.Text = "Daily Reminder at :"
+        '
+        'TEWaningLate
+        '
+        Me.TEWaningLate.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
+        Me.TEWaningLate.Location = New System.Drawing.Point(115, 12)
+        Me.TEWaningLate.Name = "TEWaningLate"
+        Me.TEWaningLate.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.TEWaningLate.Properties.Mask.EditMask = "HH:mm:ss"
+        Me.TEWaningLate.Size = New System.Drawing.Size(100, 20)
+        Me.TEWaningLate.TabIndex = 12
+        '
+        'XTPGetKurs
+        '
+        Me.XTPGetKurs.Controls.Add(Me.BSaveKurs)
+        Me.XTPGetKurs.Controls.Add(Me.Label10)
+        Me.XTPGetKurs.Controls.Add(Me.TETimeKurs)
+        Me.XTPGetKurs.Controls.Add(Me.LEDayKurs)
+        Me.XTPGetKurs.Controls.Add(Me.Label11)
+        Me.XTPGetKurs.Name = "XTPGetKurs"
+        Me.XTPGetKurs.Size = New System.Drawing.Size(872, 161)
+        Me.XTPGetKurs.Text = "Kurs"
+        '
+        'BSaveKurs
+        '
+        Me.BSaveKurs.Location = New System.Drawing.Point(190, 41)
+        Me.BSaveKurs.Name = "BSaveKurs"
+        Me.BSaveKurs.Size = New System.Drawing.Size(66, 23)
+        Me.BSaveKurs.TabIndex = 10
+        Me.BSaveKurs.Text = "Save"
+        '
+        'Label10
+        '
+        Me.Label10.AutoSize = True
+        Me.Label10.Location = New System.Drawing.Point(11, 47)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(28, 13)
+        Me.Label10.TabIndex = 9
+        Me.Label10.Text = "At : "
+        '
+        'TETimeKurs
+        '
+        Me.TETimeKurs.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
+        Me.TETimeKurs.Location = New System.Drawing.Point(84, 44)
+        Me.TETimeKurs.Name = "TETimeKurs"
+        Me.TETimeKurs.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.TETimeKurs.Properties.Mask.EditMask = "HH:mm:ss"
+        Me.TETimeKurs.Size = New System.Drawing.Size(100, 20)
+        Me.TETimeKurs.TabIndex = 8
+        '
+        'LEDayKurs
+        '
+        Me.LEDayKurs.Location = New System.Drawing.Point(84, 11)
+        Me.LEDayKurs.Name = "LEDayKurs"
+        Me.LEDayKurs.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.LEDayKurs.Properties.Columns.AddRange(New DevExpress.XtraEditors.Controls.LookUpColumnInfo() {New DevExpress.XtraEditors.Controls.LookUpColumnInfo("id_day", "ID Day", 20, DevExpress.Utils.FormatType.None, "", False, DevExpress.Utils.HorzAlignment.[Default], DevExpress.Data.ColumnSortOrder.Ascending), New DevExpress.XtraEditors.Controls.LookUpColumnInfo("day_name", "Day")})
+        Me.LEDayKurs.Size = New System.Drawing.Size(445, 20)
+        Me.LEDayKurs.TabIndex = 7
+        '
+        'Label11
+        '
+        Me.Label11.AutoSize = True
+        Me.Label11.Location = New System.Drawing.Point(11, 14)
+        Me.Label11.Name = "Label11"
+        Me.Label11.Size = New System.Drawing.Size(67, 13)
+        Me.Label11.TabIndex = 6
+        Me.Label11.Text = "Run Every : "
+        '
         'FormScheduler
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -570,6 +677,13 @@ Partial Class FormScheduler
         Me.XTPNoticeEmail.ResumeLayout(False)
         Me.XTPNoticeEmail.PerformLayout()
         CType(Me.TEEmailNoticeAR.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.XTPWarningLate.ResumeLayout(False)
+        Me.XTPWarningLate.PerformLayout()
+        CType(Me.TEWaningLate.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.XTPGetKurs.ResumeLayout(False)
+        Me.XTPGetKurs.PerformLayout()
+        CType(Me.TETimeKurs.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.LEDayKurs.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -623,4 +737,14 @@ Partial Class FormScheduler
     Friend WithEvents BtnEmailNoticeAR As DevExpress.XtraEditors.SimpleButton
     Friend WithEvents Label8 As Label
     Friend WithEvents TEEmailNoticeAR As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents XTPWarningLate As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents SBWarningLate As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents Label9 As Label
+    Friend WithEvents TEWaningLate As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents XTPGetKurs As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents BSaveKurs As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents Label10 As Label
+    Friend WithEvents TETimeKurs As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents LEDayKurs As DevExpress.XtraEditors.LookUpEdit
+    Friend WithEvents Label11 As Label
 End Class
