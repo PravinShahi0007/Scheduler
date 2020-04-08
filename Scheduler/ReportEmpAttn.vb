@@ -6,6 +6,8 @@
     Public Shared date_label As String = ""
     Public Shared dept_label As String = ""
 
+    Public Shared is_daily As String = "-1"
+
     Sub load_report()
         Dim dept As String
 
@@ -13,6 +15,12 @@
             dept = "%%"
         Else
             dept = id_dept
+        End If
+
+        Dim where_daily As String = " AND YEARWEEK(sch.`date`,1) = YEARWEEK(DATE_SUB(NOW(), INTERVAL 1 WEEK), 1)"
+
+        If is_daily = "1" Then
+            where_daily = " AND sch.date = DATE(DATE_SUB(NOW(), INTERVAL 1 DAY))"
         End If
 
         Dim query As String = ""
@@ -56,7 +64,7 @@
                     LEFT JOIN tb_emp_attn at_out_hol ON at_out_hol.id_employee = sch.id_employee AND DATE(at_out_hol.datetime) = sch.Date AND at_out_hol.type_log = 2  
                     WHERE emp.id_departement Like '" & dept & "' 
                     AND emp.id_employee_active='1'
-                    AND YEARWEEK(sch.`date`,1) = YEARWEEK(DATE_SUB(NOW(), INTERVAL 1 WEEK), 1)
+                    " + where_daily + "
                     GROUP BY sch.id_schedule
                     ) tb"
             'this is last week from monday till sunday
@@ -109,7 +117,7 @@
                         GROUP BY id_employee
                     ) dept_head ON dept_head.id_employee=emp.id_employee
                     WHERE emp.id_employee_active='1'
-                    AND YEARWEEK(sch.`date`,1) = YEARWEEK(DATE_SUB(NOW(), INTERVAL 1 WEEK), 1)
+                    " + where_daily + "
                     GROUP BY sch.id_schedule
                     ) tb"
         End If
@@ -134,6 +142,13 @@
         Dim data_label As DataTable = execute_query(query_label, -1, True, "", "", "", "")
 
         LDateRange.Text = Date.Parse(data_label.Rows(0)("mon_last_week").ToString).ToString("dd MMMM yyyy") & " until " & Date.Parse(data_label.Rows(0)("sun_last_week").ToString).ToString("dd MMMM yyyy")
+
+        If is_daily = "1" Then
+            query_label = "SELECT DATE(DATE_SUB(NOW(), INTERVAL 1 DAY)) AS last_day"
+            data_label = execute_query(query_label, -1, True, "", "", "", "")
+
+            LDateRange.Text = Date.Parse(data_label.Rows(0)("last_day").ToString).ToString("dd MMMM yyyy")
+        End If
     End Sub
 
     Private Sub ReportEmpAttn_BeforePrint(sender As Object, e As Printing.PrintEventArgs) Handles MyBase.BeforePrint

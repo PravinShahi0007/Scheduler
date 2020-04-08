@@ -192,6 +192,13 @@
                 mail_dept.report_mark_type = "weekly_attn_head"
                 mail_dept.send_email_html()
             End If
+            'daily attendance
+            If get_opt_scheduler_field("is_active_daily_attendance").ToString = "1" And (Date.Parse(TETime.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
+                Dim mail As ClassSendEmail = New ClassSendEmail()
+                mail.report_mark_type = "weekly_attn"
+                mail.is_daily = "1"
+                mail.send_email_html()
+            End If
             'monthly attendance
             If cur_datetime.Day = 1 And (Date.Parse(TETimeMonthly.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
                 Dim mail As ClassSendEmail = New ClassSendEmail()
