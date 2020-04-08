@@ -19,6 +19,7 @@ Public Class ClassSendEmail
     Public head As String = ""
     Public dt As DataTable
 
+    Public is_daily As String = "-1"
 
 
     '
@@ -311,6 +312,11 @@ Public Class ClassSendEmail
 
         ReportEmpAttn.id_dept = id_dept
         ReportEmpAttn.is_head_dept = "-1"
+
+        If is_daily = "1" Then
+            ReportEmpAttn.is_daily = "1"
+        End If
+
         Dim Report As New ReportEmpAttn()
 
         ' Create a new memory stream and export the report into it as PDF.
@@ -320,7 +326,11 @@ Public Class ClassSendEmail
         ' Create a new attachment and put the PDF report into it.
         Mem.Seek(0, SeekOrigin.Begin)
         '
-        Dim Att = New Attachment(Mem, "Weekly Attendance Report - " & dept & ".pdf", "application/pdf")
+        Dim weekly_title As String = "Weekly"
+        If is_daily = "1" Then
+            weekly_title = "Daily"
+        End If
+        Dim Att = New Attachment(Mem, weekly_title + " Attendance Report - " & dept & ".pdf", "application/pdf")
         '
         Dim mail_from As MailAddress = New MailAddress("system@volcom.co.id", get_setup_field("app_name").ToString)
         Dim mail_to As MailAddress = New MailAddress(dept_head_email, dept_head)
@@ -328,12 +338,17 @@ Public Class ClassSendEmail
         'Dim mail As MailMessage = New MailMessage("system@volcom.co.id", "septian@volcom.co.id")
         mail.Attachments.Add(Att)
 
-        mail.Subject = "Weekly Attendance Report (" & dept & ")"
+        mail.Subject = weekly_title + " Attendance Report (" & dept & ")"
         mail.IsBodyHtml = True
         mail.Body = email_temp(dept_head, False)
         'cc
         Dim query_cc As String = "SELECT emp.`email_external` as email,emp.employee_name FROM tb_m_departement_cc cc
                                   INNER JOIN tb_m_employee emp ON cc.`id_employee`=emp.`id_employee` WHERE cc.id_departement='" & id_dept & "'"
+
+        If is_daily = "1" Then
+            query_cc += " UNION SELECT management_mail AS email_external, 'Management' AS employee_name FROM tb_opt_scheduler"
+        End If
+
         Dim data_cc As DataTable = execute_query(query_cc, -1, True, "", "", "", "")
 
         For i As Integer = 0 To data_cc.Rows.Count - 1
@@ -427,6 +442,10 @@ Public Class ClassSendEmail
         Else
             dep = "department head"
         End If
+        Dim weekly_title As String = "weekly"
+        If is_daily = "1" Then
+            weekly_title = "daily"
+        End If
         Dim body_temp As String = ""
         body_temp = "<table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='100%' style='width:100.0%;background:#eeeeee'>
                      <tbody><tr>
@@ -461,7 +480,7 @@ Public Class ClassSendEmail
                           <td style='padding:15.0pt 15.0pt 15.0pt 15.0pt'>
                           <div>
                           <p class='MsoNormal' style='line-height:14.25pt'><b><span style='font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>Dear " & employee_name & ",</span></b><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'><u></u><u></u></span></p>
-                          <p class='MsoNormal' style='line-height:14.25pt'><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'>Here's your weekly attendance report for " & dep & ". Please see attachment.
+                          <p class='MsoNormal' style='line-height:14.25pt'><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'>Here's your " + weekly_title + " attendance report for " & dep & ". Please see attachment.
                     <u></u><u></u></span></p>
                           <p class='MsoNormal' style='line-height:14.25pt'><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'>Thank you<br /><b>Volcom ERP</b><u></u><u></u></span></p>
 
