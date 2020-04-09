@@ -346,7 +346,13 @@ Public Class ClassSendEmail
                                   INNER JOIN tb_m_employee emp ON cc.`id_employee`=emp.`id_employee` WHERE cc.id_departement='" & id_dept & "'"
 
         If is_daily = "1" Then
-            query_cc += " UNION SELECT management_mail AS email_external, 'Management' AS employee_name FROM tb_opt_scheduler"
+            query_cc = "
+                SELECT email_external AS email, employee_name FROM tb_m_employee WHERE id_employee = 134
+                UNION
+                SELECT email_other AS email, employee_name FROM tb_m_employee WHERE id_employee = 289
+                UNION 
+                SELECT management_mail AS email, 'Management' AS employee_name FROM tb_opt_scheduler
+            "
         End If
 
         Dim data_cc As DataTable = execute_query(query_cc, -1, True, "", "", "", "")
