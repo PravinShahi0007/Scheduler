@@ -345,14 +345,19 @@ Public Class ClassSendEmail
         Dim query_cc As String = "SELECT emp.`email_external` as email,emp.employee_name FROM tb_m_departement_cc cc
                                   INNER JOIN tb_m_employee emp ON cc.`id_employee`=emp.`id_employee` WHERE cc.id_departement='" & id_dept & "'"
 
+        If get_opt_scheduler_field("weekly_attn_include_management").ToString = "1" Then
+            query_cc += " UNION SELECT management_mail AS email, 'Management' AS employee_name FROM tb_opt_scheduler"
+        End If
+
         If is_daily = "1" Then
             query_cc = "
-                SELECT email_external AS email, employee_name FROM tb_m_employee WHERE id_employee = 134
-                UNION
-                SELECT email_other AS email, employee_name FROM tb_m_employee WHERE id_employee = 289
-                UNION 
-                SELECT management_mail AS email, 'Management' AS employee_name FROM tb_opt_scheduler
+                SELECT emp.`email_external` AS email,emp.employee_name FROM `tb_attn_daily_cc` cc
+                INNER JOIN tb_m_employee emp ON cc.`id_employee`=emp.`id_employee`
             "
+
+            If get_opt_scheduler_field("daily_attn_include_management").ToString = "1" Then
+                query_cc += " UNION SELECT management_mail AS email, 'Management' AS employee_name FROM tb_opt_scheduler"
+            End If
         End If
 
         Dim data_cc As DataTable = execute_query(query_cc, -1, True, "", "", "", "")
@@ -949,5 +954,20 @@ Public Class ClassSendEmail
             </tbody>
         </table>"
         Return body_temp
+    End Function
+
+    Function get_opt_scheduler_field(ByVal field As String)
+        'opt as var choose field
+        Dim ret_var, query As String
+        ret_var = ""
+
+        Try
+            query = "SELECT " & field & " FROM tb_opt_scheduler LIMIT 1"
+            ret_var = execute_query(query, 0, True, "", "", "", "")
+        Catch ex As Exception
+            ret_var = ""
+        End Try
+
+        Return ret_var
     End Function
 End Class
