@@ -434,6 +434,17 @@ Public Class ClassSendEmail
         mail.Subject = "Weekly Attendance Report (Department Head)"
         mail.IsBodyHtml = True
         mail.Body = email_temp(emp_name, True)
+        'cc
+        If get_opt_scheduler_field("weekly_head_attn_include_management").ToString = "1" Then
+            Dim query_cc = "SELECT management_mail AS email, 'Management' AS employee_name FROM tb_opt_scheduler"
+            Dim data_cc As DataTable = execute_query(query_cc, -1, True, "", "", "", "")
+
+            For i As Integer = 0 To data_cc.Rows.Count - 1
+                Dim copy As MailAddress = New MailAddress(data_cc.Rows(i)("email").ToString, data_cc.Rows(i)("employee_name").ToString)
+                'Dim copy As MailAddress = New MailAddress("septian@volcom.co.id", data_cc.Rows(i)("email").ToString & " - " & data_cc.Rows(i)("employee_name").ToString)
+                mail.CC.Add(copy)
+            Next
+        End If
         client.Send(mail)
         '
         Report.Dispose()
