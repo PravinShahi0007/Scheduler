@@ -186,10 +186,12 @@
             If LEDay.EditValue = cur_datetime.DayOfWeek And (Date.Parse(TETime.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
                 Dim mail As ClassSendEmail = New ClassSendEmail()
                 mail.report_mark_type = "weekly_attn"
+                mail.is_daily = "-1"
                 mail.send_email_html()
                 'dept head
                 Dim mail_dept As ClassSendEmail = New ClassSendEmail()
                 mail_dept.report_mark_type = "weekly_attn_head"
+                mail_dept.is_daily = "-1"
                 mail_dept.send_email_html()
             End If
             'daily attendance

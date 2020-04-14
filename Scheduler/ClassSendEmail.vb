@@ -312,6 +312,7 @@ Public Class ClassSendEmail
 
         ReportEmpAttn.id_dept = id_dept
         ReportEmpAttn.is_head_dept = "-1"
+        ReportEmpAttn.is_daily = "-1"
 
         If is_daily = "1" Then
             ReportEmpAttn.is_daily = "1"
