@@ -310,15 +310,15 @@ Public Class ClassSendEmail
             client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email").ToString, get_setup_field("system_email_pass").ToString)
         End If
 
-        ReportEmpAttn.id_dept = id_dept
-        ReportEmpAttn.is_head_dept = "-1"
-        ReportEmpAttn.is_daily = "-1"
+        Dim Report As New ReportEmpAttn()
+
+        Report.id_dept = id_dept
+        Report.is_head_dept = "-1"
+        Report.is_daily = "-1"
 
         If is_daily = "1" Then
-            ReportEmpAttn.is_daily = "1"
+            Report.is_daily = "1"
         End If
-
-        Dim Report As New ReportEmpAttn()
 
         ' Create a new memory stream and export the report into it as PDF.
         Dim Mem As New MemoryStream()
@@ -413,9 +413,10 @@ Public Class ClassSendEmail
             client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email").ToString, get_setup_field("system_email_pass").ToString)
         End If
 
-        ReportEmpAttn.id_dept = "dept_head"
-        ReportEmpAttn.is_head_dept = "1"
         Dim Report As New ReportEmpAttn()
+
+        Report.id_dept = "dept_head"
+        Report.is_head_dept = "1"
 
         ' Create a new memory stream and export the report into it as PDF.
         Dim Mem As New MemoryStream()

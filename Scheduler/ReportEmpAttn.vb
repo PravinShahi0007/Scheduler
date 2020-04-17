@@ -1,12 +1,12 @@
 ﻿Public Class ReportEmpAttn
-    Public Shared id_dept As String = "-1"
+    Public id_dept As String = "-1"
 
-    Public Shared is_head_dept As String = "-1"
+    Public is_head_dept As String = "-1"
 
-    Public Shared date_label As String = ""
-    Public Shared dept_label As String = ""
+    Public date_label As String = ""
+    Public dept_label As String = ""
 
-    Public Shared is_daily As String = "-1"
+    Public is_daily As String = "-1"
 
     Sub load_report()
         Dim dept As String

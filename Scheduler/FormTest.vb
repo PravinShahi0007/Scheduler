@@ -2,9 +2,9 @@
     Public connection_problem As Boolean
 
     Private Sub SimpleButton1_Click(sender As Object, e As EventArgs) Handles SimpleButton1.Click
-        ReportEmpAttn.id_dept = "dept_head"
-        ReportEmpAttn.is_head_dept = "1"
         Dim Report As New ReportEmpAttn()
+        Report.id_dept = "dept_head"
+        Report.is_head_dept = "1"
         '
         Dim Tool As DevExpress.XtraReports.UI.ReportPrintTool = New DevExpress.XtraReports.UI.ReportPrintTool(Report)
         Tool.ShowPreview()
