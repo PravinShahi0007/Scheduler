@@ -273,7 +273,7 @@
             If get_opt_scheduler_field("is_active_notif_emp_per_app").ToString = "1" Then
                 'Employee performance appraisal
                 If Date.Parse(TEEmpPerApp.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
-                    ClassEmpPerAppraisal.check_evaluation()
+                    ClassContractReminder.contract_reminder()
                 End If
             End If
 
