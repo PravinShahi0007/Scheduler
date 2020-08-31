@@ -93,11 +93,20 @@
 
         'cc
         Dim cc_query As String = "
-            SELECT emp.employee_name, emp.email_external
+            (SELECT emp.employee_name, emp.email_external
             FROM tb_appraisal_mail_mapping AS map
             LEFT JOIN tb_m_employee AS emp ON map.id_employee = emp.id_employee
-            WHERE map.send_type = 'cc' AND map.id_departement IN (0, " + data.Rows(0)("id_departement").ToString + ") AND emp.email_external <> '" + send_mail + "'
+            WHERE map.send_type = 'cc' AND map.id_departement IN (0, " + data.Rows(0)("id_departement").ToString + ") AND emp.email_external <> '" + send_mail + "')
         "
+
+        Dim is_cc_management As String = execute_query("SELECT emp_per_app_is_cc_management FROM tb_opt_scheduler LIMIT 1", 0, True, "", "", "", "")
+
+        If is_cc_management = "1" Then
+            cc_query += "
+                UNION ALL
+                (SELECT management_mail AS employee_name, management_mail AS email_external FROM tb_opt_scheduler LIMIT 1)
+            "
+        End If
 
         Dim cc_data As DataTable = execute_query(cc_query, -1, True, "", "", "", "")
 
