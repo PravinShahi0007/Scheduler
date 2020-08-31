@@ -407,7 +407,7 @@ Partial Class FormScheduler
         '
         'SBEmpPerApp
         '
-        Me.SBEmpPerApp.Location = New System.Drawing.Point(226, 12)
+        Me.SBEmpPerApp.Location = New System.Drawing.Point(125, 41)
         Me.SBEmpPerApp.Name = "SBEmpPerApp"
         Me.SBEmpPerApp.Size = New System.Drawing.Size(66, 23)
         Me.SBEmpPerApp.TabIndex = 11
@@ -418,14 +418,14 @@ Partial Class FormScheduler
         Me.Label5.AutoSize = True
         Me.Label5.Location = New System.Drawing.Point(16, 17)
         Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(98, 13)
+        Me.Label5.Size = New System.Drawing.Size(370, 13)
         Me.Label5.TabIndex = 10
-        Me.Label5.Text = "Daily Reminder at :"
+        Me.Label5.Text = "Monthly Reminder day [emp_per_app_day_1] && [emp_per_app_day_2] at :"
         '
         'TEEmpPerApp
         '
         Me.TEEmpPerApp.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
-        Me.TEEmpPerApp.Location = New System.Drawing.Point(120, 14)
+        Me.TEEmpPerApp.Location = New System.Drawing.Point(19, 43)
         Me.TEEmpPerApp.Name = "TEEmpPerApp"
         Me.TEEmpPerApp.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
         Me.TEEmpPerApp.Properties.Mask.EditMask = "HH:mm:ss"
