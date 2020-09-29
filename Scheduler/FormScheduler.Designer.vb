@@ -19,13 +19,12 @@ Partial Class FormScheduler
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FormScheduler))
-        Me.Timer = New System.Windows.Forms.Timer(Me.components)
-        Me.ContextMenuStrip = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.Timer = New System.Windows.Forms.Timer()
+        Me.ContextMenuStrip = New System.Windows.Forms.ContextMenuStrip()
         Me.SettingToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.NotifyIcon = New System.Windows.Forms.NotifyIcon(Me.components)
+        Me.NotifyIcon = New System.Windows.Forms.NotifyIcon()
         Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
         Me.Linfo = New DevExpress.XtraEditors.LabelControl()
         Me.BCancel = New DevExpress.XtraEditors.SimpleButton()
@@ -418,9 +417,9 @@ Partial Class FormScheduler
         Me.Label5.AutoSize = True
         Me.Label5.Location = New System.Drawing.Point(16, 17)
         Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(370, 13)
+        Me.Label5.Size = New System.Drawing.Size(69, 13)
         Me.Label5.TabIndex = 10
-        Me.Label5.Text = "Monthly Reminder day [emp_per_app_day_1] && [emp_per_app_day_2] at :"
+        Me.Label5.Text = "Reminder at:"
         '
         'TEEmpPerApp
         '

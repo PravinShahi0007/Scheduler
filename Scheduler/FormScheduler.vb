@@ -141,11 +141,9 @@
         GCSchedule.DataSource = data
     End Sub
     Sub load_emp_per_app()
-        Dim query As String = "SELECT emp_per_app_day_1, emp_per_app_day_2, emp_per_app_time FROM tb_opt_scheduler LIMIT 1"
+        Dim query As String = "SELECT emp_per_app_time FROM tb_opt_scheduler LIMIT 1"
         Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
 
-        Label5.Text = Label5.Text.Replace("[emp_per_app_day_1]", data.Rows(0)("emp_per_app_day_1").ToString)
-        Label5.Text = Label5.Text.Replace("[emp_per_app_day_2]", data.Rows(0)("emp_per_app_day_2").ToString)
         TEEmpPerApp.EditValue = data.Rows(0)("emp_per_app_time")
     End Sub
     Sub load_cash_advance()
@@ -273,10 +271,7 @@
             End If
 
             If get_opt_scheduler_field("is_active_notif_emp_per_app").ToString = "1" Then
-                'Employee performance appraisal
-                Dim data_app As DataTable = execute_query("SELECT emp_per_app_day_1, emp_per_app_day_2 FROM tb_opt_scheduler LIMIT 1", -1, True, "", "", "", "")
-
-                If (cur_datetime.Day = data_app.Rows(0)("emp_per_app_day_1") Or cur_datetime.Day = data_app.Rows(0)("emp_per_app_day_2")) And Date.Parse(TEEmpPerApp.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                If Date.Parse(TEEmpPerApp.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
                     ClassContractReminder.contract_reminder()
                 End If
             End If

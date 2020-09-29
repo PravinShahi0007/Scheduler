@@ -1,16 +1,14 @@
 ﻿Public Class ClassContractReminder
     Public Shared Sub contract_reminder()
-        Dim date_range As DataTable = execute_query("SELECT DATE(CONCAT(YEAR(DATE_ADD(DATE(NOW()), INTERVAL 2 MONTH)), '-', MONTH(DATE_ADD(DATE(NOW()), INTERVAL 2 MONTH)), '-01')) first_date, LAST_DAY(DATE_ADD(DATE(NOW()), INTERVAL 2 MONTH)) last_date", -1, True, "", "", "", "")
-
         Dim query_employee As String = "
-            SELECT emp.id_employee, emp.employee_name, emp.employee_position, lvl.employee_level, sts.employee_status, dep.id_departement, dep.departement, emp.employee_join_date, emp.start_period, emp.end_period, DATE_ADD(DATE(CONCAT(YEAR(NOW()), '-', MONTH(NOW()), '-01')), INTERVAL -1 DAY) AS end_appraisal, lvl.grup_penilaian, emp_head.id_employee AS id_employee_head, emp_head.employee_name AS employee_name_head, emp_head.email_external AS email_external_head, dep.is_store
+            SELECT emp.id_employee, emp.employee_name, emp.employee_position, lvl.employee_level, sts.employee_status, dep.id_departement, dep.departement, emp.employee_join_date, emp.start_period, emp.end_period, DATE_ADD(DATE(NOW()), INTERVAL -1 DAY) AS end_appraisal, lvl.grup_penilaian, emp_head.id_employee AS id_employee_head, emp_head.employee_name AS employee_name_head, emp_head.email_external AS email_external_head, dep.is_store
             FROM tb_m_employee AS emp
             LEFT JOIN tb_lookup_employee_level AS lvl ON emp.id_employee_level = lvl.id_employee_level
             LEFT JOIN tb_lookup_employee_status AS sts ON emp.id_employee_status = sts.id_employee_status
             LEFT JOIN tb_m_departement AS dep ON emp.id_departement = dep.id_departement
             LEFT JOIN tb_m_user AS usr_head ON dep.id_user_head = usr_head.id_user
             LEFT JOIN tb_m_employee AS emp_head ON usr_head.id_employee = emp_head.id_employee
-            WHERE emp.id_employee_status IN (1, 3) AND emp.id_employee_active = 1 AND emp.end_period BETWEEN '" + Date.Parse(date_range.Rows(0)("first_date").ToString).ToString("yyyy-MM-dd") + "' AND '" + Date.Parse(date_range.Rows(0)("last_date").ToString).ToString("yyyy-MM-dd") + "'
+            WHERE emp.id_employee_status IN (1, 3) AND emp.id_employee_active = 1 AND emp.end_period = DATE_ADD(DATE(NOW()), INTERVAL 2 MONTH)
             ORDER BY dep.id_departement ASC
         "
 
