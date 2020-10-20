@@ -120,7 +120,7 @@
         mail.IsBodyHtml = True
 
         Dim bdy As String = "
-            <p style='font: normal 10.00pt/14.25pt Arial; margin: 0;'>Dear " + data.Rows(0)("employee_name_head").ToString + ",</p>
+            <p style='font: normal 10.00pt/14.25pt Arial; margin: 0;'>Dear " + send_name + ",</p>
             <br>
             <p style='font: normal 10.00pt/14.25pt Arial; margin: 0;'>Sehubungan dengan kontrak staffnya akan berakhir, maka mohon dapat dibuatkan evaluasi kerja atas nama sbb:</p>
             <br>
