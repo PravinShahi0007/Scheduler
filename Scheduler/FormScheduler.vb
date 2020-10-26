@@ -493,7 +493,7 @@
     Sub get_data()
         Dim fp As New ClassFingerPrint
 
-        Dim query As String = "SELECT * FROM tb_m_fingerprint"
+        Dim query As String = "SELECT * FROM tb_m_fingerprint WHERE is_active='1'"
         Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
 
         Dim string_err As String = ""
