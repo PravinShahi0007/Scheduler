@@ -136,6 +136,10 @@
     <Reference Include="MySql.Data, Version=6.8.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\MySQL\MySQL Connector Net 6.8.3\Assemblies\v4.5\MySql.Data.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
@@ -171,6 +175,7 @@
     <Compile Include="ClassLateWarning.vb" />
     <Compile Include="ClassMailManage.vb" />
     <Compile Include="ClassSendEmail.vb" />
+    <Compile Include="ClassShopifyAPI.vb" />
     <Compile Include="Common.vb" />
     <Compile Include="database.vb" />
     <Compile Include="FormDatabase.Designer.vb">

@@ -597,8 +597,6 @@
     End Sub
 
     Private Sub BtnFailOrder_Click(sender As Object, e As EventArgs) Handles BtnFailOrder.Click
-        Dim curr_date As Date = Now()
-        Dim check_date As Date = curr_date.AddDays(-2)
-        Console.WriteLine()
+
     End Sub
 End Class

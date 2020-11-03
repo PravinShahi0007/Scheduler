@@ -20,6 +20,12 @@
     End Function
 
     Sub get_order_fail()
+        'checked date
+        Dim qd As String = "SELECT STR_TO_DATE(CONCAT(DATE_SUB(DATE(NOW()),INTERVAL o.shopify_min_date_order_failed DAY),' 23:59:59'),'%Y-%m-%d %H:%i:%s') AS `check_date`
+        FROM tb_opt o "
+        Dim dd As DataTable = execute_query(qd, -1, True, "", "", "", "")
+        Dim check_date As DateTime = dd.Rows(0)("check_date")
+
         Net.ServicePointManager.Expect100Continue = True
         Net.ServicePointManager.SecurityProtocol = CType(3072, Net.SecurityProtocolType)
         Dim limit_order As String = get_setup_field("shopify_limit_order_failed")
@@ -40,9 +46,10 @@
                     Dim json As Newtonsoft.Json.Linq.JObject = Newtonsoft.Json.Linq.JObject.Parse(responseFromServer)
                     For Each row In json("orders").ToList
                         Dim financial_status As String = row("financial_status").ToString
-                        Dim created_at As String = DateTime.Parse(row("created_at").ToString).ToString("yyyy-MM-dd HH:mm:ss")
-                        If financial_status = "pending" Then
-
+                        Dim created_at As DateTime = DateTime.Parse(row("created_at").ToString)
+                        If financial_status = "pending" And created_at <= check_date Then
+                            Dim order_number As String = ""
+                            Console.WriteLine()
                         End If
                     Next
                 End Using
@@ -51,6 +58,18 @@
                 is_loop = False
             End If
             i += 1
+
+            'get next page
+            Dim link As String() = response.Headers.GetValues(16)
+            Dim j1 As Integer = link(link.Count - 1).LastIndexOf(">; rel=""next")
+            Dim j2 As Integer = link(link.Count - 1).LastIndexOf("o=") + 2
+            If j1 > 0 And j2 > 0 Then
+                page_info = link(link.Count - 1).Substring(0, j1).Substring(j2)
+            Else
+                page_info = ""
+            End If
+
+            response.Close()
         End While
     End Sub
 End Class
