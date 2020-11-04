@@ -83,7 +83,7 @@ Partial Class FormScheduler
         Me.XTPFailOrder = New DevExpress.XtraTab.XtraTabPage()
         Me.BtnFailOrder = New DevExpress.XtraEditors.SimpleButton()
         Me.Label12 = New System.Windows.Forms.Label()
-        Me.TimeEdit1 = New DevExpress.XtraEditors.TimeEdit()
+        Me.TECheckFailOrder = New DevExpress.XtraEditors.TimeEdit()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -115,7 +115,7 @@ Partial Class FormScheduler
         CType(Me.TETimeKurs.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LEDayKurs.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.XTPFailOrder.SuspendLayout()
-        CType(Me.TimeEdit1.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.TECheckFailOrder.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Timer
@@ -642,7 +642,7 @@ Partial Class FormScheduler
         '
         Me.XTPFailOrder.Controls.Add(Me.BtnFailOrder)
         Me.XTPFailOrder.Controls.Add(Me.Label12)
-        Me.XTPFailOrder.Controls.Add(Me.TimeEdit1)
+        Me.XTPFailOrder.Controls.Add(Me.TECheckFailOrder)
         Me.XTPFailOrder.Name = "XTPFailOrder"
         Me.XTPFailOrder.Size = New System.Drawing.Size(872, 161)
         Me.XTPFailOrder.Text = "VIOS - Close Failed Order"
@@ -664,15 +664,15 @@ Partial Class FormScheduler
         Me.Label12.TabIndex = 19
         Me.Label12.Text = "Evaluation at"
         '
-        'TimeEdit1
+        'TECheckFailOrder
         '
-        Me.TimeEdit1.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
-        Me.TimeEdit1.Location = New System.Drawing.Point(108, 26)
-        Me.TimeEdit1.Name = "TimeEdit1"
-        Me.TimeEdit1.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
-        Me.TimeEdit1.Properties.Mask.EditMask = "HH:mm:ss"
-        Me.TimeEdit1.Size = New System.Drawing.Size(100, 20)
-        Me.TimeEdit1.TabIndex = 18
+        Me.TECheckFailOrder.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
+        Me.TECheckFailOrder.Location = New System.Drawing.Point(108, 26)
+        Me.TECheckFailOrder.Name = "TECheckFailOrder"
+        Me.TECheckFailOrder.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.TECheckFailOrder.Properties.Mask.EditMask = "HH:mm:ss"
+        Me.TECheckFailOrder.Size = New System.Drawing.Size(100, 20)
+        Me.TECheckFailOrder.TabIndex = 18
         '
         'FormScheduler
         '
@@ -728,7 +728,7 @@ Partial Class FormScheduler
         CType(Me.LEDayKurs.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.XTPFailOrder.ResumeLayout(False)
         Me.XTPFailOrder.PerformLayout()
-        CType(Me.TimeEdit1.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.TECheckFailOrder.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -795,5 +795,5 @@ Partial Class FormScheduler
     Friend WithEvents XTPFailOrder As DevExpress.XtraTab.XtraTabPage
     Friend WithEvents BtnFailOrder As DevExpress.XtraEditors.SimpleButton
     Friend WithEvents Label12 As Label
-    Friend WithEvents TimeEdit1 As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents TECheckFailOrder As DevExpress.XtraEditors.TimeEdit
 End Class

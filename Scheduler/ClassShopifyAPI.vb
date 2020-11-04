@@ -4,7 +4,7 @@
     Public shop As String = get_setup_field("shopify_api_shop")
     Public id_comp_group As String = get_setup_field("shopify_comp_group")
 
-    Function get_setup_field(ByVal field As String)
+    Private Function get_setup_field(ByVal field As String)
         'opt as var choose field
         Dim ret_var, query As String
         ret_var = ""
@@ -29,12 +29,19 @@
         Net.ServicePointManager.Expect100Continue = True
         Net.ServicePointManager.SecurityProtocol = CType(3072, Net.SecurityProtocolType)
         Dim limit_order As String = get_setup_field("shopify_limit_order_failed")
-        Dim url As String = "https://" + username + ":" + password + "@" + shop + "/admin/api/2020-04/orders.json?fulfillment_status=unshipped&financial_status=pending&status=open&limit=" + limit_order + ""
+        Dim url_first As String = "https://" + username + ":" + password + "@" + shop + "/admin/api/2020-04/orders.json?fulfillment_status=unshipped&financial_status=pending&status=open&limit=" + limit_order + ""
+        Dim url As String = "https://" + username + ":" + password + "@" + shop + "/admin/api/2020-04/orders.json?limit=" + limit_order + ""
         Dim page_info As String = ""
         Dim i As Integer = 0
         Dim is_loop As Boolean = True
         While is_loop
-            Dim url_page_info As String = url + (If(Not page_info = "", "&page_info=" + page_info, ""))
+            Dim url_page_info As String = ""
+            If i = 0 Then
+                url_page_info = url_first + (If(Not page_info = "", "&page_info=" + page_info, ""))
+            Else
+                url_page_info = url + (If(Not page_info = "", "&page_info=" + page_info, ""))
+            End If
+
             Dim request As Net.WebRequest = Net.WebRequest.Create(url_page_info)
             request.Method = "GET"
             request.Credentials = New Net.NetworkCredential(username, password)
@@ -47,9 +54,34 @@
                     For Each row In json("orders").ToList
                         Dim financial_status As String = row("financial_status").ToString
                         Dim created_at As DateTime = DateTime.Parse(row("created_at").ToString)
+                        Console.WriteLine(DateTime.Parse(created_at.ToString).ToString("yyyy-MM-dd HH:mm:ss") + "/" + DateTime.Parse(check_date.ToString).ToString("yyyy-MM-dd HH:mm:ss"))
                         If financial_status = "pending" And created_at <= check_date Then
-                            Dim order_number As String = ""
-                            Console.WriteLine()
+                            Dim id As String = row("id").ToString
+                            Dim checkout_id As String = If(row("checkout_id").ToString = "null", "", row("checkout_id").ToString)
+                            Dim order_date As String = DateTime.Parse(row("created_at").ToString).ToString("yyyy-MM-dd HH:mm:ss")
+                            Dim order_number As String = row("order_number").ToString
+                            Dim customer_name As String = row("customer")("first_name").ToString + " " + row("customer")("last_name").ToString
+
+                            'detail line item
+                            Dim qins As String = "INSERT tb_ol_store_order_fail(id,checkout_id, order_date, order_number, customer_name, line_item_id, quantity, input_date) VALUES "
+                            Dim line_item_id As String = ""
+                            Dim quantity As String = ""
+                            Dim j As Integer = 0
+                            For Each row_item In row("line_items").ToList
+                                line_item_id = row_item("id").ToString
+                                quantity = decimalSQL(row_item("quantity").ToString)
+
+                                If j > 0 Then
+                                    qins += ","
+                                End If
+                                qins += "('" + id + "', '" + checkout_id + "', '" + order_date + "', '" + order_number + "', '" + customer_name + "', '" + line_item_id + "', '" + quantity + "', NOW()) "
+                                j += 1
+                            Next
+                            'insert ortder
+                            If j > 0 Then
+                                execute_non_query(qins, True, "", "", "", "")
+                            End If
+
                         End If
                     Next
                 End Using
@@ -72,4 +104,11 @@
             response.Close()
         End While
     End Sub
+
+    Public Shared Function decimalSQL(ByVal value As String) 'hanya kalo masuk ke database
+        Dim nominal As String
+
+        nominal = value.Replace(",", ".")
+        Return nominal
+    End Function
 End Class

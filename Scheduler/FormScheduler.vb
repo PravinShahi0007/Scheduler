@@ -61,36 +61,38 @@
 
         If connection_problem = False Then
             load_schedule()
+            'comment when develop
+            ''weekly
+            'load_days()
+            'load_schedule_weekly_attn_report()
 
-            'weekly
-            load_days()
-            load_schedule_weekly_attn_report()
+            ''monthly
+            'load_schedule_monthly_leave_report()
 
-            'monthly
-            load_schedule_monthly_leave_report()
-
-            'duty
-            load_duty_reminder()
-
-
-            'cash advance
-            load_cash_advance()
+            ''duty
+            'load_duty_reminder()
 
 
-            'employee performance appraisal
-            load_emp_per_app()
+            ''cash advance
+            'load_cash_advance()
 
-            'evaluation ar time
-            load_evaluation_time()
 
-            'email notice ar
-            load_notice_ar_time()
+            ''employee performance appraisal
+            'load_emp_per_app()
 
-            'warning late
-            load_warning_late_time()
+            ''evaluation ar time
+            'load_evaluation_time()
 
-            'kurs
-            load_kurs()
+            ''email notice ar
+            'load_notice_ar_time()
+
+            ''warning late
+            'load_warning_late_time()
+
+            ''kurs
+            'load_kurs()
+
+            'closed order vios
 
             start_timer()
             WindowState = FormWindowState.Minimized
@@ -175,8 +177,8 @@
     End Sub
 
     Private Sub Timer_Tick(sender As Object, e As EventArgs) Handles Timer.Tick
-        Try
-            Dim cur_datetime As Date = Now()
+        'Try
+        Dim cur_datetime As Date = Now()
             'comment when developed
             'For i As Integer = 0 To GVSchedule.RowCount - 1
             '    If (Date.Parse(GVSchedule.GetRowCellValue(i, "time_var").ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
@@ -413,10 +415,17 @@
             '    ClassGetKurs.get_kurs()
             'End If
 
-        Catch ex As Exception
-            stop_timer()
-            MsgBox(ex.ToString)
-        End Try
+            'CLOSED SHOPIFY ORDER
+            If get_opt_scheduler_field("is_active_vios_close_fail_order").ToString = "1" Then
+                If Date.Parse(TECheckFailOrder.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                    Dim fo As New ClassShopifyAPI()
+                    fo.get_order_fail()
+                End If
+            End If
+        'Catch ex As Exception
+        'stop_timer()
+        'MsgBox(ex.ToString)
+        'End Try
     End Sub
 
     Private Sub BSave_Click(sender As Object, e As EventArgs) Handles BSave.Click
