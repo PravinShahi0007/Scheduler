@@ -109,10 +109,142 @@
         End While
     End Sub
 
+    Sub proceed_cancel_fail_order()
+        Dim is_process As String = get_opt_scheduler_field("is_process_vios_close_fail_order")
+        If is_process = "2" Then
+            'on process
+            set_process_closed_order("1")
+
+            'get on process fail order
+            Dim qor As String = "SELECT of.id,of.order_number 
+            FROM tb_ol_store_order_fail of WHERE of.is_process=2
+            GROUP BY of.id
+            ORDER BY of.id ASC "
+            Dim dor As DataTable = execute_query(qor, -1, True, "", "", "", "")
+            For d As Integer = 0 To dor.Rows.Count - 1
+                Dim id As String = dor.Rows(d)("id").ToString
+
+                Try
+                    'closed order
+                    cancel_order(id)
+                    'set tag
+                    set_tag_order(id)
+                    execute_non_query("UPDATE tb_ol_store_order_fail SET is_process=1,process_date=NOW() WHERE id='" + id + "'", True, "", "", "", "")
+                Catch ex As Exception
+                    'update error note
+                    execute_non_query("UPDATE tb_ol_store_order_fail SET error_process='" + addSlashes(ex.ToString) + "' WHERE id='" + id + "'", True, "", "", "", "")
+                End Try
+            Next
+
+            'end process
+            set_process_closed_order("2")
+        End If
+    End Sub
+
+    Sub cancel_order(ByVal id_order As String)
+        Dim location_id As String = get_setup_field("shopify_location_id")
+        Dim query As String = "SELECT * FROM tb_ol_store_order_fail of WHERE of.id='" + id_order + "' "
+        Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+        Dim str As String = ""
+        For i As Integer = 0 To data.Rows.Count - 1
+            Dim line_item_id As String = data.Rows(i)("line_item_id").ToString
+            Dim quantity As String = data.Rows(i)("quantity").ToString
+
+            If i > 0 Then
+                str += ","
+            End If
+            str += " {
+        ""line_item_id"": " + line_item_id + ",
+        ""quantity"": " + quantity + ",
+        ""restock_type"": ""cancel"",
+        ""location_id"": " + location_id + "
+      }"
+        Next
+
+        Dim dt = Text.Encoding.UTF8.GetBytes("{
+  ""refund"": {
+    ""note"": ""Expired Order"",
+    ""shipping"": {
+      ""full_refund"": true
+    },
+    ""refund_line_items"": [
+      " + str + "
+    ]
+  }
+}")
+        Dim result_post As String = SendRequest("https://" & username & ":" & password & "@" & shop & "/admin/api/2020-04/orders/" & id_order & "/cancel.json", dt, "application/json", "POST", username, password)
+    End Sub
+
+    Sub set_tag_order(ByVal id_order As String)
+        Dim curr_tag As String = execute_query("SELECT of.order_tag FROM tb_ol_store_order_fail of WHERE of.id='" + id_order + "' LIMIT 1", 0, True, "", "", "", "")
+        If curr_tag = "" Then
+            curr_tag = "Cancel by ERP"
+        Else
+            curr_tag = curr_tag + "," + "Cancel by ERP"
+        End If
+        Dim dt = Text.Encoding.UTF8.GetBytes("{
+  ""order"": {
+    ""id"": " + id_order + ",
+    ""tags"": """ + curr_tag + """
+  }
+}")
+        Dim result_post As String = SendRequest("https://" & username & ":" & password & "@" & shop & "/admin/api/2020-04/orders/" & id_order & ".json", dt, "application/json", "PUT", username, password)
+    End Sub
+
+    Private Function SendRequest(str_url As String, jsonDataBytes As Byte(), contentType As String, method As String, ByVal username As String, ByVal pass As String) As String
+        Net.ServicePointManager.Expect100Continue = True
+        Net.ServicePointManager.SecurityProtocol = CType(3072, Net.SecurityProtocolType)
+
+        Dim response As String
+        Dim request As Net.WebRequest
+
+
+        Dim url As Uri = New Uri(str_url)
+
+        request = Net.WebRequest.Create(url)
+        request.ContentLength = jsonDataBytes.Length
+        request.ContentType = contentType
+        request.Method = method
+        request.Credentials = New Net.NetworkCredential(username, password)
+
+
+        Using requestStream = request.GetRequestStream
+            requestStream.Write(jsonDataBytes, 0, jsonDataBytes.Length)
+            requestStream.Close()
+
+            Using responseStream = request.GetResponse.GetResponseStream
+                Using reader As New IO.StreamReader(responseStream)
+                    response = reader.ReadToEnd()
+                End Using
+            End Using
+        End Using
+
+        Return response
+    End Function
+
     Public Shared Function decimalSQL(ByVal value As String) 'hanya kalo masuk ke database
         Dim nominal As String
 
         nominal = value.Replace(",", ".")
         Return nominal
     End Function
+
+    Private Function get_opt_scheduler_field(ByVal field As String)
+        'opt as var choose field
+        Dim ret_var, query As String
+        ret_var = ""
+
+        Try
+            query = "SELECT " & field & " FROM tb_opt_scheduler LIMIT 1"
+            ret_var = execute_query(query, 0, True, "", "", "", "")
+        Catch ex As Exception
+            ret_var = ""
+        End Try
+
+        Return ret_var
+    End Function
+
+    Private Sub set_process_closed_order(ByVal par As String)
+        execute_non_query("UPDATE tb_opt_scheduler SET is_process_vios_close_fail_order=" + par + "; ", True, "", "", "", "")
+    End Sub
 End Class
