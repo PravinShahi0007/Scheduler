@@ -54,34 +54,38 @@
                     For Each row In json("orders").ToList
                         Dim financial_status As String = row("financial_status").ToString
                         Dim created_at As DateTime = DateTime.Parse(row("created_at").ToString)
-                        Console.WriteLine(DateTime.Parse(created_at.ToString).ToString("yyyy-MM-dd HH:mm:ss") + "/" + DateTime.Parse(check_date.ToString).ToString("yyyy-MM-dd HH:mm:ss"))
                         If financial_status = "pending" And created_at <= check_date Then
+                            'check existing
                             Dim id As String = row("id").ToString
-                            Dim checkout_id As String = If(row("checkout_id").ToString = "null", "", row("checkout_id").ToString)
-                            Dim order_date As String = DateTime.Parse(row("created_at").ToString).ToString("yyyy-MM-dd HH:mm:ss")
-                            Dim order_number As String = row("order_number").ToString
-                            Dim customer_name As String = row("customer")("first_name").ToString + " " + row("customer")("last_name").ToString
+                            Dim qcek As String = "SELECT * FROM tb_ol_store_order_fail od WHERE od.id='" + id + "' "
+                            Dim dcek As DataTable = execute_query(qcek, -1, True, "", "", "", "")
+                            If dcek.Rows.Count = 0 Then
+                                Dim checkout_id As String = If(row("checkout_id").ToString = "null", "", row("checkout_id").ToString)
+                                Dim order_date As String = DateTime.Parse(row("created_at").ToString).ToString("yyyy-MM-dd HH:mm:ss")
+                                Dim order_number As String = row("order_number").ToString
+                                Dim order_tag As String = addSlashes(row("tags").ToString)
+                                Dim customer_name As String = row("customer")("first_name").ToString + " " + row("customer")("last_name").ToString
 
-                            'detail line item
-                            Dim qins As String = "INSERT tb_ol_store_order_fail(id,checkout_id, order_date, order_number, customer_name, line_item_id, quantity, input_date) VALUES "
-                            Dim line_item_id As String = ""
-                            Dim quantity As String = ""
-                            Dim j As Integer = 0
-                            For Each row_item In row("line_items").ToList
-                                line_item_id = row_item("id").ToString
-                                quantity = decimalSQL(row_item("quantity").ToString)
+                                'detail line item
+                                Dim qins As String = "INSERT tb_ol_store_order_fail(id,checkout_id, order_date, order_number, order_tag, customer_name, line_item_id, quantity, input_date) VALUES "
+                                Dim line_item_id As String = ""
+                                Dim quantity As String = ""
+                                Dim j As Integer = 0
+                                For Each row_item In row("line_items").ToList
+                                    line_item_id = row_item("id").ToString
+                                    quantity = decimalSQL(row_item("quantity").ToString)
 
+                                    If j > 0 Then
+                                        qins += ","
+                                    End If
+                                    qins += "('" + id + "', '" + checkout_id + "', '" + order_date + "', '" + order_number + "', '" + order_tag + "', '" + customer_name + "', '" + line_item_id + "', '" + quantity + "', NOW()) "
+                                    j += 1
+                                Next
+                                'insert ortder
                                 If j > 0 Then
-                                    qins += ","
+                                    execute_non_query(qins, True, "", "", "", "")
                                 End If
-                                qins += "('" + id + "', '" + checkout_id + "', '" + order_date + "', '" + order_number + "', '" + customer_name + "', '" + line_item_id + "', '" + quantity + "', NOW()) "
-                                j += 1
-                            Next
-                            'insert ortder
-                            If j > 0 Then
-                                execute_non_query(qins, True, "", "", "", "")
                             End If
-
                         End If
                     Next
                 End Using
