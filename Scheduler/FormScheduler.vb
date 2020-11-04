@@ -93,6 +93,7 @@
             'load_kurs()
 
             'closed order vios
+            load_check_fail_order_time()
 
             start_timer()
             WindowState = FormWindowState.Minimized
@@ -599,6 +600,13 @@
         TETimeKurs.EditValue = data.Rows(0)("get_kurs_time")
     End Sub
 
+    Sub load_check_fail_order_time()
+        Dim query As String = ""
+        query = "SELECT check_vios_fail_order_time FROM tb_opt_scheduler LIMIT 1"
+        Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+        TECheckFailOrder.EditValue = data.Rows(0)("check_vios_fail_order_time")
+    End Sub
+
     Private Sub BSaveKurs_Click(sender As Object, e As EventArgs) Handles BSaveKurs.Click
         Dim query_log As String = "UPDATE tb_opt_scheduler SET get_kurs_day='" & LEDayKurs.EditValue.ToString & "',`get_kurs_time`='" & Date.Parse(TETimeKurs.EditValue.ToString).ToString("HH:mm:ss") & "'"
         execute_non_query(query_log, True, "", "", "", "")
@@ -606,6 +614,8 @@
     End Sub
 
     Private Sub BtnFailOrder_Click(sender As Object, e As EventArgs) Handles BtnFailOrder.Click
-
+        Dim query_log As String = "UPDATE tb_opt_scheduler SET `check_vios_fail_order_time`='" & Date.Parse(TECheckFailOrder.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        execute_non_query(query_log, True, "", "", "", "")
+        MsgBox("Check Fail Order Schedule saved.")
     End Sub
 End Class
