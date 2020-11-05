@@ -19,12 +19,13 @@ Partial Class FormScheduler
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FormScheduler))
-        Me.Timer = New System.Windows.Forms.Timer()
-        Me.ContextMenuStrip = New System.Windows.Forms.ContextMenuStrip()
+        Me.Timer = New System.Windows.Forms.Timer(Me.components)
+        Me.ContextMenuStrip = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.SettingToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.NotifyIcon = New System.Windows.Forms.NotifyIcon()
+        Me.NotifyIcon = New System.Windows.Forms.NotifyIcon(Me.components)
         Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
         Me.Linfo = New DevExpress.XtraEditors.LabelControl()
         Me.BCancel = New DevExpress.XtraEditors.SimpleButton()
@@ -79,6 +80,10 @@ Partial Class FormScheduler
         Me.TETimeKurs = New DevExpress.XtraEditors.TimeEdit()
         Me.LEDayKurs = New DevExpress.XtraEditors.LookUpEdit()
         Me.Label11 = New System.Windows.Forms.Label()
+        Me.XTPFailOrder = New DevExpress.XtraTab.XtraTabPage()
+        Me.BtnFailOrder = New DevExpress.XtraEditors.SimpleButton()
+        Me.Label12 = New System.Windows.Forms.Label()
+        Me.TECheckFailOrder = New DevExpress.XtraEditors.TimeEdit()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -109,6 +114,8 @@ Partial Class FormScheduler
         Me.XTPGetKurs.SuspendLayout()
         CType(Me.TETimeKurs.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LEDayKurs.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.XTPFailOrder.SuspendLayout()
+        CType(Me.TECheckFailOrder.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Timer
@@ -257,7 +264,7 @@ Partial Class FormScheduler
         Me.XtraTabControl1.SelectedTabPage = Me.XTPSchedule
         Me.XtraTabControl1.Size = New System.Drawing.Size(878, 189)
         Me.XtraTabControl1.TabIndex = 6
-        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail, Me.XTPWarningLate, Me.XTPGetKurs})
+        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail, Me.XTPWarningLate, Me.XTPGetKurs, Me.XTPFailOrder})
         '
         'XTPSchedule
         '
@@ -631,6 +638,42 @@ Partial Class FormScheduler
         Me.Label11.TabIndex = 6
         Me.Label11.Text = "Run Every : "
         '
+        'XTPFailOrder
+        '
+        Me.XTPFailOrder.Controls.Add(Me.BtnFailOrder)
+        Me.XTPFailOrder.Controls.Add(Me.Label12)
+        Me.XTPFailOrder.Controls.Add(Me.TECheckFailOrder)
+        Me.XTPFailOrder.Name = "XTPFailOrder"
+        Me.XTPFailOrder.Size = New System.Drawing.Size(872, 161)
+        Me.XTPFailOrder.Text = "VIOS - Close Failed Order"
+        '
+        'BtnFailOrder
+        '
+        Me.BtnFailOrder.Location = New System.Drawing.Point(172, 19)
+        Me.BtnFailOrder.Name = "BtnFailOrder"
+        Me.BtnFailOrder.Size = New System.Drawing.Size(66, 23)
+        Me.BtnFailOrder.TabIndex = 20
+        Me.BtnFailOrder.Text = "Save"
+        '
+        'Label12
+        '
+        Me.Label12.AutoSize = True
+        Me.Label12.Location = New System.Drawing.Point(11, 24)
+        Me.Label12.Name = "Label12"
+        Me.Label12.Size = New System.Drawing.Size(49, 13)
+        Me.Label12.TabIndex = 19
+        Me.Label12.Text = "Check at"
+        '
+        'TECheckFailOrder
+        '
+        Me.TECheckFailOrder.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
+        Me.TECheckFailOrder.Location = New System.Drawing.Point(66, 21)
+        Me.TECheckFailOrder.Name = "TECheckFailOrder"
+        Me.TECheckFailOrder.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.TECheckFailOrder.Properties.Mask.EditMask = "HH:mm:ss"
+        Me.TECheckFailOrder.Size = New System.Drawing.Size(100, 20)
+        Me.TECheckFailOrder.TabIndex = 18
+        '
         'FormScheduler
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -683,6 +726,9 @@ Partial Class FormScheduler
         Me.XTPGetKurs.PerformLayout()
         CType(Me.TETimeKurs.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LEDayKurs.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.XTPFailOrder.ResumeLayout(False)
+        Me.XTPFailOrder.PerformLayout()
+        CType(Me.TECheckFailOrder.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -746,4 +792,8 @@ Partial Class FormScheduler
     Friend WithEvents TETimeKurs As DevExpress.XtraEditors.TimeEdit
     Friend WithEvents LEDayKurs As DevExpress.XtraEditors.LookUpEdit
     Friend WithEvents Label11 As Label
+    Friend WithEvents XTPFailOrder As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents BtnFailOrder As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents Label12 As Label
+    Friend WithEvents TECheckFailOrder As DevExpress.XtraEditors.TimeEdit
 End Class
