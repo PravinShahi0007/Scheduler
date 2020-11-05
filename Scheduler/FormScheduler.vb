@@ -61,36 +61,36 @@
 
         If connection_problem = False Then
             load_schedule()
-            'comment when develop
-            ''weekly
-            'load_days()
-            'load_schedule_weekly_attn_report()
 
-            ''monthly
-            'load_schedule_monthly_leave_report()
+            'weekly
+            load_days()
+            load_schedule_weekly_attn_report()
 
-            ''duty
-            'load_duty_reminder()
+            'monthly
+            load_schedule_monthly_leave_report()
 
-
-            ''cash advance
-            'load_cash_advance()
+            'duty
+            load_duty_reminder()
 
 
-            ''employee performance appraisal
-            'load_emp_per_app()
+            'cash advance
+            load_cash_advance()
 
-            ''evaluation ar time
-            'load_evaluation_time()
 
-            ''email notice ar
-            'load_notice_ar_time()
+            'employee performance appraisal
+            load_emp_per_app()
 
-            ''warning late
-            'load_warning_late_time()
+            'evaluation ar time
+            load_evaluation_time()
 
-            ''kurs
-            'load_kurs()
+            'email notice ar
+            load_notice_ar_time()
+
+            'warning late
+            load_warning_late_time()
+
+            'kurs
+            load_kurs()
 
             'closed order vios
             load_check_fail_order_time()
