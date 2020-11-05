@@ -418,12 +418,12 @@
 
             'CLOSED SHOPIFY ORDER
             If get_opt_scheduler_field("is_active_vios_close_fail_order").ToString = "1" Then
-                If Date.Parse(TECheckFailOrder.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
-                    Dim fo As New ClassShopifyAPI()
+            If Date.Parse(TECheckFailOrder.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                Dim fo As New ClassShopifyAPI()
                 fo.get_order_fail()
-                fo.proceed_cancel_fail_order()
+                'fo.proceed_cancel_fail_order()
             End If
-            End If
+        End If
         'Catch ex As Exception
         'stop_timer()
         'MsgBox(ex.ToString)

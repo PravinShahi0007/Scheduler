@@ -176,11 +176,12 @@
     End Sub
 
     Sub set_tag_order(ByVal id_order As String)
+        Dim tag As String = get_setup_field("shopify_fail_order_tag")
         Dim curr_tag As String = execute_query("SELECT of.order_tag FROM tb_ol_store_order_fail of WHERE of.id='" + id_order + "' LIMIT 1", 0, True, "", "", "", "")
         If curr_tag = "" Then
-            curr_tag = "Cancel by ERP"
+            curr_tag = tag
         Else
-            curr_tag = curr_tag + "," + "Cancel by ERP"
+            curr_tag = curr_tag + "," + tag
         End If
         Dim dt = Text.Encoding.UTF8.GetBytes("{
   ""order"": {
