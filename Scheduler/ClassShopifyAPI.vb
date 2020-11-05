@@ -41,6 +41,7 @@
             Else
                 url_page_info = url + (If(Not page_info = "", "&page_info=" + page_info, ""))
             End If
+            'Console.WriteLine(url_page_info)
 
             Dim request As Net.WebRequest = Net.WebRequest.Create(url_page_info)
             request.Method = "GET"

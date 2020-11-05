@@ -421,7 +421,7 @@
             If Date.Parse(TECheckFailOrder.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
                 Dim fo As New ClassShopifyAPI()
                 fo.get_order_fail()
-                'fo.proceed_cancel_fail_order()
+                fo.proceed_cancel_fail_order()
             End If
         End If
         'Catch ex As Exception
