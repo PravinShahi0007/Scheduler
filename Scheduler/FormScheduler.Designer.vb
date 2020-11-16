@@ -19,13 +19,12 @@ Partial Class FormScheduler
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FormScheduler))
-        Me.Timer = New System.Windows.Forms.Timer(Me.components)
-        Me.ContextMenuStrip = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.Timer = New System.Windows.Forms.Timer()
+        Me.ContextMenuStrip = New System.Windows.Forms.ContextMenuStrip()
         Me.SettingToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.NotifyIcon = New System.Windows.Forms.NotifyIcon(Me.components)
+        Me.NotifyIcon = New System.Windows.Forms.NotifyIcon()
         Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
         Me.Linfo = New DevExpress.XtraEditors.LabelControl()
         Me.BCancel = New DevExpress.XtraEditors.SimpleButton()
@@ -84,6 +83,10 @@ Partial Class FormScheduler
         Me.BtnFailOrder = New DevExpress.XtraEditors.SimpleButton()
         Me.Label12 = New System.Windows.Forms.Label()
         Me.TECheckFailOrder = New DevExpress.XtraEditors.TimeEdit()
+        Me.XTPSalesReturn = New DevExpress.XtraTab.XtraTabPage()
+        Me.SBSalesReturnOrder = New DevExpress.XtraEditors.SimpleButton()
+        Me.Label13 = New System.Windows.Forms.Label()
+        Me.TESalesReturnOrder = New DevExpress.XtraEditors.TimeEdit()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -116,6 +119,8 @@ Partial Class FormScheduler
         CType(Me.LEDayKurs.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.XTPFailOrder.SuspendLayout()
         CType(Me.TECheckFailOrder.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.XTPSalesReturn.SuspendLayout()
+        CType(Me.TESalesReturnOrder.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Timer
@@ -264,7 +269,7 @@ Partial Class FormScheduler
         Me.XtraTabControl1.SelectedTabPage = Me.XTPSchedule
         Me.XtraTabControl1.Size = New System.Drawing.Size(878, 189)
         Me.XtraTabControl1.TabIndex = 6
-        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail, Me.XTPWarningLate, Me.XTPGetKurs, Me.XTPFailOrder})
+        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail, Me.XTPWarningLate, Me.XTPGetKurs, Me.XTPFailOrder, Me.XTPSalesReturn})
         '
         'XTPSchedule
         '
@@ -674,6 +679,42 @@ Partial Class FormScheduler
         Me.TECheckFailOrder.Size = New System.Drawing.Size(100, 20)
         Me.TECheckFailOrder.TabIndex = 18
         '
+        'XTPSalesReturn
+        '
+        Me.XTPSalesReturn.Controls.Add(Me.SBSalesReturnOrder)
+        Me.XTPSalesReturn.Controls.Add(Me.Label13)
+        Me.XTPSalesReturn.Controls.Add(Me.TESalesReturnOrder)
+        Me.XTPSalesReturn.Name = "XTPSalesReturn"
+        Me.XTPSalesReturn.Size = New System.Drawing.Size(872, 161)
+        Me.XTPSalesReturn.Text = "Sales Return"
+        '
+        'SBSalesReturnOrder
+        '
+        Me.SBSalesReturnOrder.Location = New System.Drawing.Point(226, 12)
+        Me.SBSalesReturnOrder.Name = "SBSalesReturnOrder"
+        Me.SBSalesReturnOrder.Size = New System.Drawing.Size(66, 23)
+        Me.SBSalesReturnOrder.TabIndex = 13
+        Me.SBSalesReturnOrder.Text = "Save"
+        '
+        'Label13
+        '
+        Me.Label13.AutoSize = True
+        Me.Label13.Location = New System.Drawing.Point(16, 17)
+        Me.Label13.Name = "Label13"
+        Me.Label13.Size = New System.Drawing.Size(98, 13)
+        Me.Label13.TabIndex = 12
+        Me.Label13.Text = "Daily Reminder at :"
+        '
+        'TESalesReturnOrder
+        '
+        Me.TESalesReturnOrder.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
+        Me.TESalesReturnOrder.Location = New System.Drawing.Point(120, 14)
+        Me.TESalesReturnOrder.Name = "TESalesReturnOrder"
+        Me.TESalesReturnOrder.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.TESalesReturnOrder.Properties.Mask.EditMask = "HH:mm:ss"
+        Me.TESalesReturnOrder.Size = New System.Drawing.Size(100, 20)
+        Me.TESalesReturnOrder.TabIndex = 11
+        '
         'FormScheduler
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -729,6 +770,9 @@ Partial Class FormScheduler
         Me.XTPFailOrder.ResumeLayout(False)
         Me.XTPFailOrder.PerformLayout()
         CType(Me.TECheckFailOrder.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.XTPSalesReturn.ResumeLayout(False)
+        Me.XTPSalesReturn.PerformLayout()
+        CType(Me.TESalesReturnOrder.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -796,4 +840,8 @@ Partial Class FormScheduler
     Friend WithEvents BtnFailOrder As DevExpress.XtraEditors.SimpleButton
     Friend WithEvents Label12 As Label
     Friend WithEvents TECheckFailOrder As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents XTPSalesReturn As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents SBSalesReturnOrder As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents Label13 As Label
+    Friend WithEvents TESalesReturnOrder As DevExpress.XtraEditors.TimeEdit
 End Class

@@ -1,15 +1,25 @@
 ﻿Public Class ClassGetKurs
     Shared Sub get_kurs()
-        Net.ServicePointManager.SecurityProtocol = DirectCast(3072, Net.SecurityProtocolType)
+        Dim data_sel As DataTable = New DataTable
+        Try
+            Net.ServicePointManager.SecurityProtocol = DirectCast(3072, Net.SecurityProtocolType)
 
-        Dim webClient As New Net.WebClient
-        Dim result As String = webClient.DownloadString("https://fiskal.kemenkeu.go.id/informasi-publik/kurs-pajak")
-        Dim str_kurs_dec As String = Between(Between(result, "<img src=""/assets/19bc465b/transparent.gif"" class=""flag flag-us"" alt=""Amerika Serikat"" />", "</td>"), "<div class=""ml-5"">", "</div>").Replace(".", "").Replace(" ", "").Replace(",", "")
-        'Dim str_kurs_dec As String = Between(result, "<img src=""/assets/92970f7b/transparent.gif"" class=""flag flag-us"" alt=""Amerika Serikat"" />", "</td>").Replace(".", "").Replace(" ", "").Replace(",", "")
-        str_kurs_dec = str_kurs_dec.Substring(0, str_kurs_dec.Length - 2) + "." + str_kurs_dec.Substring(str_kurs_dec.Length - 2, 2)
-        '
-        Dim query_sel As String = "SELECT CAST('" & str_kurs_dec & "' AS DECIMAL(13,2)) as kurs"
-        Dim data_sel As DataTable = execute_query(query_sel, -1, True, "", "", "", "")
+            Dim kurs_url As String = get_setup_field("get_kurs_url")
+            Dim find_first As String = get_setup_field("get_kurs_find_first")
+            Dim find_last As String = get_setup_field("get_kurs_find_last")
+
+            Dim webClient As New Net.WebClient
+            Dim result As String = webClient.DownloadString(kurs_url)
+            result = result.Replace(vbLf, "").Replace(vbTab, "")
+            Dim str_kurs_dec As String = Between(result, find_first, find_last).Replace(".", "").Replace(" ", "").Replace(",", "")
+            'Dim str_kurs_dec As String = Between(result, "<img src=""/assets/92970f7b/transparent.gif"" class=""flag flag-us"" alt=""Amerika Serikat"" />", "</td>").Replace(".", "").Replace(" ", "").Replace(",", "")
+            str_kurs_dec = str_kurs_dec.Substring(0, str_kurs_dec.Length - 2) + "." + str_kurs_dec.Substring(str_kurs_dec.Length - 2, 2)
+            '
+            Dim query_sel As String = "SELECT CAST('" & str_kurs_dec & "' AS DECIMAL(13,2)) as kurs"
+            data_sel = execute_query(query_sel, -1, True, "", "", "", "")
+        Catch ex As Exception
+        End Try
+
         If data_sel.Rows.Count > 0 Then
             Dim kurs As Decimal = data_sel.Rows(0)("kurs")
             'get last fixed floating

@@ -95,6 +95,9 @@
             'closed order vios
             load_check_fail_order_time()
 
+            'sales return order
+            load_sales_return_order()
+
             start_timer()
             WindowState = FormWindowState.Minimized
         End If
@@ -423,6 +426,13 @@
                     fo.proceed_cancel_fail_order()
                 End If
             End If
+
+            If get_opt_scheduler_field("is_active_sales_return_order").ToString = "1" Then
+                'Sales Return Order
+                If Date.Parse(TESalesReturnOrder.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                    ClassSalesReturnOrder.check_empty_pickup_date()
+                End If
+            End If
         Catch ex As Exception
             stop_timer()
             MsgBox(ex.ToString)
@@ -617,5 +627,19 @@
         Dim query_log As String = "UPDATE tb_opt_scheduler SET `check_vios_fail_order_time`='" & Date.Parse(TECheckFailOrder.EditValue.ToString).ToString("HH:mm:ss") & "'"
         execute_non_query(query_log, True, "", "", "", "")
         MsgBox("Check Fail Order Schedule saved.")
+    End Sub
+
+    Sub load_sales_return_order()
+        Dim query As String = ""
+        query = "SELECT sales_return_order FROM tb_opt_scheduler LIMIT 1"
+        Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+
+        TESalesReturnOrder.EditValue = data.Rows(0)("sales_return_order")
+    End Sub
+
+    Private Sub SBSalesReturnOrder_Click(sender As Object, e As EventArgs) Handles SBSalesReturnOrder.Click
+        Dim query As String = "UPDATE tb_opt_scheduler SET sales_return_order='" & Date.Parse(TESalesReturnOrder.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        execute_non_query(query, True, "", "", "", "")
+        MsgBox("Sales Return Order Time saved.")
     End Sub
 End Class
