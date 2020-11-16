@@ -65,7 +65,7 @@
                                 Dim order_date As String = DateTime.Parse(row("created_at").ToString).ToString("yyyy-MM-dd HH:mm:ss")
                                 Dim order_number As String = row("order_number").ToString
                                 Dim order_tag As String = addSlashes(row("tags").ToString)
-                                Dim customer_name As String = row("customer")("first_name").ToString + " " + row("customer")("last_name").ToString
+                                Dim customer_name As String = addSlashes(row("customer")("first_name").ToString + " " + row("customer")("last_name").ToString)
 
                                 'detail line item
                                 Dim qins As String = "INSERT tb_ol_store_order_fail(id,checkout_id, order_date, order_number, order_tag, customer_name, line_item_id, quantity, input_date) VALUES "
