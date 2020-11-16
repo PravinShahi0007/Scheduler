@@ -785,7 +785,7 @@ Partial Class FormScheduler
         'GridColumn5
         '
         Me.GridColumn5.Caption = "Schedule"
-        Me.GridColumn5.FieldName = "schedule"
+        Me.GridColumn5.FieldName = "schedule_desc"
         Me.GridColumn5.Name = "GridColumn5"
         Me.GridColumn5.Visible = True
         Me.GridColumn5.VisibleIndex = 0
@@ -795,7 +795,7 @@ Partial Class FormScheduler
         Me.GridColumn6.Caption = "Time"
         Me.GridColumn6.DisplayFormat.FormatString = "HH:mm:ss"
         Me.GridColumn6.DisplayFormat.FormatType = DevExpress.Utils.FormatType.DateTime
-        Me.GridColumn6.FieldName = "time_var"
+        Me.GridColumn6.FieldName = "schedule"
         Me.GridColumn6.Name = "GridColumn6"
         Me.GridColumn6.Visible = True
         Me.GridColumn6.VisibleIndex = 1

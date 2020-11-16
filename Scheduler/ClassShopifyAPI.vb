@@ -19,15 +19,11 @@
         Return ret_var
     End Function
 
-    Sub get_order_fail()
-        'checked date
-        Dim qd As String = "SELECT STR_TO_DATE(CONCAT(DATE_SUB(DATE(NOW()),INTERVAL o.shopify_min_date_order_failed DAY),' 23:59:59'),'%Y-%m-%d %H:%i:%s') AS `check_date`
-        FROM tb_opt o "
-        Dim dd As DataTable = execute_query(qd, -1, True, "", "", "", "")
-        Dim check_date As DateTime = dd.Rows(0)("check_date")
-
+    Sub get_order_fail(ByVal schedule_cek As DateTime)
+        Console.WriteLine(schedule_cek)
         Net.ServicePointManager.Expect100Continue = True
         Net.ServicePointManager.SecurityProtocol = CType(3072, Net.SecurityProtocolType)
+        Dim check_time_set = get_setup_field("shopify_min_date_order_failed")
         Dim limit_order As String = get_setup_field("shopify_limit_order_failed")
         Dim url_first As String = "https://" + username + ":" + password + "@" + shop + "/admin/api/2020-04/orders.json?fulfillment_status=unshipped&financial_status=pending&status=open&limit=" + limit_order + ""
         Dim url As String = "https://" + username + ":" + password + "@" + shop + "/admin/api/2020-04/orders.json?limit=" + limit_order + ""
@@ -41,7 +37,7 @@
             Else
                 url_page_info = url + (If(Not page_info = "", "&page_info=" + page_info, ""))
             End If
-            'Console.WriteLine(url_page_info)
+            Console.WriteLine(url_page_info)
 
             Dim request As Net.WebRequest = Net.WebRequest.Create(url_page_info)
             request.Method = "GET"
@@ -55,7 +51,10 @@
                     For Each row In json("orders").ToList
                         Dim financial_status As String = row("financial_status").ToString
                         Dim created_at As DateTime = DateTime.Parse(row("created_at").ToString)
-                        If financial_status = "pending" And created_at <= check_date Then
+                        Dim diff_time As Long = (schedule_cek - created_at).TotalMinutes
+                        Console.WriteLine(created_at.ToString)
+                        Console.WriteLine(diff_time.ToString)
+                        If financial_status = "pending" And diff_time >= check_time_set Then
                             'check existing
                             Dim id As String = row("id").ToString
                             Dim qcek As String = "SELECT * FROM tb_ol_store_order_fail od WHERE od.id='" + id + "' "
