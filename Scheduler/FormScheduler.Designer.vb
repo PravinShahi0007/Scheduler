@@ -19,12 +19,13 @@ Partial Class FormScheduler
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FormScheduler))
-        Me.Timer = New System.Windows.Forms.Timer()
-        Me.ContextMenuStrip = New System.Windows.Forms.ContextMenuStrip()
+        Me.Timer = New System.Windows.Forms.Timer(Me.components)
+        Me.ContextMenuStrip = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.SettingToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.NotifyIcon = New System.Windows.Forms.NotifyIcon()
+        Me.NotifyIcon = New System.Windows.Forms.NotifyIcon(Me.components)
         Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
         Me.Linfo = New DevExpress.XtraEditors.LabelControl()
         Me.BCancel = New DevExpress.XtraEditors.SimpleButton()
@@ -87,6 +88,14 @@ Partial Class FormScheduler
         Me.SBSalesReturnOrder = New DevExpress.XtraEditors.SimpleButton()
         Me.Label13 = New System.Windows.Forms.Label()
         Me.TESalesReturnOrder = New DevExpress.XtraEditors.TimeEdit()
+        Me.PanelControl3 = New DevExpress.XtraEditors.PanelControl()
+        Me.BtnDelSchCloseOrder = New DevExpress.XtraEditors.SimpleButton()
+        Me.BtnAddSchCloseOrder = New DevExpress.XtraEditors.SimpleButton()
+        Me.GCSchCloseOrder = New DevExpress.XtraGrid.GridControl()
+        Me.GVSchCloseOrder = New DevExpress.XtraGrid.Views.Grid.GridView()
+        Me.GridColumn4 = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.GridColumn5 = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.GridColumn6 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -121,6 +130,10 @@ Partial Class FormScheduler
         CType(Me.TECheckFailOrder.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.XTPSalesReturn.SuspendLayout()
         CType(Me.TESalesReturnOrder.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.PanelControl3, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.PanelControl3.SuspendLayout()
+        CType(Me.GCSchCloseOrder, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.GVSchCloseOrder, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Timer
@@ -156,7 +169,10 @@ Partial Class FormScheduler
         '
         'PanelControl1
         '
+        Me.PanelControl1.Controls.Add(Me.BtnFailOrder)
+        Me.PanelControl1.Controls.Add(Me.Label12)
         Me.PanelControl1.Controls.Add(Me.Linfo)
+        Me.PanelControl1.Controls.Add(Me.TECheckFailOrder)
         Me.PanelControl1.Controls.Add(Me.BCancel)
         Me.PanelControl1.Controls.Add(Me.BSave)
         Me.PanelControl1.Dock = System.Windows.Forms.DockStyle.Bottom
@@ -645,16 +661,15 @@ Partial Class FormScheduler
         '
         'XTPFailOrder
         '
-        Me.XTPFailOrder.Controls.Add(Me.BtnFailOrder)
-        Me.XTPFailOrder.Controls.Add(Me.Label12)
-        Me.XTPFailOrder.Controls.Add(Me.TECheckFailOrder)
+        Me.XTPFailOrder.Controls.Add(Me.GCSchCloseOrder)
+        Me.XTPFailOrder.Controls.Add(Me.PanelControl3)
         Me.XTPFailOrder.Name = "XTPFailOrder"
         Me.XTPFailOrder.Size = New System.Drawing.Size(872, 161)
         Me.XTPFailOrder.Text = "VIOS - Close Failed Order"
         '
         'BtnFailOrder
         '
-        Me.BtnFailOrder.Location = New System.Drawing.Point(172, 19)
+        Me.BtnFailOrder.Location = New System.Drawing.Point(291, 6)
         Me.BtnFailOrder.Name = "BtnFailOrder"
         Me.BtnFailOrder.Size = New System.Drawing.Size(66, 23)
         Me.BtnFailOrder.TabIndex = 20
@@ -663,7 +678,7 @@ Partial Class FormScheduler
         'Label12
         '
         Me.Label12.AutoSize = True
-        Me.Label12.Location = New System.Drawing.Point(11, 24)
+        Me.Label12.Location = New System.Drawing.Point(130, 11)
         Me.Label12.Name = "Label12"
         Me.Label12.Size = New System.Drawing.Size(49, 13)
         Me.Label12.TabIndex = 19
@@ -672,7 +687,7 @@ Partial Class FormScheduler
         'TECheckFailOrder
         '
         Me.TECheckFailOrder.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
-        Me.TECheckFailOrder.Location = New System.Drawing.Point(66, 21)
+        Me.TECheckFailOrder.Location = New System.Drawing.Point(185, 8)
         Me.TECheckFailOrder.Name = "TECheckFailOrder"
         Me.TECheckFailOrder.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
         Me.TECheckFailOrder.Properties.Mask.EditMask = "HH:mm:ss"
@@ -714,6 +729,76 @@ Partial Class FormScheduler
         Me.TESalesReturnOrder.Properties.Mask.EditMask = "HH:mm:ss"
         Me.TESalesReturnOrder.Size = New System.Drawing.Size(100, 20)
         Me.TESalesReturnOrder.TabIndex = 11
+        '
+        'PanelControl3
+        '
+        Me.PanelControl3.Controls.Add(Me.BtnDelSchCloseOrder)
+        Me.PanelControl3.Controls.Add(Me.BtnAddSchCloseOrder)
+        Me.PanelControl3.Dock = System.Windows.Forms.DockStyle.Top
+        Me.PanelControl3.Location = New System.Drawing.Point(0, 0)
+        Me.PanelControl3.Name = "PanelControl3"
+        Me.PanelControl3.Size = New System.Drawing.Size(872, 30)
+        Me.PanelControl3.TabIndex = 5
+        '
+        'BtnDelSchCloseOrder
+        '
+        Me.BtnDelSchCloseOrder.Dock = System.Windows.Forms.DockStyle.Right
+        Me.BtnDelSchCloseOrder.Location = New System.Drawing.Point(788, 2)
+        Me.BtnDelSchCloseOrder.Name = "BtnDelSchCloseOrder"
+        Me.BtnDelSchCloseOrder.Size = New System.Drawing.Size(42, 26)
+        Me.BtnDelSchCloseOrder.TabIndex = 1
+        Me.BtnDelSchCloseOrder.Text = "-"
+        '
+        'BtnAddSchCloseOrder
+        '
+        Me.BtnAddSchCloseOrder.Dock = System.Windows.Forms.DockStyle.Right
+        Me.BtnAddSchCloseOrder.Location = New System.Drawing.Point(830, 2)
+        Me.BtnAddSchCloseOrder.Name = "BtnAddSchCloseOrder"
+        Me.BtnAddSchCloseOrder.Size = New System.Drawing.Size(40, 26)
+        Me.BtnAddSchCloseOrder.TabIndex = 0
+        Me.BtnAddSchCloseOrder.Text = "+"
+        '
+        'GCSchCloseOrder
+        '
+        Me.GCSchCloseOrder.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.GCSchCloseOrder.Location = New System.Drawing.Point(0, 30)
+        Me.GCSchCloseOrder.MainView = Me.GVSchCloseOrder
+        Me.GCSchCloseOrder.Name = "GCSchCloseOrder"
+        Me.GCSchCloseOrder.Size = New System.Drawing.Size(872, 131)
+        Me.GCSchCloseOrder.TabIndex = 6
+        Me.GCSchCloseOrder.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.GVSchCloseOrder})
+        '
+        'GVSchCloseOrder
+        '
+        Me.GVSchCloseOrder.Columns.AddRange(New DevExpress.XtraGrid.Columns.GridColumn() {Me.GridColumn4, Me.GridColumn5, Me.GridColumn6})
+        Me.GVSchCloseOrder.GridControl = Me.GCSchCloseOrder
+        Me.GVSchCloseOrder.Name = "GVSchCloseOrder"
+        Me.GVSchCloseOrder.OptionsBehavior.Editable = False
+        Me.GVSchCloseOrder.OptionsView.ShowGroupPanel = False
+        '
+        'GridColumn4
+        '
+        Me.GridColumn4.Caption = "id"
+        Me.GridColumn4.FieldName = "id_scheduler_attn"
+        Me.GridColumn4.Name = "GridColumn4"
+        '
+        'GridColumn5
+        '
+        Me.GridColumn5.Caption = "Schedule"
+        Me.GridColumn5.FieldName = "schedule"
+        Me.GridColumn5.Name = "GridColumn5"
+        Me.GridColumn5.Visible = True
+        Me.GridColumn5.VisibleIndex = 0
+        '
+        'GridColumn6
+        '
+        Me.GridColumn6.Caption = "Time"
+        Me.GridColumn6.DisplayFormat.FormatString = "HH:mm:ss"
+        Me.GridColumn6.DisplayFormat.FormatType = DevExpress.Utils.FormatType.DateTime
+        Me.GridColumn6.FieldName = "time_var"
+        Me.GridColumn6.Name = "GridColumn6"
+        Me.GridColumn6.Visible = True
+        Me.GridColumn6.VisibleIndex = 1
         '
         'FormScheduler
         '
@@ -768,11 +853,14 @@ Partial Class FormScheduler
         CType(Me.TETimeKurs.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LEDayKurs.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.XTPFailOrder.ResumeLayout(False)
-        Me.XTPFailOrder.PerformLayout()
         CType(Me.TECheckFailOrder.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.XTPSalesReturn.ResumeLayout(False)
         Me.XTPSalesReturn.PerformLayout()
         CType(Me.TESalesReturnOrder.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.PanelControl3, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.PanelControl3.ResumeLayout(False)
+        CType(Me.GCSchCloseOrder, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.GVSchCloseOrder, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -844,4 +932,12 @@ Partial Class FormScheduler
     Friend WithEvents SBSalesReturnOrder As DevExpress.XtraEditors.SimpleButton
     Friend WithEvents Label13 As Label
     Friend WithEvents TESalesReturnOrder As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents GCSchCloseOrder As DevExpress.XtraGrid.GridControl
+    Friend WithEvents GVSchCloseOrder As DevExpress.XtraGrid.Views.Grid.GridView
+    Friend WithEvents GridColumn4 As DevExpress.XtraGrid.Columns.GridColumn
+    Friend WithEvents GridColumn5 As DevExpress.XtraGrid.Columns.GridColumn
+    Friend WithEvents GridColumn6 As DevExpress.XtraGrid.Columns.GridColumn
+    Friend WithEvents PanelControl3 As DevExpress.XtraEditors.PanelControl
+    Friend WithEvents BtnDelSchCloseOrder As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents BtnAddSchCloseOrder As DevExpress.XtraEditors.SimpleButton
 End Class

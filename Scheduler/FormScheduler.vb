@@ -93,7 +93,8 @@
             load_kurs()
 
             'closed order vios
-            load_check_fail_order_time()
+            'load_check_fail_order_time()
+            load_schedule_close_ol_order()
 
             'sales return order
             load_sales_return_order()
@@ -611,10 +612,18 @@
     End Sub
 
     Sub load_check_fail_order_time()
-        Dim query As String = ""
-        query = "SELECT check_vios_fail_order_time FROM tb_opt_scheduler LIMIT 1"
+        'not used
+        'Dim query As String = ""
+        'query = "SELECT check_vios_fail_order_time FROM tb_opt_scheduler LIMIT 1"
+        'Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+        'TECheckFailOrder.EditValue = data.Rows(0)("check_vios_fail_order_time")
+    End Sub
+
+    Sub load_schedule_close_ol_order()
+        Dim query As String = "SELECT s.id_schedule, s.schedule_desc, s.`schedule` FROM tb_ol_store_order_fail_schedule s
+        ORDER BY s.`schedule` ASC "
         Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
-        TECheckFailOrder.EditValue = data.Rows(0)("check_vios_fail_order_time")
+        GCSchCloseOrder.DataSource = data
     End Sub
 
     Private Sub BSaveKurs_Click(sender As Object, e As EventArgs) Handles BSaveKurs.Click
