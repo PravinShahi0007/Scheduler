@@ -20,7 +20,6 @@
     End Function
 
     Sub get_order_fail(ByVal schedule_cek As DateTime)
-        Console.WriteLine(schedule_cek)
         Net.ServicePointManager.Expect100Continue = True
         Net.ServicePointManager.SecurityProtocol = CType(3072, Net.SecurityProtocolType)
         Dim check_time_set = get_setup_field("shopify_min_date_order_failed")
@@ -37,7 +36,7 @@
             Else
                 url_page_info = url + (If(Not page_info = "", "&page_info=" + page_info, ""))
             End If
-            Console.WriteLine(url_page_info)
+            'Console.WriteLine(url_page_info)
 
             Dim request As Net.WebRequest = Net.WebRequest.Create(url_page_info)
             request.Method = "GET"
@@ -51,7 +50,9 @@
                     For Each row In json("orders").ToList
                         Dim financial_status As String = row("financial_status").ToString
                         Dim created_at As DateTime = DateTime.Parse(row("created_at").ToString)
-                        Dim diff_time As Long = (schedule_cek - created_at).TotalMinutes
+                        Dim created_at_cek As DateTime = New DateTime(created_at.Year, created_at.Month, created_at.Day, created_at.Hour, created_at.Minute, 0)
+                        Dim diff_time As Long = (schedule_cek - created_at_cek).TotalMinutes
+                        Console.WriteLine(schedule_cek.ToString)
                         Console.WriteLine(created_at.ToString)
                         Console.WriteLine(diff_time.ToString)
                         If financial_status = "pending" And diff_time >= check_time_set Then
@@ -60,6 +61,7 @@
                             Dim qcek As String = "SELECT * FROM tb_ol_store_order_fail od WHERE od.id='" + id + "' "
                             Dim dcek As DataTable = execute_query(qcek, -1, True, "", "", "", "")
                             If dcek.Rows.Count = 0 Then
+                                Dim schedule_time As String = DateTime.Parse(schedule_cek).ToString("yyyy-MM-dd HH:mm:ss")
                                 Dim checkout_id As String = If(row("checkout_id").ToString = "null", "", row("checkout_id").ToString)
                                 Dim order_date As String = DateTime.Parse(row("created_at").ToString).ToString("yyyy-MM-dd HH:mm:ss")
                                 Dim order_number As String = row("order_number").ToString
@@ -67,7 +69,7 @@
                                 Dim customer_name As String = addSlashes(row("customer")("first_name").ToString + " " + row("customer")("last_name").ToString)
 
                                 'detail line item
-                                Dim qins As String = "INSERT tb_ol_store_order_fail(id,checkout_id, order_date, order_number, order_tag, customer_name, line_item_id, quantity, input_date) VALUES "
+                                Dim qins As String = "INSERT tb_ol_store_order_fail(id,schedule_time,checkout_id, order_date, order_number, order_tag, customer_name, line_item_id, quantity, input_date) VALUES "
                                 Dim line_item_id As String = ""
                                 Dim quantity As String = ""
                                 Dim j As Integer = 0
@@ -78,7 +80,7 @@
                                     If j > 0 Then
                                         qins += ","
                                     End If
-                                    qins += "('" + id + "', '" + checkout_id + "', '" + order_date + "', '" + order_number + "', '" + order_tag + "', '" + customer_name + "', '" + line_item_id + "', '" + quantity + "', NOW()) "
+                                    qins += "('" + id + "', '" + schedule_time + "','" + checkout_id + "', '" + order_date + "', '" + order_number + "', '" + order_tag + "', '" + customer_name + "', '" + line_item_id + "', '" + quantity + "', NOW()) "
                                     j += 1
                                 Next
                                 'insert ortder
