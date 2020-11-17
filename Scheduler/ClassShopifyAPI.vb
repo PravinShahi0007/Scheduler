@@ -52,9 +52,9 @@
                         Dim created_at As DateTime = DateTime.Parse(row("created_at").ToString)
                         Dim created_at_cek As DateTime = New DateTime(created_at.Year, created_at.Month, created_at.Day, created_at.Hour, created_at.Minute, 0)
                         Dim diff_time As Long = (schedule_cek - created_at_cek).TotalMinutes
-                        Console.WriteLine(schedule_cek.ToString)
-                        Console.WriteLine(created_at.ToString)
-                        Console.WriteLine(diff_time.ToString)
+                        'Console.WriteLine(schedule_cek.ToString)
+                        'Console.WriteLine(created_at.ToString)
+                        'Console.WriteLine(diff_time.ToString)
                         If financial_status = "pending" And diff_time >= check_time_set Then
                             'check existing
                             Dim id As String = row("id").ToString
