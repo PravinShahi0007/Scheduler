@@ -645,10 +645,10 @@
         'Dim query_log As String = "UPDATE tb_opt_scheduler SET `check_vios_fail_order_time`='" & Date.Parse(TECheckFailOrder.EditValue.ToString).ToString("HH:mm:ss") & "'"
         'execute_non_query(query_log, True, "", "", "", "")
         'MsgBox("Check Fail Order Schedule saved.")
-        Dim date_cek As DateTime = New DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 0)
-        Dim date_order As DateTime = New DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 10, 33, 30)
-        Dim diff As Long = (date_cek - date_order).TotalMinutes
-        MsgBox(diff.ToString)
+        'Dim date_cek As DateTime = New DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 0)
+        'Dim date_order As DateTime = New DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 10, 33, 30)
+        'Dim diff As Long = (date_cek - date_order).TotalMinutes
+        'MsgBox(diff.ToString)
         load_schedule_close_ol_order()
     End Sub
 
@@ -664,5 +664,9 @@
         Dim query As String = "UPDATE tb_opt_scheduler SET sales_return_order='" & Date.Parse(TESalesReturnOrder.EditValue.ToString).ToString("HH:mm:ss") & "'"
         execute_non_query(query, True, "", "", "", "")
         MsgBox("Sales Return Order Time saved.")
+    End Sub
+
+    Private Sub BtnRefresh_Click(sender As Object, e As EventArgs) Handles BtnRefresh.Click
+        load_schedule_close_ol_order()
     End Sub
 End Class
