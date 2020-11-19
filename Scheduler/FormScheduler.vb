@@ -93,7 +93,8 @@
             load_kurs()
 
             'closed order vios
-            load_check_fail_order_time()
+            'load_check_fail_order_time()
+            load_schedule_close_ol_order()
 
             'sales return order
             load_sales_return_order()
@@ -420,11 +421,19 @@
 
             'CLOSED SHOPIFY ORDER
             If get_opt_scheduler_field("is_active_vios_close_fail_order").ToString = "1" Then
-                If Date.Parse(TECheckFailOrder.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
-                    Dim fo As New ClassShopifyAPI()
-                    fo.get_order_fail()
-                    fo.proceed_cancel_fail_order()
-                End If
+                For i As Integer = 0 To GVSchCloseOrder.RowCount - 1
+                    If (Date.Parse(GVSchCloseOrder.GetRowCellValue(i, "schedule").ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
+                        'split par
+                        Dim time_split As String() = Split(cur_datetime.ToString("HH:mm"), ":")
+                        Dim hour As Integer = Integer.Parse(time_split(0).ToString)
+                        Dim minute As Integer = Integer.Parse(time_split(1).ToString)
+                        Dim sch_cek As DateTime = New DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hour, minute, 0)
+
+                        Dim fo As New ClassShopifyAPI()
+                        fo.get_order_fail(sch_cek)
+                        fo.proceed_cancel_fail_order()
+                    End If
+                Next
             End If
 
             If get_opt_scheduler_field("is_active_sales_return_order").ToString = "1" Then
@@ -611,10 +620,18 @@
     End Sub
 
     Sub load_check_fail_order_time()
-        Dim query As String = ""
-        query = "SELECT check_vios_fail_order_time FROM tb_opt_scheduler LIMIT 1"
+        'not used
+        'Dim query As String = ""
+        'query = "SELECT check_vios_fail_order_time FROM tb_opt_scheduler LIMIT 1"
+        'Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+        'TECheckFailOrder.EditValue = data.Rows(0)("check_vios_fail_order_time")
+    End Sub
+
+    Sub load_schedule_close_ol_order()
+        Dim query As String = "SELECT s.id_schedule, s.schedule_desc, s.`schedule` FROM tb_ol_store_order_fail_schedule s
+        ORDER BY s.`schedule` ASC "
         Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
-        TECheckFailOrder.EditValue = data.Rows(0)("check_vios_fail_order_time")
+        GCSchCloseOrder.DataSource = data
     End Sub
 
     Private Sub BSaveKurs_Click(sender As Object, e As EventArgs) Handles BSaveKurs.Click
@@ -624,9 +641,14 @@
     End Sub
 
     Private Sub BtnFailOrder_Click(sender As Object, e As EventArgs) Handles BtnFailOrder.Click
-        Dim query_log As String = "UPDATE tb_opt_scheduler SET `check_vios_fail_order_time`='" & Date.Parse(TECheckFailOrder.EditValue.ToString).ToString("HH:mm:ss") & "'"
-        execute_non_query(query_log, True, "", "", "", "")
-        MsgBox("Check Fail Order Schedule saved.")
+        'Dim query_log As String = "UPDATE tb_opt_scheduler SET `check_vios_fail_order_time`='" & Date.Parse(TECheckFailOrder.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        'execute_non_query(query_log, True, "", "", "", "")
+        'MsgBox("Check Fail Order Schedule saved.")
+        'Dim date_cek As DateTime = New DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 0)
+        'Dim date_order As DateTime = New DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 10, 33, 30)
+        'Dim diff As Long = (date_cek - date_order).TotalMinutes
+        'MsgBox(diff.ToString)
+        load_schedule_close_ol_order()
     End Sub
 
     Sub load_sales_return_order()
@@ -641,5 +663,9 @@
         Dim query As String = "UPDATE tb_opt_scheduler SET sales_return_order='" & Date.Parse(TESalesReturnOrder.EditValue.ToString).ToString("HH:mm:ss") & "'"
         execute_non_query(query, True, "", "", "", "")
         MsgBox("Sales Return Order Time saved.")
+    End Sub
+
+    Private Sub BtnRefresh_Click(sender As Object, e As EventArgs) Handles BtnRefresh.Click
+        load_schedule_close_ol_order()
     End Sub
 End Class

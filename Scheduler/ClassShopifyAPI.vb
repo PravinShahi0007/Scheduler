@@ -19,15 +19,10 @@
         Return ret_var
     End Function
 
-    Sub get_order_fail()
-        'checked date
-        Dim qd As String = "SELECT STR_TO_DATE(CONCAT(DATE_SUB(DATE(NOW()),INTERVAL o.shopify_min_date_order_failed DAY),' 23:59:59'),'%Y-%m-%d %H:%i:%s') AS `check_date`
-        FROM tb_opt o "
-        Dim dd As DataTable = execute_query(qd, -1, True, "", "", "", "")
-        Dim check_date As DateTime = dd.Rows(0)("check_date")
-
+    Sub get_order_fail(ByVal schedule_cek As DateTime)
         Net.ServicePointManager.Expect100Continue = True
         Net.ServicePointManager.SecurityProtocol = CType(3072, Net.SecurityProtocolType)
+        Dim check_time_set = get_setup_field("shopify_min_date_order_failed")
         Dim limit_order As String = get_setup_field("shopify_limit_order_failed")
         Dim url_first As String = "https://" + username + ":" + password + "@" + shop + "/admin/api/2020-04/orders.json?fulfillment_status=unshipped&financial_status=pending&status=open&limit=" + limit_order + ""
         Dim url As String = "https://" + username + ":" + password + "@" + shop + "/admin/api/2020-04/orders.json?limit=" + limit_order + ""
@@ -55,12 +50,18 @@
                     For Each row In json("orders").ToList
                         Dim financial_status As String = row("financial_status").ToString
                         Dim created_at As DateTime = DateTime.Parse(row("created_at").ToString)
-                        If financial_status = "pending" And created_at <= check_date Then
+                        Dim created_at_cek As DateTime = New DateTime(created_at.Year, created_at.Month, created_at.Day, created_at.Hour, created_at.Minute, 0)
+                        Dim diff_time As Long = (schedule_cek - created_at_cek).TotalMinutes
+                        'Console.WriteLine(schedule_cek.ToString)
+                        'Console.WriteLine(created_at.ToString)
+                        'Console.WriteLine(diff_time.ToString)
+                        If financial_status = "pending" And diff_time >= check_time_set Then
                             'check existing
                             Dim id As String = row("id").ToString
                             Dim qcek As String = "SELECT * FROM tb_ol_store_order_fail od WHERE od.id='" + id + "' "
                             Dim dcek As DataTable = execute_query(qcek, -1, True, "", "", "", "")
                             If dcek.Rows.Count = 0 Then
+                                Dim schedule_time As String = DateTime.Parse(schedule_cek).ToString("yyyy-MM-dd HH:mm:ss")
                                 Dim checkout_id As String = If(row("checkout_id").ToString = "null", "", row("checkout_id").ToString)
                                 Dim order_date As String = DateTime.Parse(row("created_at").ToString).ToString("yyyy-MM-dd HH:mm:ss")
                                 Dim order_number As String = row("order_number").ToString
@@ -68,7 +69,7 @@
                                 Dim customer_name As String = addSlashes(row("customer")("first_name").ToString + " " + row("customer")("last_name").ToString)
 
                                 'detail line item
-                                Dim qins As String = "INSERT tb_ol_store_order_fail(id,checkout_id, order_date, order_number, order_tag, customer_name, line_item_id, quantity, input_date) VALUES "
+                                Dim qins As String = "INSERT tb_ol_store_order_fail(id,schedule_time,checkout_id, order_date, order_number, order_tag, customer_name, line_item_id, quantity, input_date) VALUES "
                                 Dim line_item_id As String = ""
                                 Dim quantity As String = ""
                                 Dim j As Integer = 0
@@ -79,7 +80,7 @@
                                     If j > 0 Then
                                         qins += ","
                                     End If
-                                    qins += "('" + id + "', '" + checkout_id + "', '" + order_date + "', '" + order_number + "', '" + order_tag + "', '" + customer_name + "', '" + line_item_id + "', '" + quantity + "', NOW()) "
+                                    qins += "('" + id + "', '" + schedule_time + "','" + checkout_id + "', '" + order_date + "', '" + order_number + "', '" + order_tag + "', '" + customer_name + "', '" + line_item_id + "', '" + quantity + "', NOW()) "
                                     j += 1
                                 Next
                                 'insert ortder
