@@ -2,19 +2,19 @@
     Shared Sub check_empty_pickup_date()
         Dim query As String = "
             SELECT CONCAT(d.comp_number, ' - ', d.comp_name) AS store_name_to, CONCAT(wh.comp_number, ' - ', wh.comp_name) AS wh_name_to, a.sales_return_order_number, a.sales_return_order_date, a.sales_return_order_est_date
-            FROM tb_sales_return_order AS a
-            INNER JOIN tb_m_comp_contact AS c ON c.id_comp_contact = a.id_store_contact_to
-            INNER JOIN tb_m_comp AS d ON c.id_comp = d.id_comp
+            FROM tb_mail_manage_det AS m
+            LEFT JOIN tb_mail_manage AS h ON m.id_mail_manage = h.id_mail_manage
+            LEFT JOIN tb_sales_return_order AS a ON m.id_report = a.id_sales_return_order
+            LEFT JOIN tb_m_comp_contact AS c ON c.id_comp_contact = a.id_store_contact_to
+            LEFT JOIN tb_m_comp AS d ON c.id_comp = d.id_comp
             LEFT JOIN tb_m_comp_contact AS whc ON whc.id_comp_contact = a.id_wh_contact_to
             LEFT JOIN tb_m_comp AS wh ON wh.id_comp = whc.id_comp
-            LEFT JOIN (
-                SELECT id_report
-                FROM tb_mail_manage_det AS m
-                LEFT JOIN tb_mail_manage AS h ON m.id_mail_manage = h.id_mail_manage
-                WHERE h.report_mark_type = 45 AND h.id_mail_status = 2
-            ) AS mail ON a.id_sales_return_order = mail.id_report 
-            WHERE a.id_sales_return_order > 0 AND a.id_report_status = '6' AND TIMESTAMPDIFF(DAY, a.sales_return_order_date, DATE(NOW())) >= (SELECT sales_return_order_limit_day FROM tb_opt LIMIT 1) AND mail.id_report IS NOT NULL AND a.pickup_date IS NULL
-            ORDER BY a.id_sales_return_order ASC
+            WHERE h.report_mark_type = 45 AND h.id_mail_status = 2 AND m.id_report NOT IN (
+	            SELECT d.id_sales_order_return
+	            FROM tb_sales_return_order_mail_3pl_det AS d
+	            LEFT JOIN tb_sales_return_order_mail_3pl AS p ON d.id_mail_3pl = p.id_mail_3pl
+	            WHERE p.id_status <> 5
+            )
         "
 
         Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
@@ -38,7 +38,7 @@
                                 <tr>
                                     <td style='padding: 30pt;'>
                                         <p style='font-size: 12pt; font-family: Arial, sans-serif; font-weight: bold; margin: 0pt 0pt 10pt 0pt;'>Dear Team,</p>
-                                        <p style='font-size: 10pt; font-family: Arial, sans-serif; margin: 0pt 0pt 5pt 0pt;'>Please input pick up date for propose return below :</p>
+                                        <p style='font-size: 10pt; font-family: Arial, sans-serif; margin: 0pt 0pt 5pt 0pt;'>Please create pickup order for propose return below :</p>
                                         <table border='1' cellpadding='0' cellspacing='0' width='100%' style='margin: 15pt 0;'>
                                             <tr>
                                                 <th style='padding: 5pt 10pt;'><p style='font-size: 10pt; font-family: Arial, sans-serif; margin: 0pt 0pt 0pt 0pt;'>No</p></th>
