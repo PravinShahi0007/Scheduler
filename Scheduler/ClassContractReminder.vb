@@ -1,15 +1,10 @@
 ﻿Public Class ClassContractReminder
     Public Shared Sub contract_reminder()
         Dim query_employee As String = "
-            SELECT emp.id_employee, emp.employee_name, emp.employee_position, lvl.employee_level, sts.employee_status, dep.id_departement, dep.departement, emp.employee_join_date, emp.start_period, emp.end_period, DATE_ADD(DATE(NOW()), INTERVAL -1 DAY) AS end_appraisal, lvl.grup_penilaian, emp_head.id_employee AS id_employee_head, emp_head.employee_name AS employee_name_head, emp_head.email_external AS email_external_head, dep.is_store
-            FROM tb_m_employee AS emp
-            LEFT JOIN tb_lookup_employee_level AS lvl ON emp.id_employee_level = lvl.id_employee_level
-            LEFT JOIN tb_lookup_employee_status AS sts ON emp.id_employee_status = sts.id_employee_status
-            LEFT JOIN tb_m_departement AS dep ON emp.id_departement = dep.id_departement
-            LEFT JOIN tb_m_user AS usr_head ON dep.id_user_head = usr_head.id_user
-            LEFT JOIN tb_m_employee AS emp_head ON usr_head.id_employee = emp_head.id_employee
-            WHERE emp.id_employee_status IN (1, 3) AND emp.id_employee_active = 1 AND emp.end_period = DATE_ADD(DATE(NOW()), INTERVAL 2 MONTH)
-            ORDER BY dep.id_departement ASC
+            SELECT id_employee, employee_name, employee_position, employee_level, employee_status, id_departement, departement, employee_join_date, start_period, end_period, end_appraisal, grup_penilaian, id_employee_head, employee_name_head, email_external_head, is_store
+            FROM tb_appraisal_mail_queue
+            WHERE is_sent = 0 AND id_employee_head IS NOT NULL AND employee_name_head IS NOT NULL AND email_external_head IS NOT NULL;
+            UPDATE tb_appraisal_mail_queue SET is_sent = 1 WHERE id_employee_head IS NOT NULL AND employee_name_head IS NOT NULL AND email_external_head IS NOT NULL;
         "
 
         Dim data_employee As DataTable = execute_query(query_employee, -1, True, "", "", "", "")
