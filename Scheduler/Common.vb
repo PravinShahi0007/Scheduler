@@ -35,4 +35,10 @@
         End If
         Return management_mail
     End Function
+
+    Function unixMiliSecondsToDatetime(ByVal unix_time As Double) As DateTime
+        Dim dt As DateTime = New DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+        dt = dt.AddMilliseconds(unix_time).AddHours(8)
+        Return dt
+    End Function
 End Module
