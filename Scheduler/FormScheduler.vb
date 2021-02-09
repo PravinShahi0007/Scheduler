@@ -512,7 +512,7 @@
                             cmos.insertLog(sch_input, "set status returned : blibli")
                             'action set return
 
-                            cmos.insertLog(sch_input, "End")
+                            cmos.insertLog(sch_input, "end")
                         End If
                     End If
                 Next
