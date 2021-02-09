@@ -480,6 +480,7 @@
                                         Dim id_sales_order_det As String = dzo.Rows(z)("id_sales_order_det").ToString
                                         Dim status As String = dt.Rows(0)("order_status").ToString
                                         Dim status_date As String = dt.Rows(0)("order_status_date").ToString
+                                        Console.WriteLine(id_sales_order_det + "/" + status)
                                         cmos.insertStatusOrder(id_sales_order_det, status, status_date)
                                     End If
                                 Catch ex As Exception
