@@ -1,4 +1,6 @@
-﻿Module Common
+﻿Imports System.Text
+
+Module Common
     Public Function addSlashes(ByVal InputTxt As String) As String
         ' List of characters handled:
         ' \000 null
@@ -40,5 +42,13 @@
         Dim dt As DateTime = New DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
         dt = dt.AddMilliseconds(unix_time).AddHours(8)
         Return dt
+    End Function
+
+    Public Function isNumber(ByVal number As String)
+        Dim pattern As String = "^^[0-9\ ]+$"
+        Dim test As New RegularExpressions.Regex(pattern)
+        Dim valid As Boolean = False
+        valid = test.IsMatch(number, 0)
+        Return valid
     End Function
 End Module

@@ -464,13 +464,54 @@
                             Dim cmos As New ClassMOS()
                             cmos.insertLog(sch_input, "start")
 
+                            'general
+                            Dim qopt As String = "SELECT o.zalora_comp_group, o.blibli_comp_group FROM tb_opt o "
+                            Dim dopt As DataTable = execute_query(qopt, -1, True, "", "", "", "")
+
                             'zalora order status
+                            cmos.insertLog(sch_input, "sync status order : zalora")
+                            Dim qzo As String = "CALL view_status_ol_store(" + dopt.Rows(0)("zalora_comp_group").ToString + ")"
+                            Dim dzo As DataTable = execute_query(qzo, -1, True, "", "", "", "")
+                            For z As Integer = 0 To dzo.Rows.Count - 1
+                                Try
+                                    Dim za As New ClassZaloraAPI()
+                                    Dim dt As DataTable = za.get_status_update(dzo.Rows(z)("id_order").ToString, dzo.Rows(z)("item_id").ToString)
+                                    If dt IsNot Nothing AndAlso dt.Rows.Count > 0 Then
+                                        Dim id_sales_order_det As String = dzo.Rows(z)("id_sales_order_det").ToString
+                                        Dim status As String = dt.Rows(0)("order_status").ToString
+                                        Dim status_date As String = dt.Rows(0)("order_status_date").ToString
+                                        cmos.insertStatusOrder(id_sales_order_det, status, status_date)
+                                    End If
+                                Catch ex As Exception
+                                End Try
+                            Next
 
                             'blibli order status
+                            cmos.insertLog(sch_input, "sync status order : blibli")
+                            Dim qbl As String = "CALL view_status_ol_store(" + dopt.Rows(0)("blibli_comp_group").ToString + ")"
+                            Dim dbl As DataTable = execute_query(qbl, -1, True, "", "", "", "")
+                            For b As Integer = 0 To dbl.Rows.Count - 1
+                                Try
+                                    Dim bli As New ClassBliApi()
+                                    Dim dt As DataTable = bli.get_status(dbl.Rows(b)("order_no").ToString, dbl.Rows(b)("ol_store_id").ToString)
+                                    If dt IsNot Nothing AndAlso dt.Rows.Count > 0 Then
+                                        Dim id_sales_order_det As String = dbl.Rows(b)("id_sales_order_det").ToString
+                                        Dim status As String = dt.Rows(0)("order_status").ToString
+                                        Dim status_date As String = DateTime.Parse(dt.Rows(0)("order_status_date").ToString).ToString("yyyy-MM-dd HH:mm")
+                                        cmos.insertStatusOrder(id_sales_order_det, status, status_date)
+                                    End If
+                                Catch ex As Exception
+                                End Try
+                            Next
 
                             'blibli ror
+                            cmos.insertLog(sch_input, "sync ROR : blibli")
+                            Dim bliror As New ClassBliApi()
+                            bliror.get_ror_list()
+                            cmos.insertLog(sch_input, "set status returned : blibli")
+                            'action set return
 
-                            cmos.insertLog(sch_input, "end")
+                            cmos.insertLog(sch_input, "End")
                         End If
                     End If
                 Next

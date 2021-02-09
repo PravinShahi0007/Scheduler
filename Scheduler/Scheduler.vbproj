@@ -179,6 +179,7 @@
     <Compile Include="ClassSalesReturnOrder.vb" />
     <Compile Include="ClassSendEmail.vb" />
     <Compile Include="ClassShopifyAPI.vb" />
+    <Compile Include="ClassZaloraAPI.vb" />
     <Compile Include="Common.vb" />
     <Compile Include="database.vb" />
     <Compile Include="FormDatabase.Designer.vb">
