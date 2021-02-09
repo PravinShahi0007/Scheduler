@@ -175,6 +175,7 @@
     <Compile Include="ClassGetKurs.vb" />
     <Compile Include="ClassLateWarning.vb" />
     <Compile Include="ClassMailManage.vb" />
+    <Compile Include="ClassMOS.vb" />
     <Compile Include="ClassSalesReturnOrder.vb" />
     <Compile Include="ClassSendEmail.vb" />
     <Compile Include="ClassShopifyAPI.vb" />

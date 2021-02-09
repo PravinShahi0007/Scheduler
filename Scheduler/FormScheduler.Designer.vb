@@ -27,12 +27,12 @@ Partial Class FormScheduler
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.NotifyIcon = New System.Windows.Forms.NotifyIcon(Me.components)
         Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
-        Me.BtnFailOrder = New DevExpress.XtraEditors.SimpleButton()
-        Me.Label12 = New System.Windows.Forms.Label()
         Me.Linfo = New DevExpress.XtraEditors.LabelControl()
-        Me.TECheckFailOrder = New DevExpress.XtraEditors.TimeEdit()
         Me.BCancel = New DevExpress.XtraEditors.SimpleButton()
         Me.BSave = New DevExpress.XtraEditors.SimpleButton()
+        Me.BtnFailOrder = New DevExpress.XtraEditors.SimpleButton()
+        Me.Label12 = New System.Windows.Forms.Label()
+        Me.TECheckFailOrder = New DevExpress.XtraEditors.TimeEdit()
         Me.PanelControl2 = New DevExpress.XtraEditors.PanelControl()
         Me.BDelete = New DevExpress.XtraEditors.SimpleButton()
         Me.BAdd = New DevExpress.XtraEditors.SimpleButton()
@@ -90,11 +90,19 @@ Partial Class FormScheduler
         Me.GridColumn5 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn6 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.PanelControl3 = New DevExpress.XtraEditors.PanelControl()
+        Me.BtnRefresh = New DevExpress.XtraEditors.SimpleButton()
         Me.XTPSalesReturn = New DevExpress.XtraTab.XtraTabPage()
         Me.SBSalesReturnOrder = New DevExpress.XtraEditors.SimpleButton()
         Me.Label13 = New System.Windows.Forms.Label()
         Me.TESalesReturnOrder = New DevExpress.XtraEditors.TimeEdit()
-        Me.BtnRefresh = New DevExpress.XtraEditors.SimpleButton()
+        Me.XTPMarketplaceOrderStt = New DevExpress.XtraTab.XtraTabPage()
+        Me.GCMOS = New DevExpress.XtraGrid.GridControl()
+        Me.GVMOS = New DevExpress.XtraGrid.Views.Grid.GridView()
+        Me.GridColumn7 = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.GridColumn8 = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.GridColumn9 = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.PanelControl4 = New DevExpress.XtraEditors.PanelControl()
+        Me.BtnRefMOS = New DevExpress.XtraEditors.SimpleButton()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -133,6 +141,11 @@ Partial Class FormScheduler
         Me.PanelControl3.SuspendLayout()
         Me.XTPSalesReturn.SuspendLayout()
         CType(Me.TESalesReturnOrder.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.XTPMarketplaceOrderStt.SuspendLayout()
+        CType(Me.GCMOS, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.GVMOS, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.PanelControl4, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.PanelControl4.SuspendLayout()
         Me.SuspendLayout()
         '
         'Timer
@@ -177,6 +190,32 @@ Partial Class FormScheduler
         Me.PanelControl1.Size = New System.Drawing.Size(878, 36)
         Me.PanelControl1.TabIndex = 3
         '
+        'Linfo
+        '
+        Me.Linfo.Location = New System.Drawing.Point(12, 11)
+        Me.Linfo.Name = "Linfo"
+        Me.Linfo.Size = New System.Drawing.Size(86, 13)
+        Me.Linfo.TabIndex = 5
+        Me.Linfo.Text = "Schedule Stopped"
+        '
+        'BCancel
+        '
+        Me.BCancel.Dock = System.Windows.Forms.DockStyle.Right
+        Me.BCancel.Location = New System.Drawing.Point(733, 2)
+        Me.BCancel.Name = "BCancel"
+        Me.BCancel.Size = New System.Drawing.Size(71, 32)
+        Me.BCancel.TabIndex = 1
+        Me.BCancel.Text = "Exit"
+        '
+        'BSave
+        '
+        Me.BSave.Dock = System.Windows.Forms.DockStyle.Right
+        Me.BSave.Location = New System.Drawing.Point(804, 2)
+        Me.BSave.Name = "BSave"
+        Me.BSave.Size = New System.Drawing.Size(72, 32)
+        Me.BSave.TabIndex = 0
+        Me.BSave.Text = "Start"
+        '
         'BtnFailOrder
         '
         Me.BtnFailOrder.Location = New System.Drawing.Point(174, 3)
@@ -196,14 +235,6 @@ Partial Class FormScheduler
         Me.Label12.Text = "Check at"
         Me.Label12.Visible = False
         '
-        'Linfo
-        '
-        Me.Linfo.Location = New System.Drawing.Point(12, 11)
-        Me.Linfo.Name = "Linfo"
-        Me.Linfo.Size = New System.Drawing.Size(86, 13)
-        Me.Linfo.TabIndex = 5
-        Me.Linfo.Text = "Schedule Stopped"
-        '
         'TECheckFailOrder
         '
         Me.TECheckFailOrder.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
@@ -214,24 +245,6 @@ Partial Class FormScheduler
         Me.TECheckFailOrder.Size = New System.Drawing.Size(100, 20)
         Me.TECheckFailOrder.TabIndex = 18
         Me.TECheckFailOrder.Visible = False
-        '
-        'BCancel
-        '
-        Me.BCancel.Dock = System.Windows.Forms.DockStyle.Right
-        Me.BCancel.Location = New System.Drawing.Point(733, 2)
-        Me.BCancel.Name = "BCancel"
-        Me.BCancel.Size = New System.Drawing.Size(71, 32)
-        Me.BCancel.TabIndex = 1
-        Me.BCancel.Text = "Exit"
-        '
-        'BSave
-        '
-        Me.BSave.Dock = System.Windows.Forms.DockStyle.Right
-        Me.BSave.Location = New System.Drawing.Point(804, 2)
-        Me.BSave.Name = "BSave"
-        Me.BSave.Size = New System.Drawing.Size(72, 32)
-        Me.BSave.TabIndex = 0
-        Me.BSave.Text = "Start"
         '
         'PanelControl2
         '
@@ -311,7 +324,7 @@ Partial Class FormScheduler
         Me.XtraTabControl1.SelectedTabPage = Me.XTPSchedule
         Me.XtraTabControl1.Size = New System.Drawing.Size(878, 189)
         Me.XtraTabControl1.TabIndex = 6
-        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail, Me.XTPWarningLate, Me.XTPGetKurs, Me.XTPFailOrder, Me.XTPSalesReturn})
+        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail, Me.XTPWarningLate, Me.XTPGetKurs, Me.XTPFailOrder, Me.XTPSalesReturn, Me.XTPMarketplaceOrderStt})
         '
         'XTPSchedule
         '
@@ -747,6 +760,15 @@ Partial Class FormScheduler
         Me.PanelControl3.Size = New System.Drawing.Size(872, 30)
         Me.PanelControl3.TabIndex = 5
         '
+        'BtnRefresh
+        '
+        Me.BtnRefresh.Dock = System.Windows.Forms.DockStyle.Right
+        Me.BtnRefresh.Location = New System.Drawing.Point(795, 2)
+        Me.BtnRefresh.Name = "BtnRefresh"
+        Me.BtnRefresh.Size = New System.Drawing.Size(75, 26)
+        Me.BtnRefresh.TabIndex = 21
+        Me.BtnRefresh.Text = "Refresh"
+        '
         'XTPSalesReturn
         '
         Me.XTPSalesReturn.Controls.Add(Me.SBSalesReturnOrder)
@@ -783,14 +805,73 @@ Partial Class FormScheduler
         Me.TESalesReturnOrder.Size = New System.Drawing.Size(100, 20)
         Me.TESalesReturnOrder.TabIndex = 11
         '
-        'BtnRefresh
+        'XTPMarketplaceOrderStt
         '
-        Me.BtnRefresh.Dock = System.Windows.Forms.DockStyle.Right
-        Me.BtnRefresh.Location = New System.Drawing.Point(795, 2)
-        Me.BtnRefresh.Name = "BtnRefresh"
-        Me.BtnRefresh.Size = New System.Drawing.Size(75, 26)
-        Me.BtnRefresh.TabIndex = 21
-        Me.BtnRefresh.Text = "Refresh"
+        Me.XTPMarketplaceOrderStt.Controls.Add(Me.GCMOS)
+        Me.XTPMarketplaceOrderStt.Controls.Add(Me.PanelControl4)
+        Me.XTPMarketplaceOrderStt.Name = "XTPMarketplaceOrderStt"
+        Me.XTPMarketplaceOrderStt.Size = New System.Drawing.Size(872, 161)
+        Me.XTPMarketplaceOrderStt.Text = "Marketplace Order Status"
+        '
+        'GCMOS
+        '
+        Me.GCMOS.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.GCMOS.Location = New System.Drawing.Point(0, 30)
+        Me.GCMOS.MainView = Me.GVMOS
+        Me.GCMOS.Name = "GCMOS"
+        Me.GCMOS.Size = New System.Drawing.Size(872, 131)
+        Me.GCMOS.TabIndex = 8
+        Me.GCMOS.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.GVMOS})
+        '
+        'GVMOS
+        '
+        Me.GVMOS.Columns.AddRange(New DevExpress.XtraGrid.Columns.GridColumn() {Me.GridColumn7, Me.GridColumn8, Me.GridColumn9})
+        Me.GVMOS.GridControl = Me.GCMOS
+        Me.GVMOS.Name = "GVMOS"
+        Me.GVMOS.OptionsBehavior.Editable = False
+        Me.GVMOS.OptionsView.ShowGroupPanel = False
+        '
+        'GridColumn7
+        '
+        Me.GridColumn7.Caption = "id"
+        Me.GridColumn7.FieldName = "id_scheduler_attn"
+        Me.GridColumn7.Name = "GridColumn7"
+        '
+        'GridColumn8
+        '
+        Me.GridColumn8.Caption = "Schedule"
+        Me.GridColumn8.FieldName = "schedule_desc"
+        Me.GridColumn8.Name = "GridColumn8"
+        Me.GridColumn8.Visible = True
+        Me.GridColumn8.VisibleIndex = 0
+        '
+        'GridColumn9
+        '
+        Me.GridColumn9.Caption = "Time"
+        Me.GridColumn9.DisplayFormat.FormatString = "HH:mm:ss"
+        Me.GridColumn9.DisplayFormat.FormatType = DevExpress.Utils.FormatType.DateTime
+        Me.GridColumn9.FieldName = "schedule"
+        Me.GridColumn9.Name = "GridColumn9"
+        Me.GridColumn9.Visible = True
+        Me.GridColumn9.VisibleIndex = 1
+        '
+        'PanelControl4
+        '
+        Me.PanelControl4.Controls.Add(Me.BtnRefMOS)
+        Me.PanelControl4.Dock = System.Windows.Forms.DockStyle.Top
+        Me.PanelControl4.Location = New System.Drawing.Point(0, 0)
+        Me.PanelControl4.Name = "PanelControl4"
+        Me.PanelControl4.Size = New System.Drawing.Size(872, 30)
+        Me.PanelControl4.TabIndex = 7
+        '
+        'BtnRefMOS
+        '
+        Me.BtnRefMOS.Dock = System.Windows.Forms.DockStyle.Right
+        Me.BtnRefMOS.Location = New System.Drawing.Point(795, 2)
+        Me.BtnRefMOS.Name = "BtnRefMOS"
+        Me.BtnRefMOS.Size = New System.Drawing.Size(75, 26)
+        Me.BtnRefMOS.TabIndex = 21
+        Me.BtnRefMOS.Text = "Refresh"
         '
         'FormScheduler
         '
@@ -854,6 +935,11 @@ Partial Class FormScheduler
         Me.XTPSalesReturn.ResumeLayout(False)
         Me.XTPSalesReturn.PerformLayout()
         CType(Me.TESalesReturnOrder.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.XTPMarketplaceOrderStt.ResumeLayout(False)
+        CType(Me.GCMOS, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.GVMOS, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.PanelControl4, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.PanelControl4.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -932,4 +1018,12 @@ Partial Class FormScheduler
     Friend WithEvents GridColumn6 As DevExpress.XtraGrid.Columns.GridColumn
     Friend WithEvents PanelControl3 As DevExpress.XtraEditors.PanelControl
     Friend WithEvents BtnRefresh As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents XTPMarketplaceOrderStt As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents GCMOS As DevExpress.XtraGrid.GridControl
+    Friend WithEvents GVMOS As DevExpress.XtraGrid.Views.Grid.GridView
+    Friend WithEvents GridColumn7 As DevExpress.XtraGrid.Columns.GridColumn
+    Friend WithEvents GridColumn8 As DevExpress.XtraGrid.Columns.GridColumn
+    Friend WithEvents GridColumn9 As DevExpress.XtraGrid.Columns.GridColumn
+    Friend WithEvents PanelControl4 As DevExpress.XtraEditors.PanelControl
+    Friend WithEvents BtnRefMOS As DevExpress.XtraEditors.SimpleButton
 End Class

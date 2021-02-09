@@ -8,8 +8,6 @@
     Private Sub FormScheduler_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Cursor = Cursors.WaitCursor
         load_form()
-        Dim bli As New ClassBliApi()
-        bli.get_ror_list()
         'Console.WriteLine(Now().AddDays(1).DayOfWeek())
         Cursor = Cursors.Default
     End Sub
@@ -102,6 +100,9 @@
             ''sales return order
             'load_sales_return_order()
 
+            'marketplace order status
+            load_schedule_mos()
+
             start_timer()
             WindowState = FormWindowState.Minimized
         End If
@@ -187,7 +188,7 @@
     Private Sub Timer_Tick(sender As Object, e As EventArgs) Handles Timer.Tick
         Try
             'disable when developed
-            'Dim cur_datetime As Date = Now()
+            Dim cur_datetime As Date = Now()
             'For i As Integer = 0 To GVSchedule.RowCount - 1
             '    If (Date.Parse(GVSchedule.GetRowCellValue(i, "time_var").ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
             '        exec_process()
@@ -447,7 +448,33 @@
             '    End If
             'End If
 
-            'test
+            'markatplace order status
+            If get_opt_scheduler_field("is_active_mos").ToString = "1" Then
+                For i As Integer = 0 To GVMOS.RowCount - 1
+                    If (Date.Parse(GVMOS.GetRowCellValue(i, "schedule").ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
+                        Dim is_need_sync As String = execute_query("CALL view_ol_store_status_check_sync();", 0, True, "", "", "", "")
+                        If is_need_sync = "1" Then
+                            'split par
+                            Dim time_split As String() = Split(cur_datetime.ToString("HH:mm"), ":")
+                            Dim hour As Integer = Integer.Parse(time_split(0).ToString)
+                            Dim minute As Integer = Integer.Parse(time_split(1).ToString)
+                            Dim sch_cek As DateTime = New DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hour, minute, 0)
+                            Dim sch_input As String = DateTime.Parse(sch_cek).ToString("yyyy-MM-dd HH:mm:ss")
+
+                            Dim cmos As New ClassMOS()
+                            cmos.insertLog(sch_input, "start")
+
+                            'zalora order status
+
+                            'blibli order status
+
+                            'blibli ror
+
+                            cmos.insertLog(sch_input, "end")
+                        End If
+                    End If
+                Next
+            End If
         Catch ex As Exception
             stop_timer()
             MsgBox(ex.ToString)
@@ -673,5 +700,17 @@
 
     Private Sub BtnRefresh_Click(sender As Object, e As EventArgs) Handles BtnRefresh.Click
         load_schedule_close_ol_order()
+    End Sub
+
+    Private Sub BtnRefMOS_Click(sender As Object, e As EventArgs) Handles BtnRefMOS.Click
+        load_schedule_mos()
+    End Sub
+
+    Sub load_schedule_mos()
+        Dim query As String = "SELECT s.id_schedule, s.schedule_desc, s.`schedule` 
+        FROM tb_ol_store_status_schedule s
+        ORDER BY s.`schedule` ASC "
+        Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+        GCMOS.DataSource = data
     End Sub
 End Class
