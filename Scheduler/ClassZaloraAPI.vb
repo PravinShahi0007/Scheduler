@@ -8,12 +8,17 @@
     Sub New()
         Dim query_main As String = "SELECT o.zalora_api_key,
         o.zalora_user_id,
-        o.zalora_comp_group
+        o.zalora_comp_group, o.id_code_product_size
         FROM tb_opt o "
         Dim data_main As DataTable = execute_query(query_main, -1, True, "", "", "", "")
         api_key = data_main.Rows(0)("zalora_api_key").ToString
         user_id = data_main.Rows(0)("zalora_user_id").ToString
         id_store_group = data_main.Rows(0)("zalora_comp_group").ToString
+
+        'size
+        Dim id_code_detail_size As String = data_main.Rows(0)("id_code_product_size").ToString
+        Dim query As String = "SELECT cd.id_code_detail,cd.code, cd.code_detail_name FROM tb_m_code_detail cd WHERE cd.id_code=" + id_code_detail_size + " "
+        data_size = execute_query(query, -1, True, "", "", "", "")
     End Sub
 
     Function get_signature(ByVal parameter As DataTable) As String

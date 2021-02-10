@@ -480,7 +480,6 @@
                                         Dim id_sales_order_det As String = dzo.Rows(z)("id_sales_order_det").ToString
                                         Dim status As String = dt.Rows(0)("order_status").ToString
                                         Dim status_date As String = dt.Rows(0)("order_status_date").ToString
-                                        Console.WriteLine(id_sales_order_det + "/" + status)
                                         cmos.insertStatusOrder(id_sales_order_det, status, status_date)
                                     End If
                                 Catch ex As Exception
@@ -509,8 +508,13 @@
                             cmos.insertLog(sch_input, "sync ROR : blibli")
                             Dim bliror As New ClassBliApi()
                             bliror.get_ror_list()
-                            cmos.insertLog(sch_input, "set status returned : blibli")
+
                             'action set return
+                            cmos.insertLog(sch_input, "set status returned : blibli")
+                            bliror.set_to_returned()
+
+                            'processing auto cn/ror
+                            cmos.insertLog(sch_input, "auto cn & ror")
 
                             cmos.insertLog(sch_input, "end")
                         End If

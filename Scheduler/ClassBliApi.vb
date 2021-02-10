@@ -143,6 +143,38 @@
         Next
     End Sub
 
+    Sub set_to_returned()
+        Dim query As String = "SELECT b.id_ol_store_ror_bli, b.sync_date, b.id, b.ror_date, b.ror_number, b.order_number, b.item_id, b.customer_name,
+        b.qty, b.price 
+        FROM tb_ol_store_ror_bli b
+        WHERE b.is_process=2
+        ORDER BY b.ror_date ASC "
+        Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+        For i As Integer = 0 To data.Rows.Count - 1
+            Dim stt_date As String = DateTime.Parse(data.Rows(i)("ror_date").ToString).ToString("yyyy-MM-dd HH:mm:ss")
+            Dim qcek As String = "SELECT sod.id_sales_order, sod.id_sales_order_det, spd.id_sales_pos_det, spd.id_sales_pos
+            FROM tb_sales_order so
+            INNER JOIN tb_m_comp_contact sc ON sc.id_comp_contact = so.id_store_contact_to
+            INNER JOIN tb_m_comp s ON s.id_comp = sc.id_comp
+            INNER JOIN tb_sales_order_det sod ON sod.id_sales_order = so.id_sales_order
+            INNER JOIN tb_pl_sales_order_del_det dd ON dd.id_sales_order_det = sod.id_sales_order_det
+            INNER JOIN tb_sales_pos_det spd ON spd.id_pl_sales_order_del_det = dd.id_pl_sales_order_del_det
+            WHERE so.id_report_status=6  AND s.id_comp_group='" + id_store_group + "' AND so.id_sales_order_ol_shop='" + data.Rows(i)("order_number").ToString + "' AND sod.ol_store_id='" + data.Rows(i)("item_id").ToString + "'
+            ORDER BY sod.id_sales_order_det ASC LIMIT " + data.Rows(i)("qty").ToString + " "
+            Dim dcek As DataTable = execute_query(qcek, -1, True, "", "", "", "")
+            Dim found_item As Boolean = False
+            For j As Integer = 0 To dcek.Rows.Count - 1
+                'set status
+                Dim cmos As New ClassMOS()
+                cmos.insertStatusOrder(dcek.Rows(j)("id_sales_order_det").ToString, "returned", stt_date)
+                found_item = True
+            Next
+            If found_item Then
+                execute_non_query("UPDATE tb_ol_store_ror_bli SET is_process=1, process_date=NOW() WHERE id_ol_store_ror_bli='" + data.Rows(i)("id_ol_store_ror_bli").ToString + "' ", True, "", "", "", "")
+            End If
+        Next
+    End Sub
+
     Public Shared Function decimalSQL(ByVal value As String) 'hanya kalo masuk ke database
         Dim nominal As String
 
