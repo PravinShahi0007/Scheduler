@@ -60,6 +60,7 @@
         End Try
 
         If connection_problem = False Then
+            'disable when developed
             load_schedule()
 
             'weekly
@@ -98,6 +99,9 @@
 
             'sales return order
             load_sales_return_order()
+
+            'marketplace order status
+            load_schedule_mos()
 
             start_timer()
             WindowState = FormWindowState.Minimized
@@ -183,6 +187,7 @@
 
     Private Sub Timer_Tick(sender As Object, e As EventArgs) Handles Timer.Tick
         Try
+            'disable when developed
             Dim cur_datetime As Date = Now()
             For i As Integer = 0 To GVSchedule.RowCount - 1
                 If (Date.Parse(GVSchedule.GetRowCellValue(i, "time_var").ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
@@ -442,6 +447,80 @@
                     ClassSalesReturnOrder.check_empty_pickup_date()
                 End If
             End If
+
+            'markatplace order status
+            If get_opt_scheduler_field("is_active_mos").ToString = "1" Then
+                For i As Integer = 0 To GVMOS.RowCount - 1
+                    If (Date.Parse(GVMOS.GetRowCellValue(i, "schedule").ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
+                        Dim is_need_sync As String = execute_query("CALL view_ol_store_status_check_sync();", 0, True, "", "", "", "")
+                        If is_need_sync = "1" Then
+                            'split par
+                            Dim time_split As String() = Split(cur_datetime.ToString("HH:mm"), ":")
+                            Dim hour As Integer = Integer.Parse(time_split(0).ToString)
+                            Dim minute As Integer = Integer.Parse(time_split(1).ToString)
+                            Dim sch_cek As DateTime = New DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hour, minute, 0)
+                            Dim sch_input As String = DateTime.Parse(sch_cek).ToString("yyyy-MM-dd HH:mm:ss")
+
+                            Dim cmos As New ClassMOS()
+                            cmos.insertLog(sch_input, "start")
+
+                            'general
+                            Dim qopt As String = "SELECT o.zalora_comp_group, o.blibli_comp_group FROM tb_opt o "
+                            Dim dopt As DataTable = execute_query(qopt, -1, True, "", "", "", "")
+
+                            'zalora order status
+                            cmos.insertLog(sch_input, "sync status order : zalora")
+                            Dim qzo As String = "CALL view_status_ol_store(" + dopt.Rows(0)("zalora_comp_group").ToString + ")"
+                            Dim dzo As DataTable = execute_query(qzo, -1, True, "", "", "", "")
+                            For z As Integer = 0 To dzo.Rows.Count - 1
+                                Try
+                                    Dim za As New ClassZaloraAPI()
+                                    Dim dt As DataTable = za.get_status_update(dzo.Rows(z)("id_order").ToString, dzo.Rows(z)("item_id").ToString)
+                                    If dt IsNot Nothing AndAlso dt.Rows.Count > 0 Then
+                                        Dim id_sales_order_det As String = dzo.Rows(z)("id_sales_order_det").ToString
+                                        Dim status As String = dt.Rows(0)("order_status").ToString
+                                        Dim status_date As String = dt.Rows(0)("order_status_date").ToString
+                                        cmos.insertStatusOrder(id_sales_order_det, status, status_date)
+                                    End If
+                                Catch ex As Exception
+                                End Try
+                            Next
+
+                            'blibli order status
+                            cmos.insertLog(sch_input, "sync status order : blibli")
+                            Dim qbl As String = "CALL view_status_ol_store(" + dopt.Rows(0)("blibli_comp_group").ToString + ")"
+                            Dim dbl As DataTable = execute_query(qbl, -1, True, "", "", "", "")
+                            For b As Integer = 0 To dbl.Rows.Count - 1
+                                Try
+                                    Dim bli As New ClassBliApi()
+                                    Dim dt As DataTable = bli.get_status(dbl.Rows(b)("order_no").ToString, dbl.Rows(b)("ol_store_id").ToString)
+                                    If dt IsNot Nothing AndAlso dt.Rows.Count > 0 Then
+                                        Dim id_sales_order_det As String = dbl.Rows(b)("id_sales_order_det").ToString
+                                        Dim status As String = dt.Rows(0)("order_status").ToString
+                                        Dim status_date As String = DateTime.Parse(dt.Rows(0)("order_status_date").ToString).ToString("yyyy-MM-dd HH:mm")
+                                        cmos.insertStatusOrder(id_sales_order_det, status, status_date)
+                                    End If
+                                Catch ex As Exception
+                                End Try
+                            Next
+
+                            'blibli ror
+                            cmos.insertLog(sch_input, "sync ROR : blibli")
+                            Dim bliror As New ClassBliApi()
+                            bliror.get_ror_list()
+
+                            'action set return
+                            cmos.insertLog(sch_input, "set status returned : blibli")
+                            bliror.set_to_returned()
+
+                            'processing auto cn/ror
+                            cmos.insertLog(sch_input, "auto cn & ror")
+
+                            cmos.insertLog(sch_input, "end")
+                        End If
+                    End If
+                Next
+            End If
         Catch ex As Exception
             stop_timer()
             MsgBox(ex.ToString)
@@ -667,5 +746,17 @@
 
     Private Sub BtnRefresh_Click(sender As Object, e As EventArgs) Handles BtnRefresh.Click
         load_schedule_close_ol_order()
+    End Sub
+
+    Private Sub BtnRefMOS_Click(sender As Object, e As EventArgs) Handles BtnRefMOS.Click
+        load_schedule_mos()
+    End Sub
+
+    Sub load_schedule_mos()
+        Dim query As String = "SELECT s.id_schedule, s.schedule_desc, s.`schedule` 
+        FROM tb_ol_store_status_schedule s
+        ORDER BY s.`schedule` ASC "
+        Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+        GCMOS.DataSource = data
     End Sub
 End Class

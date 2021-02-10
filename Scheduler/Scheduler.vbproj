@@ -167,6 +167,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClassAREvaluation.vb" />
+    <Compile Include="ClassBliApi.vb" />
     <Compile Include="ClassCashAdvance.vb" />
     <Compile Include="ClassContractReminder.vb" />
     <Compile Include="ClassEmpPerAppraisal.vb" />
@@ -174,9 +175,11 @@
     <Compile Include="ClassGetKurs.vb" />
     <Compile Include="ClassLateWarning.vb" />
     <Compile Include="ClassMailManage.vb" />
+    <Compile Include="ClassMOS.vb" />
     <Compile Include="ClassSalesReturnOrder.vb" />
     <Compile Include="ClassSendEmail.vb" />
     <Compile Include="ClassShopifyAPI.vb" />
+    <Compile Include="ClassZaloraAPI.vb" />
     <Compile Include="Common.vb" />
     <Compile Include="database.vb" />
     <Compile Include="FormDatabase.Designer.vb">
