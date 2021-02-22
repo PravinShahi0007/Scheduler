@@ -435,7 +435,11 @@
                         Dim sch_cek As DateTime = New DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hour, minute, 0)
 
                         Dim fo As New ClassShopifyAPI()
-                        fo.get_order_fail(sch_cek)
+                        Try
+                            fo.get_order_fail(sch_cek)
+                        Catch ex As Exception
+                            fo.orderFailLog("(" + DateTime.Parse(sch_cek).ToString("yyyy-MM-dd HH:mm:ss") + "):" + ex.ToString)
+                        End Try
                         fo.proceed_cancel_fail_order()
                     End If
                 Next
@@ -483,6 +487,7 @@
                                         cmos.insertStatusOrder(id_sales_order_det, status, status_date)
                                     End If
                                 Catch ex As Exception
+                                    cmos.insertLog(sch_input, "err_stt_zal;item:" + dzo.Rows(z)("item_id").ToString + ";" + ex.ToString + "")
                                 End Try
                             Next
 
@@ -501,13 +506,19 @@
                                         cmos.insertStatusOrder(id_sales_order_det, status, status_date)
                                     End If
                                 Catch ex As Exception
+                                    cmos.insertLog(sch_input, "err_stt_bli;ol_id:" + dbl.Rows(b)("ol_store_id").ToString + ";" + ex.ToString + "")
                                 End Try
                             Next
 
                             'blibli ror
                             cmos.insertLog(sch_input, "sync ROR : blibli")
                             Dim bliror As New ClassBliApi()
-                            bliror.get_ror_list()
+                            Try
+                                bliror.get_ror_list()
+                            Catch ex As Exception
+                                cmos.insertLog(sch_input, "err_ror_bli;" + ex.ToString)
+                            End Try
+
 
                             'action set return
                             cmos.insertLog(sch_input, "set status returned : blibli")
