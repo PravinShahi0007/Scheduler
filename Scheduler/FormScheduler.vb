@@ -511,6 +511,13 @@
                                         Dim status As String = dt.Rows(0)("order_status").ToString
                                         Dim status_date As String = DateTime.Parse(dt.Rows(0)("order_status_date").ToString).ToString("yyyy-MM-dd HH:mm")
                                         cmos.insertStatusOrder(id_sales_order_det, status, status_date)
+
+                                        'for auto cn/ror
+                                        If dbl.Rows(b)("id_sales_pos").ToString <> "" And (dt.Rows(0)("order_status").ToString = "cancelled" Or dt.Rows(0)("order_status").ToString = "failed") Then
+                                            Dim qib As String = "INSERT INTO tb_ol_store_return_order(id_comp_group, created_date, order_number, ol_store_id, item_id, qty, id_sales_order, id_sales_order_det, id_sales_pos_det, id_sales_pos)
+                                            VALUES('" + dopt.Rows(0)("blibli_comp_group").ToString + "', NOW(), '" + dbl.Rows(b)("order_no").ToString + "', '" + dbl.Rows(b)("ol_store_id").ToString + "', '" + dbl.Rows(b)("item_id").ToString + "','1','" + dbl.Rows(b)("id_sales_order").ToString + "', '" + dbl.Rows(b)("id_sales_order_det").ToString + "', '" + dbl.Rows(b)("id_sales_pos_det").ToString + "', '" + dbl.Rows(b)("id_sales_pos").ToString + "'); "
+                                            execute_non_query(qib, True, "", "", "", "")
+                                        End If
                                     End If
                                 Catch ex As Exception
                                     cmos.insertLog(sch_input, "err_stt_bli;ol_id:" + dbl.Rows(b)("ol_store_id").ToString + ";" + ex.ToString + "")
