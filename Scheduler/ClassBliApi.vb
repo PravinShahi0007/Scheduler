@@ -154,14 +154,17 @@
         Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
         For i As Integer = 0 To data.Rows.Count - 1
             Dim stt_date As String = DateTime.Parse(data.Rows(i)("ror_date").ToString).ToString("yyyy-MM-dd HH:mm:ss")
-            Dim qcek As String = "SELECT sod.id_sales_order, sod.id_sales_order_det, spd.id_sales_pos_det, spd.id_sales_pos
-            FROM tb_sales_order so
+            Dim qcek As String = "SELECT so.sales_order_ol_shop_number AS `order_no`, sod.id_sales_order, sod.id_sales_order_det, spd.id_sales_pos_det, spd.id_sales_pos,
+            sod.ol_store_id, sod.item_id
+            FROM  tb_sales_order so
             INNER JOIN tb_m_comp_contact sc ON sc.id_comp_contact = so.id_store_contact_to
             INNER JOIN tb_m_comp s ON s.id_comp = sc.id_comp
             INNER JOIN tb_sales_order_det sod ON sod.id_sales_order = so.id_sales_order
-            INNER JOIN tb_pl_sales_order_del_det dd ON dd.id_sales_order_det = sod.id_sales_order_det
-            INNER JOIN tb_sales_pos_det spd ON spd.id_pl_sales_order_del_det = dd.id_pl_sales_order_del_det
-            WHERE so.id_report_status=6  AND s.id_comp_group='" + id_store_group + "' AND so.id_sales_order_ol_shop='" + data.Rows(i)("order_number").ToString + "' AND sod.ol_store_id='" + data.Rows(i)("item_id").ToString + "'
+            LEFT JOIN tb_pl_sales_order_del_det dd ON dd.id_sales_order_det = sod.id_sales_order_det
+            LEFT JOIN tb_pl_sales_order_del d ON d.id_pl_sales_order_del = dd.id_pl_sales_order_del AND d.id_report_status=6
+            LEFT JOIN tb_sales_pos_det spd ON spd.id_pl_sales_order_del_det = dd.id_pl_sales_order_del_det
+            LEFT JOIN tb_sales_pos sp ON sp.id_sales_pos = spd.id_sales_pos AND sp.id_report_status=6
+            WHERE so.id_report_status=6  AND s.id_comp_group='" + id_store_group + "' AND so.sales_order_ol_shop_number='" + data.Rows(i)("order_number").ToString + "' AND sod.ol_store_id='" + data.Rows(i)("item_id").ToString + "'
             ORDER BY sod.id_sales_order_det ASC LIMIT " + data.Rows(i)("qty").ToString + " "
             Dim dcek As DataTable = execute_query(qcek, -1, True, "", "", "", "")
             Dim found_item As Boolean = False
@@ -170,6 +173,11 @@
                 Dim cmos As New ClassMOS()
                 cmos.insertStatusOrder(dcek.Rows(j)("id_sales_order_det").ToString, "returned", stt_date)
                 found_item = True
+                If dcek.Rows(j)("id_sales_pos").ToString <> "" Then
+                    Dim qib As String = "INSERT INTO tb_ol_store_return_order(id_comp_group, created_date, order_number, ol_store_id, item_id, qty, id_sales_order, id_sales_order_det, id_sales_pos_det, id_sales_pos)
+                                            VALUES('" + id_store_group + "', NOW(), '" + dcek.Rows(j)("order_no").ToString + "', '" + dcek.Rows(j)("ol_store_id").ToString + "', '" + dcek.Rows(j)("item_id").ToString + "','1','" + dcek.Rows(j)("id_sales_order").ToString + "', '" + dcek.Rows(j)("id_sales_order_det").ToString + "', '" + dcek.Rows(j)("id_sales_pos_det").ToString + "', '" + dcek.Rows(j)("id_sales_pos").ToString + "'); "
+                    execute_non_query(qib, True, "", "", "", "")
+                End If
             Next
             If found_item Then
                 execute_non_query("UPDATE tb_ol_store_ror_bli SET is_process=1, process_date=NOW() WHERE id_ol_store_ror_bli='" + data.Rows(i)("id_ol_store_ror_bli").ToString + "' ", True, "", "", "", "")

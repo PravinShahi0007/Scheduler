@@ -536,7 +536,12 @@
 
                             'action set return
                             cmos.insertLog(sch_input, "set status returned : blibli")
-                            bliror.set_to_returned()
+                            Try
+                                bliror.set_to_returned()
+                            Catch ex As Exception
+                                cmos.insertLog(sch_input, "err_set_returned_bli;" + ex.ToString)
+                            End Try
+
 
                             'processing auto cn/ror
                             cmos.insertLog(sch_input, "auto cn & ror")
