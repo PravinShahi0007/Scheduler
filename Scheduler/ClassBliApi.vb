@@ -59,6 +59,8 @@
                         stt = "delivered"
                     ElseIf row("orderStatus").ToString = "X" Then
                         stt = "cancelled"
+                    ElseIf row("orderStatus").ToString = "DF" Then
+                        stt = "failed"
                     Else
                         stt = "on_process"
                     End If
