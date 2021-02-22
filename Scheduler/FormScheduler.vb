@@ -554,7 +554,7 @@
                                 Dim dcr As DataTable = execute_query(qcr, -1, True, "", "", "", "")
                                 For c As Integer = 0 To dcr.Rows.Count - 1
                                     cmos.insertLog(sch_input, "auto_cn_ror_" + dcr.Rows(c)("order_number").ToString)
-                                    execute_non_query("", True, "", "", "", "")
+                                    execute_non_query_long("CALL create_ol_store_cn_ror(" + dcr.Rows(c)("id_sales_order").ToString + ", " + dcr.Rows(c)("id_sales_pos").ToString + "); ", True, "", "", "", "")
                                 Next
                             Catch ex As Exception
                                 cmos.insertLog(sch_input, "err_cn_ror;" + ex.ToString)
