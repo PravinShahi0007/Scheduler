@@ -61,44 +61,44 @@
 
         If connection_problem = False Then
             'disable when developed
-            'load_schedule()
+            load_schedule()
 
-            ''weekly
-            'load_days()
-            'load_schedule_weekly_attn_report()
+            'weekly
+            load_days()
+            load_schedule_weekly_attn_report()
 
-            ''monthly
-            'load_schedule_monthly_leave_report()
+            'monthly
+            load_schedule_monthly_leave_report()
 
-            ''duty
-            'load_duty_reminder()
-
-
-            ''cash advance
-            'load_cash_advance()
+            'duty
+            load_duty_reminder()
 
 
-            ''employee performance appraisal
-            'load_emp_per_app()
+            'cash advance
+            load_cash_advance()
 
-            ''evaluation ar time
-            'load_evaluation_time()
 
-            ''email notice ar
-            'load_notice_ar_time()
+            'employee performance appraisal
+            load_emp_per_app()
 
-            ''warning late
-            'load_warning_late_time()
+            'evaluation ar time
+            load_evaluation_time()
 
-            ''kurs
-            'load_kurs()
+            'email notice ar
+            load_notice_ar_time()
 
-            ''closed order vios
-            ''load_check_fail_order_time()
-            'load_schedule_close_ol_order()
+            'warning late
+            load_warning_late_time()
 
-            ''sales return order
-            'load_sales_return_order()
+            'kurs
+            load_kurs()
+
+            'closed order vios
+            'load_check_fail_order_time()
+            load_schedule_close_ol_order()
+
+            'sales return order
+            load_sales_return_order()
 
             'marketplace order status
             load_schedule_mos()
