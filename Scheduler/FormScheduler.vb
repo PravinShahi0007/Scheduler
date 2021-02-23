@@ -547,21 +547,23 @@
 
 
                             'processing auto cn/ror
-                            cmos.insertLog(sch_input, "auto cn & ror")
-                            Try
-                                Dim qcr As String = "SELECT olr.id_sales_order, olr.id_sales_pos, olr.order_number
-                                FROM tb_ol_store_return_order olr
-                                WHERE olr.is_process=2 AND !ISNULL(olr.id_sales_order) AND !ISNULL(olr.id_sales_pos)
-                                GROUP BY olr.id_sales_order, olr.id_sales_pos
-                                ORDER BY olr.created_date ASC "
-                                Dim dcr As DataTable = execute_query(qcr, -1, True, "", "", "", "")
-                                For c As Integer = 0 To dcr.Rows.Count - 1
-                                    cmos.insertLog(sch_input, "auto_cn_ror_" + dcr.Rows(c)("order_number").ToString)
-                                    execute_non_query_long("CALL create_ol_store_cn_ror(" + dcr.Rows(c)("id_sales_order").ToString + ", " + dcr.Rows(c)("id_sales_pos").ToString + "); ", True, "", "", "", "")
-                                Next
-                            Catch ex As Exception
-                                cmos.insertLog(sch_input, "err_cn_ror;" + ex.ToString)
-                            End Try
+                            If get_opt_scheduler_field("is_active_auto_cn_ror").ToString = "1" Then
+                                cmos.insertLog(sch_input, "auto cn & ror")
+                                Try
+                                    Dim qcr As String = "SELECT olr.id_sales_order, olr.id_sales_pos, olr.order_number
+                                    FROM tb_ol_store_return_order olr
+                                    WHERE olr.is_process=2 AND !ISNULL(olr.id_sales_order) AND !ISNULL(olr.id_sales_pos)
+                                    GROUP BY olr.id_sales_order, olr.id_sales_pos
+                                    ORDER BY olr.created_date ASC "
+                                    Dim dcr As DataTable = execute_query(qcr, -1, True, "", "", "", "")
+                                    For c As Integer = 0 To dcr.Rows.Count - 1
+                                        cmos.insertLog(sch_input, "auto_cn_ror_" + dcr.Rows(c)("order_number").ToString)
+                                        execute_non_query_long("CALL create_ol_store_cn_ror(" + dcr.Rows(c)("id_sales_order").ToString + ", " + dcr.Rows(c)("id_sales_pos").ToString + "); ", True, "", "", "", "")
+                                    Next
+                                Catch ex As Exception
+                                    cmos.insertLog(sch_input, "err_cn_ror;" + ex.ToString)
+                                End Try
+                            End If
                             cmos.insertLog(sch_input, "end")
                         End If
                     End If
