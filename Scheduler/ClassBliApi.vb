@@ -53,6 +53,7 @@
             Dim responseFromServer As String = reader.ReadToEnd()
             Dim json As Newtonsoft.Json.Linq.JObject = Newtonsoft.Json.Linq.JObject.Parse(responseFromServer)
             If json("success").ToString = True AndAlso json("value").Count > 0 Then
+                Dim last_stt As String = json("value")("orderStatus").ToString
                 For Each row In json("value")("orderHistory").ToList
                     Dim stt As String = ""
                     If row("orderStatus").ToString = "D" Then
@@ -64,8 +65,10 @@
                     Else
                         stt = "on_process"
                     End If
-                    dt.Rows.Add(stt, unixMiliSecondsToDatetime(row("createdTimestamp")))
-                    Exit For
+                    If row("orderStatus").ToString = last_stt Then
+                        dt.Rows.Add(stt, unixMiliSecondsToDatetime(row("createdTimestamp")))
+                        Exit For
+                    End If
                 Next
             Else
                 dt = Nothing
