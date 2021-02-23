@@ -435,7 +435,11 @@
                         Dim sch_cek As DateTime = New DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hour, minute, 0)
 
                         Dim fo As New ClassShopifyAPI()
-                        fo.get_order_fail(sch_cek)
+                        Try
+                            fo.get_order_fail(sch_cek)
+                        Catch ex As Exception
+                            fo.orderFailLog("(" + DateTime.Parse(sch_cek).ToString("yyyy-MM-dd HH:mm:ss") + "):" + ex.ToString)
+                        End Try
                         fo.proceed_cancel_fail_order()
                     End If
                 Next
@@ -448,6 +452,7 @@
                 End If
             End If
 
+            'biarkan di eksekusi terakhir, kalo mau tambah insert diatas ini
             'markatplace order status
             If get_opt_scheduler_field("is_active_mos").ToString = "1" Then
                 For i As Integer = 0 To GVMOS.RowCount - 1
@@ -465,7 +470,7 @@
                             cmos.insertLog(sch_input, "start")
 
                             'general
-                            Dim qopt As String = "SELECT o.zalora_comp_group, o.blibli_comp_group FROM tb_opt o "
+                            Dim qopt As String = "SELECT o.zalora_comp_group, o.zalora_sleep_req_time, o.blibli_comp_group FROM tb_opt o "
                             Dim dopt As DataTable = execute_query(qopt, -1, True, "", "", "", "")
 
                             'zalora order status
@@ -481,8 +486,19 @@
                                         Dim status As String = dt.Rows(0)("order_status").ToString
                                         Dim status_date As String = dt.Rows(0)("order_status_date").ToString
                                         cmos.insertStatusOrder(id_sales_order_det, status, status_date)
+
+                                        'for auto cn/ror
+                                        If dzo.Rows(z)("id_sales_pos").ToString <> "" And (dt.Rows(0)("order_status").ToString = "canceled" Or dt.Rows(0)("order_status").ToString = "failed" Or dt.Rows(0)("order_status").ToString = "returned") Then
+                                            Dim qiz As String = "INSERT INTO tb_ol_store_return_order(id_comp_group, created_date, order_number, ol_store_id, item_id, qty, id_sales_order, id_sales_order_det, id_sales_pos_det, id_sales_pos)
+                                            VALUES('" + dopt.Rows(0)("zalora_comp_group").ToString + "', NOW(), '" + dzo.Rows(z)("order_no").ToString + "', '" + dzo.Rows(z)("ol_store_id").ToString + "', '" + dzo.Rows(z)("item_id").ToString + "','1','" + dzo.Rows(z)("id_sales_order").ToString + "', '" + dzo.Rows(z)("id_sales_order_det").ToString + "', '" + dzo.Rows(z)("id_sales_pos_det").ToString + "', '" + dzo.Rows(z)("id_sales_pos").ToString + "'); "
+                                            execute_non_query(qiz, True, "", "", "", "")
+                                        End If
+                                    End If
+                                    If (z + 1) Mod 30 = 0 Then
+                                        Threading.Thread.Sleep(dopt.Rows(0)("zalora_sleep_req_time"))
                                     End If
                                 Catch ex As Exception
+                                    cmos.insertLog(sch_input, "err_stt_zal;item:" + dzo.Rows(z)("item_id").ToString + ";" + ex.ToString + "")
                                 End Try
                             Next
 
@@ -499,23 +515,56 @@
                                         Dim status As String = dt.Rows(0)("order_status").ToString
                                         Dim status_date As String = DateTime.Parse(dt.Rows(0)("order_status_date").ToString).ToString("yyyy-MM-dd HH:mm")
                                         cmos.insertStatusOrder(id_sales_order_det, status, status_date)
+
+                                        'for auto cn/ror
+                                        If dbl.Rows(b)("id_sales_pos").ToString <> "" And (dt.Rows(0)("order_status").ToString = "cancelled" Or dt.Rows(0)("order_status").ToString = "failed") Then
+                                            Dim qib As String = "INSERT INTO tb_ol_store_return_order(id_comp_group, created_date, order_number, ol_store_id, item_id, qty, id_sales_order, id_sales_order_det, id_sales_pos_det, id_sales_pos)
+                                            VALUES('" + dopt.Rows(0)("blibli_comp_group").ToString + "', NOW(), '" + dbl.Rows(b)("order_no").ToString + "', '" + dbl.Rows(b)("ol_store_id").ToString + "', '" + dbl.Rows(b)("item_id").ToString + "','1','" + dbl.Rows(b)("id_sales_order").ToString + "', '" + dbl.Rows(b)("id_sales_order_det").ToString + "', '" + dbl.Rows(b)("id_sales_pos_det").ToString + "', '" + dbl.Rows(b)("id_sales_pos").ToString + "'); "
+                                            execute_non_query(qib, True, "", "", "", "")
+                                        End If
                                     End If
                                 Catch ex As Exception
+                                    cmos.insertLog(sch_input, "err_stt_bli;ol_id:" + dbl.Rows(b)("ol_store_id").ToString + ";" + ex.ToString + "")
                                 End Try
                             Next
 
                             'blibli ror
                             cmos.insertLog(sch_input, "sync ROR : blibli")
                             Dim bliror As New ClassBliApi()
-                            bliror.get_ror_list()
+                            Try
+                                bliror.get_ror_list()
+                            Catch ex As Exception
+                                cmos.insertLog(sch_input, "err_ror_bli;" + ex.ToString)
+                            End Try
+
 
                             'action set return
                             cmos.insertLog(sch_input, "set status returned : blibli")
-                            bliror.set_to_returned()
+                            Try
+                                bliror.set_to_returned()
+                            Catch ex As Exception
+                                cmos.insertLog(sch_input, "err_set_returned_bli;" + ex.ToString)
+                            End Try
+
 
                             'processing auto cn/ror
-                            cmos.insertLog(sch_input, "auto cn & ror")
-
+                            If get_opt_scheduler_field("is_active_auto_cn_ror").ToString = "1" Then
+                                cmos.insertLog(sch_input, "auto cn & ror")
+                                Try
+                                    Dim qcr As String = "SELECT olr.id_sales_order, olr.id_sales_pos, olr.order_number
+                                    FROM tb_ol_store_return_order olr
+                                    WHERE olr.is_process=2 AND !ISNULL(olr.id_sales_order) AND !ISNULL(olr.id_sales_pos)
+                                    GROUP BY olr.id_sales_order, olr.id_sales_pos
+                                    ORDER BY olr.created_date ASC "
+                                    Dim dcr As DataTable = execute_query(qcr, -1, True, "", "", "", "")
+                                    For c As Integer = 0 To dcr.Rows.Count - 1
+                                        cmos.insertLog(sch_input, "auto_cn_ror_" + dcr.Rows(c)("order_number").ToString)
+                                        execute_non_query_long("CALL create_ol_store_cn_ror(" + dcr.Rows(c)("id_sales_order").ToString + ", " + dcr.Rows(c)("id_sales_pos").ToString + "); ", True, "", "", "", "")
+                                    Next
+                                Catch ex As Exception
+                                    cmos.insertLog(sch_input, "err_cn_ror;" + ex.ToString)
+                                End Try
+                            End If
                             cmos.insertLog(sch_input, "end")
                         End If
                     End If

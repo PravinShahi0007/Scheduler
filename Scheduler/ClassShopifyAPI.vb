@@ -250,4 +250,9 @@
     Private Sub set_process_closed_order(ByVal par As String)
         execute_non_query("UPDATE tb_opt_scheduler SET is_process_vios_close_fail_order=" + par + "; ", True, "", "", "", "")
     End Sub
+
+    Sub orderFailLog(ByVal log_par As String)
+        Dim query As String = "INSERT INTO tb_ol_store_order_fail_log(log_date, log_note) VALUES(NOW(),'" + addSlashes(log_par) + "'); "
+        execute_non_query(query, True, "", "", "", "")
+    End Sub
 End Class
