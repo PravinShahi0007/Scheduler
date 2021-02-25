@@ -103,6 +103,14 @@ Partial Class FormScheduler
         Me.GridColumn9 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.PanelControl4 = New DevExpress.XtraEditors.PanelControl()
         Me.BtnRefMOS = New DevExpress.XtraEditors.SimpleButton()
+        Me.XTPQC = New DevExpress.XtraTab.XtraTabPage()
+        Me.XTPPolis = New DevExpress.XtraTab.XtraTabPage()
+        Me.BQC = New DevExpress.XtraEditors.SimpleButton()
+        Me.Label14 = New System.Windows.Forms.Label()
+        Me.TEQC = New DevExpress.XtraEditors.TimeEdit()
+        Me.BPolis = New DevExpress.XtraEditors.SimpleButton()
+        Me.Label15 = New System.Windows.Forms.Label()
+        Me.TEPolis = New DevExpress.XtraEditors.TimeEdit()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -146,6 +154,10 @@ Partial Class FormScheduler
         CType(Me.GVMOS, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.PanelControl4, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl4.SuspendLayout()
+        Me.XTPQC.SuspendLayout()
+        Me.XTPPolis.SuspendLayout()
+        CType(Me.TEQC.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.TEPolis.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Timer
@@ -324,7 +336,7 @@ Partial Class FormScheduler
         Me.XtraTabControl1.SelectedTabPage = Me.XTPSchedule
         Me.XtraTabControl1.Size = New System.Drawing.Size(878, 189)
         Me.XtraTabControl1.TabIndex = 6
-        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail, Me.XTPWarningLate, Me.XTPGetKurs, Me.XTPFailOrder, Me.XTPSalesReturn, Me.XTPMarketplaceOrderStt})
+        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail, Me.XTPWarningLate, Me.XTPGetKurs, Me.XTPFailOrder, Me.XTPSalesReturn, Me.XTPMarketplaceOrderStt, Me.XTPQC, Me.XTPPolis})
         '
         'XTPSchedule
         '
@@ -873,6 +885,78 @@ Partial Class FormScheduler
         Me.BtnRefMOS.TabIndex = 21
         Me.BtnRefMOS.Text = "Refresh"
         '
+        'XTPQC
+        '
+        Me.XTPQC.Controls.Add(Me.BQC)
+        Me.XTPQC.Controls.Add(Me.Label14)
+        Me.XTPQC.Controls.Add(Me.TEQC)
+        Me.XTPQC.Name = "XTPQC"
+        Me.XTPQC.Size = New System.Drawing.Size(872, 161)
+        Me.XTPQC.Text = "QC"
+        '
+        'XTPPolis
+        '
+        Me.XTPPolis.Controls.Add(Me.BPolis)
+        Me.XTPPolis.Controls.Add(Me.Label15)
+        Me.XTPPolis.Controls.Add(Me.TEPolis)
+        Me.XTPPolis.Name = "XTPPolis"
+        Me.XTPPolis.Size = New System.Drawing.Size(872, 161)
+        Me.XTPPolis.Text = "Polis"
+        '
+        'BQC
+        '
+        Me.BQC.Location = New System.Drawing.Point(221, 13)
+        Me.BQC.Name = "BQC"
+        Me.BQC.Size = New System.Drawing.Size(66, 23)
+        Me.BQC.TabIndex = 16
+        Me.BQC.Text = "Save"
+        '
+        'Label14
+        '
+        Me.Label14.AutoSize = True
+        Me.Label14.Location = New System.Drawing.Point(11, 18)
+        Me.Label14.Name = "Label14"
+        Me.Label14.Size = New System.Drawing.Size(98, 13)
+        Me.Label14.TabIndex = 15
+        Me.Label14.Text = "Daily Reminder at :"
+        '
+        'TEQC
+        '
+        Me.TEQC.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
+        Me.TEQC.Location = New System.Drawing.Point(115, 15)
+        Me.TEQC.Name = "TEQC"
+        Me.TEQC.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.TEQC.Properties.Mask.EditMask = "HH:mm:ss"
+        Me.TEQC.Size = New System.Drawing.Size(100, 20)
+        Me.TEQC.TabIndex = 14
+        '
+        'BPolis
+        '
+        Me.BPolis.Location = New System.Drawing.Point(221, 13)
+        Me.BPolis.Name = "BPolis"
+        Me.BPolis.Size = New System.Drawing.Size(66, 23)
+        Me.BPolis.TabIndex = 16
+        Me.BPolis.Text = "Save"
+        '
+        'Label15
+        '
+        Me.Label15.AutoSize = True
+        Me.Label15.Location = New System.Drawing.Point(11, 18)
+        Me.Label15.Name = "Label15"
+        Me.Label15.Size = New System.Drawing.Size(98, 13)
+        Me.Label15.TabIndex = 15
+        Me.Label15.Text = "Daily Reminder at :"
+        '
+        'TEPolis
+        '
+        Me.TEPolis.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
+        Me.TEPolis.Location = New System.Drawing.Point(115, 15)
+        Me.TEPolis.Name = "TEPolis"
+        Me.TEPolis.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.TEPolis.Properties.Mask.EditMask = "HH:mm:ss"
+        Me.TEPolis.Size = New System.Drawing.Size(100, 20)
+        Me.TEPolis.TabIndex = 14
+        '
         'FormScheduler
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -940,6 +1024,12 @@ Partial Class FormScheduler
         CType(Me.GVMOS, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.PanelControl4, System.ComponentModel.ISupportInitialize).EndInit()
         Me.PanelControl4.ResumeLayout(False)
+        Me.XTPQC.ResumeLayout(False)
+        Me.XTPQC.PerformLayout()
+        Me.XTPPolis.ResumeLayout(False)
+        Me.XTPPolis.PerformLayout()
+        CType(Me.TEQC.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.TEPolis.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1026,4 +1116,12 @@ Partial Class FormScheduler
     Friend WithEvents GridColumn9 As DevExpress.XtraGrid.Columns.GridColumn
     Friend WithEvents PanelControl4 As DevExpress.XtraEditors.PanelControl
     Friend WithEvents BtnRefMOS As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents XTPQC As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents XTPPolis As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents BQC As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents Label14 As Label
+    Friend WithEvents TEQC As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents BPolis As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents Label15 As Label
+    Friend WithEvents TEPolis As DevExpress.XtraEditors.TimeEdit
 End Class

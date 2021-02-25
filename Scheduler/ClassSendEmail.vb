@@ -733,6 +733,357 @@ Public Class ClassSendEmail
         Return body_temp
     End Function
 
+    Sub send_mail_qc()
+        Dim is_ssl = get_setup_field("system_email_is_ssl").ToString
+        Dim client As SmtpClient = New SmtpClient()
+        If is_ssl = "1" Then
+            client.Port = get_setup_field("system_email_ssl_port").ToString
+            client.DeliveryMethod = SmtpDeliveryMethod.Network
+            client.UseDefaultCredentials = False
+            client.Host = get_setup_field("system_email_ssl_server").ToString
+            client.EnableSsl = True
+            client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email_ssl").ToString, get_setup_field("system_email_ssl_pass").ToString)
+        Else
+            client.Port = get_setup_field("system_email_port").ToString
+            client.DeliveryMethod = SmtpDeliveryMethod.Network
+            client.UseDefaultCredentials = False
+            client.Host = get_setup_field("system_email_server").ToString
+            client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email").ToString, get_setup_field("system_email_pass").ToString)
+        End If
+
+        Dim Report As New ReportReturnOut()
+        Report.LReminderDate.Text = Date.Parse(Now().ToString).ToString("dd MMMM yyyy")
+
+        ' Create a new memory stream and export the report into it as XLS.
+        Dim Mem As New MemoryStream()
+        Report.ExportToXls(Mem)
+
+        ' Create a new attachment and put the XLS report into it.
+        Mem.Seek(0, SeekOrigin.Begin)
+        '
+        Dim Att = New Attachment(Mem, "Return Out Reminder (" & Now.ToString("dd MMMM yyyy") & ").xls", "application/ms-excel")
+        '
+        Dim from_mail As MailAddress = New MailAddress("system@volcom.co.id", "Return Out Reminder - Volcom ERP")
+        Dim mail As MailMessage = New MailMessage()
+        mail.From = from_mail
+        mail.Attachments.Add(Att)
+        'Send to
+        Dim query_send_to As String = "SELECT emp.`email_external`,emp.`employee_name` 
+            FROM tb_mail_to md
+            INNER JOIN tb_m_user usr ON usr.`id_user`=md.id_user
+            INNER JOIN tb_m_employee emp ON emp.`id_employee`=usr.`id_employee`
+            WHERE is_to='1' AND md.report_mark_type=296 "
+        Dim data_send_to As DataTable = execute_query(query_send_to, -1, True, "", "", "", "")
+        For i As Integer = 0 To data_send_to.Rows.Count - 1
+            If Not data_send_to.Rows(i)("email_external").ToString = "" Then
+                Dim to_mail As MailAddress = New MailAddress(data_send_to.Rows(i)("email_external").ToString, data_send_to.Rows(i)("employee_name").ToString)
+                mail.To.Add(to_mail)
+            End If
+        Next
+        'CC
+        Dim query_send_cc As String = "SELECT emp.`email_external`,emp.`employee_name` 
+            FROM tb_mail_to md
+            INNER JOIN tb_m_user usr ON usr.`id_user`=md.id_user
+            INNER JOIN tb_m_employee emp ON emp.`id_employee`=usr.`id_employee`
+            WHERE is_to='2' AND md.report_mark_type=296 "
+        Dim data_send_cc As DataTable = execute_query(query_send_cc, -1, True, "", "", "", "")
+        For i As Integer = 0 To data_send_cc.Rows.Count - 1
+            If Not data_send_cc.Rows(i)("email_external").ToString = "" Then
+                Dim cc_mail As MailAddress = New MailAddress(data_send_cc.Rows(i)("email_external").ToString, data_send_cc.Rows(i)("employee_name").ToString)
+                mail.CC.Add(cc_mail)
+            End If
+        Next
+
+        Dim qmail As String = "SELECT SUM(CASE WHEN tem.overdue > 0 THEN 1 ELSE 0 END) AS jml_overdue,SUM(CASE WHEN tem.overdue <= 0 THEN 1 ELSE 0 END) AS jml_overdue_soon
+FROM
+(
+SELECT h.id_report_status, h.report_status, a.id_prod_order_ret_out, a.prod_order_ret_out_date, a.prod_order_ret_out_due_date, a.prod_order_ret_out_note,  
+a.prod_order_ret_out_number , b.prod_order_number, c.id_season, c.season, CONCAT(e.comp_number,' - ',e.comp_name) AS comp_from, CONCAT(g.comp_number,' - ',g.comp_name) AS comp_to, dsg.design_code AS `code`, dsg.design_display_name AS `name`, SUM(ad.prod_order_ret_out_det_qty) AS `qty` 
+,IFNULL(retin.qty_ret_in,0) AS qty_retin
+,SUM(ad.prod_order_ret_out_det_qty)-IFNULL(retin.qty_ret_in,0) AS diff_qty
+,DATEDIFF(DATE(NOW()),a.`prod_order_ret_out_due_date`) AS overdue
+FROM tb_prod_order_ret_out a 
+INNER JOIN tb_prod_order_ret_out_det ad ON ad.id_prod_order_ret_out = a.id_prod_order_ret_out 
+INNER JOIN tb_prod_order b ON a.id_prod_order = b.id_prod_order 
+INNER JOIN tb_prod_demand_design b1 ON b.id_prod_demand_design = b1.id_prod_demand_design 
+INNER JOIN tb_m_design dsg ON dsg.id_design = b1.id_design 
+INNER JOIN tb_prod_demand b2 ON b2.id_prod_demand = b1.id_prod_demand 
+INNER JOIN tb_season c ON b2.id_season = c.id_season 
+INNER JOIN tb_m_comp_contact d ON d.id_comp_contact = a.id_comp_contact_from 
+INNER JOIN tb_m_comp e ON d.id_comp = e.id_comp 
+INNER JOIN tb_m_comp_contact f ON f.id_comp_contact = a.id_comp_contact_to 
+INNER JOIN tb_m_comp g ON f.id_comp = g.id_comp 
+INNER JOIN tb_lookup_report_status h ON a.id_report_status = h.id_report_status 
+LEFT JOIN 
+(
+	SELECT id_prod_order_ret_out,SUM(prod_order_ret_in_det_qty) AS qty_ret_in
+	FROM `tb_prod_order_ret_in_det` retid
+	INNER JOIN `tb_prod_order_ret_in` reti ON reti.`id_prod_order_ret_in`=retid.`id_prod_order_ret_in`
+	WHERE reti.`id_report_status`!=5
+	GROUP BY reti.`id_prod_order_ret_out`
+)retin ON retin.id_prod_order_ret_out=a.`id_prod_order_ret_out`
+WHERE a.`prod_order_ret_out_due_date` >= '2020-07-01' AND a.`prod_order_ret_out_due_date` <= DATE_ADD(DATE(NOW()),INTERVAL 3 DAY) AND a.`id_report_status`=6
+GROUP BY a.id_prod_order_ret_out 
+HAVING qty > qty_retin
+ORDER BY a.id_prod_order_ret_out DESC
+) tem"
+        Dim dtmail As DataTable = execute_query(qmail, -1, True, "", "", "", "")
+
+        mail.Subject = "Return Out Reminder (" & Now.ToString("dd MMMM yyyy") & ")"
+        mail.IsBodyHtml = True
+        mail.Body = email_qc(dtmail.Rows(0)("jml_overdue").ToString, dtmail.Rows(0)("jml_overdue_soon").ToString)
+        client.Send(mail)
+        '
+        Report.Dispose()
+        Mem.Dispose()
+        Att.Dispose()
+        mail.Dispose()
+        client.Dispose()
+
+        'log
+        Dim query_log As String = "INSERT INTO tb_scheduler_prod_log(id_log_type,`datetime`,log) VALUES('1',NOW(),'Sending Return Out Reminder')"
+        execute_non_query(query_log, True, "", "", "", "")
+    End Sub
+
+    Function email_qc(ByVal jml_return_out_due As String, ByVal jml_return_out_due_soon As String)
+        Dim body_temp As String = ""
+        '
+        body_temp = "<table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='100%' style='width:100.0%;background:#eeeeee'>
+                     <tbody><tr>
+                      <td style='padding:30.0pt 30.0pt 30.0pt 30.0pt'>
+                      <div align='center'>
+
+                      <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:6.25in;background:white'>
+                       <tbody><tr>
+                        <td style='padding:0in 0in 0in 0in'></td>
+                       </tr>
+                       <tr>
+                        <td style='padding:0in 0in 0in 0in'>
+                        <p class='MsoNormal' align='center' style='text-align:center'><a href='http://www.volcom.co.id/' title='Volcom' target='_blank' data-saferedirecturl='https://www.google.com/url?hl=en&amp;q=http://www.volcom.co.id/&amp;source=gmail&amp;ust=1480121870771000&amp;usg=AFQjCNEjXvEZWgDdR-Wlke7nn0fmc1ZUuA'><span style='text-decoration:none'><img border='0' width='180' id='m_1811720018273078822_x0000_i1025' src='https://ci3.googleusercontent.com/proxy/x-zXDZUS-2knkEkbTh3HzgyAAusw1Wz7dqV-lbnl39W_4F6T97fJ2_b9doP3nYi0B6KHstdb-tK8VAF_kOaLt2OH=s0-d-e1-ft#http://www.volcom.co.id/enews/img/volcom.jpg' alt='Volcom' class='CToWUd'></span></a><u></u><u></u></p>
+                        </td>
+                       </tr>
+                       <tr>
+                        <td style='padding:0in 0in 0in 0in'></td>
+                       </tr>
+                       <tr>
+                        <td style='padding:0in 0in 0in 0in'>
+                        <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:6.25in;background:white'>
+                         <tbody><tr>
+                          <td style='padding:0in 0in 0in 0in'>
+
+                          </td>
+                         </tr>
+                        </tbody></table>
+                        <p class='MsoNormal' style='background-color:#eff0f1'><span style='display:block;background-color:#eff0f1;height: 5px;'><u></u>&nbsp;<u></u></span></p>
+                        <p class='MsoNormal'><span style='display:none'><u></u>&nbsp;<u></u></span></p>
+                        <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' style='background:white'>
+                         <tbody><tr>
+                          <td style='padding:15.0pt 15.0pt 15.0pt 15.0pt'>
+                          <div>
+                          <p class='MsoNormal' style='line-height:14.25pt'><b><span style='font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>Dear Team,</span></b><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'><u></u><u></u></span></p>
+                          <p class='MsoNormal' style='line-height:14.25pt'><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'>This is daily reminder for outstanding Return Out.
+                          "
+        If Not jml_return_out_due.ToString = "0" Then
+            body_temp += "<br/> - " & jml_return_out_due & " overdue return out."
+        End If
+        If Not jml_return_out_due_soon.ToString = "0" Then
+            body_temp += "<br/> - " & jml_return_out_due_soon & " return out will due soon."
+        End If
+        body_temp += "<br/>Make sure to follow up immediately. Please see attachment for detail.
+                    <u></u><u></u></span></p>
+                          <p class='MsoNormal' style='line-height:14.25pt'><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'>Thank you<br /><b>Volcom ERP</b><u></u><u></u></span></p>
+
+                          </div>
+                          </div>
+                          </td>
+                         </tr>
+                        </tbody></table>
+                        <p class='MsoNormal' style='background-color:#eff0f1'><span style='display:block;height: 10px;'><u></u>&nbsp;<u></u></span></p>
+                        <p class='MsoNormal'><span style='display:none'><u></u>&nbsp;<u></u></span></p>
+                        <div align='center'>
+                        <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' style='background:white'>
+                         <tbody><tr>
+                          <td style='padding:6.0pt 6.0pt 6.0pt 6.0pt;text-align:center;'>
+                            <span style='text-align:center;font-size:7.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#a0a0a0;letter-spacing:.4pt;'>This email send directly from system. Do not reply.</b><u></u><u></u></span>
+                          <p class='MsoNormal' align='center' style='margin-bottom:12.0pt;text-align:center;padding-top:0px;'><img border='0' width='300' id='m_1811720018273078822_x0000_i1028' src='https://ci6.googleusercontent.com/proxy/xq6o45mp_D9Z7DHCK5WT7GKuQ2QDaLg1hyMxoHX5ofUIv_m7GwasoczpbAOn6l6Ze-UfLuIUAndSokPvO633nnO9=s0-d-e1-ft#http://www.volcom.co.id/enews/img/footer.jpg' class='CToWUd'><u></u><u></u></p>
+                          </td>
+                         </tr>
+                        </tbody></table>
+                        </div>
+                        </td>
+                       </tr>
+                      </tbody></table>
+                      </div>
+                      </td>
+                     </tr>
+                    </tbody></table>"
+        Return body_temp
+    End Function
+
+    Sub send_mail_polis()
+        Dim is_ssl = get_setup_field("system_email_is_ssl").ToString
+        Dim client As SmtpClient = New SmtpClient()
+        If is_ssl = "1" Then
+            client.Port = get_setup_field("system_email_ssl_port").ToString
+            client.DeliveryMethod = SmtpDeliveryMethod.Network
+            client.UseDefaultCredentials = False
+            client.Host = get_setup_field("system_email_ssl_server").ToString
+            client.EnableSsl = True
+            client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email_ssl").ToString, get_setup_field("system_email_ssl_pass").ToString)
+        Else
+            client.Port = get_setup_field("system_email_port").ToString
+            client.DeliveryMethod = SmtpDeliveryMethod.Network
+            client.UseDefaultCredentials = False
+            client.Host = get_setup_field("system_email_server").ToString
+            client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email").ToString, get_setup_field("system_email_pass").ToString)
+        End If
+
+        Dim Report As New ReportPolis()
+        Report.LReminderDate.Text = Date.Parse(Now().ToString).ToString("dd MMMM yyyy")
+
+        ' Create a new memory stream and export the report into it as XLS.
+        Dim Mem As New MemoryStream()
+        Report.ExportToXls(Mem)
+
+        ' Create a new attachment and put the XLS report into it.
+        Mem.Seek(0, SeekOrigin.Begin)
+        '
+        Dim Att = New Attachment(Mem, "Polis Reminder (" & Now.ToString("dd MMMM yyyy") & ").xls", "application/ms-excel")
+        '
+        Dim from_mail As MailAddress = New MailAddress("system@volcom.co.id", "Polis Reminder - Volcom ERP")
+        Dim mail As MailMessage = New MailMessage()
+        mail.From = from_mail
+        mail.Attachments.Add(Att)
+        'Send to
+        Dim query_send_to As String = "SELECT emp.`email_external`,emp.`employee_name` 
+            FROM tb_mail_to md
+            INNER JOIN tb_m_user usr ON usr.`id_user`=md.id_user
+            INNER JOIN tb_m_employee emp ON emp.`id_employee`=usr.`id_employee`
+            WHERE is_to='1' AND md.report_mark_type=297 "
+        Dim data_send_to As DataTable = execute_query(query_send_to, -1, True, "", "", "", "")
+        For i As Integer = 0 To data_send_to.Rows.Count - 1
+            If Not data_send_to.Rows(i)("email_external").ToString = "" Then
+                Dim to_mail As MailAddress = New MailAddress(data_send_to.Rows(i)("email_external").ToString, data_send_to.Rows(i)("employee_name").ToString)
+                mail.To.Add(to_mail)
+            End If
+        Next
+        'CC
+        Dim query_send_cc As String = "SELECT emp.`email_external`,emp.`employee_name` 
+            FROM tb_mail_to md
+            INNER JOIN tb_m_user usr ON usr.`id_user`=md.id_user
+            INNER JOIN tb_m_employee emp ON emp.`id_employee`=usr.`id_employee`
+            WHERE is_to='2' AND md.report_mark_type=297 "
+        Dim data_send_cc As DataTable = execute_query(query_send_cc, -1, True, "", "", "", "")
+        For i As Integer = 0 To data_send_cc.Rows.Count - 1
+            If Not data_send_cc.Rows(i)("email_external").ToString = "" Then
+                Dim cc_mail As MailAddress = New MailAddress(data_send_cc.Rows(i)("email_external").ToString, data_send_cc.Rows(i)("employee_name").ToString)
+                mail.CC.Add(cc_mail)
+            End If
+        Next
+
+        Dim qmail As String = "SELECT SUM(CASE WHEN tem.expired_in <= 0 THEN 1 ELSE 0 END) AS jml_expired,SUM(CASE WHEN tem.expired_in > 0 THEN 1 ELSE 0 END) AS jml_expired_soon
+FROM
+(
+SELECT p.id_polis,DATEDIFF(p.end_date,DATE(NOW())) AS expired_in,pol_by.comp_name AS comp_name_polis,CONCAT(c.comp_number,' - ',c.`comp_name`) AS polis_object,c.`address_primary` AS polis_object_location,pd.`number` AS polis_number,pd.`description` AS polis_untuk,pd.`premi`,p.`start_date`,p.`end_date` 
+FROM tb_polis_det pd
+INNER JOIN tb_polis p ON p.`id_polis`=pd.`id_polis`
+INNER JOIN tb_m_comp c ON c.`id_comp`=p.`id_reff` AND p.`id_polis_cat`=1
+INNER JOIN tb_m_comp pol_by ON pol_by.id_comp=p.id_polis_by
+WHERE p.`is_active`=1 AND DATEDIFF(p.end_date,DATE(NOW()))<45
+) tem"
+        Dim dtmail As DataTable = execute_query(qmail, -1, True, "", "", "", "")
+
+        mail.Subject = "Polis Reminder (" & Now.ToString("dd MMMM yyyy") & ")"
+        mail.IsBodyHtml = True
+        mail.Body = email_polis(dtmail.Rows(0)("jml_expired").ToString, dtmail.Rows(0)("jml_expired_soon").ToString)
+        client.Send(mail)
+        '
+        Report.Dispose()
+        Mem.Dispose()
+        Att.Dispose()
+        mail.Dispose()
+        client.Dispose()
+
+        'log
+        Dim query_log As String = "INSERT INTO tb_scheduler_prod_log(id_log_type,`datetime`,log) VALUES('1',NOW(),'Sending Polis Reminder')"
+        execute_non_query(query_log, True, "", "", "", "")
+    End Sub
+
+    Function email_polis(ByVal jml_expired As String, ByVal jml_expired_soon As String)
+        Dim body_temp As String = ""
+        '
+        body_temp = "<table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='100%' style='width:100.0%;background:#eeeeee'>
+                     <tbody><tr>
+                      <td style='padding:30.0pt 30.0pt 30.0pt 30.0pt'>
+                      <div align='center'>
+
+                      <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:6.25in;background:white'>
+                       <tbody><tr>
+                        <td style='padding:0in 0in 0in 0in'></td>
+                       </tr>
+                       <tr>
+                        <td style='padding:0in 0in 0in 0in'>
+                        <p class='MsoNormal' align='center' style='text-align:center'><a href='http://www.volcom.co.id/' title='Volcom' target='_blank' data-saferedirecturl='https://www.google.com/url?hl=en&amp;q=http://www.volcom.co.id/&amp;source=gmail&amp;ust=1480121870771000&amp;usg=AFQjCNEjXvEZWgDdR-Wlke7nn0fmc1ZUuA'><span style='text-decoration:none'><img border='0' width='180' id='m_1811720018273078822_x0000_i1025' src='https://ci3.googleusercontent.com/proxy/x-zXDZUS-2knkEkbTh3HzgyAAusw1Wz7dqV-lbnl39W_4F6T97fJ2_b9doP3nYi0B6KHstdb-tK8VAF_kOaLt2OH=s0-d-e1-ft#http://www.volcom.co.id/enews/img/volcom.jpg' alt='Volcom' class='CToWUd'></span></a><u></u><u></u></p>
+                        </td>
+                       </tr>
+                       <tr>
+                        <td style='padding:0in 0in 0in 0in'></td>
+                       </tr>
+                       <tr>
+                        <td style='padding:0in 0in 0in 0in'>
+                        <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:6.25in;background:white'>
+                         <tbody><tr>
+                          <td style='padding:0in 0in 0in 0in'>
+
+                          </td>
+                         </tr>
+                        </tbody></table>
+                        <p class='MsoNormal' style='background-color:#eff0f1'><span style='display:block;background-color:#eff0f1;height: 5px;'><u></u>&nbsp;<u></u></span></p>
+                        <p class='MsoNormal'><span style='display:none'><u></u>&nbsp;<u></u></span></p>
+                        <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' style='background:white'>
+                         <tbody><tr>
+                          <td style='padding:15.0pt 15.0pt 15.0pt 15.0pt'>
+                          <div>
+                          <p class='MsoNormal' style='line-height:14.25pt'><b><span style='font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>Dear Team,</span></b><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'><u></u><u></u></span></p>
+                          <p class='MsoNormal' style='line-height:14.25pt'><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'>This is daily reminder for Polis Asuransi.
+                          "
+        If Not jml_expired.ToString = "0" Then
+            body_temp += "<br/> - " & jml_expired & " expired polis."
+        End If
+        If Not jml_expired_soon.ToString = "0" Then
+            body_temp += "<br/> - " & jml_expired_soon & " polis expired soon."
+        End If
+        body_temp += "<br/>Make sure to follow up immediately. Please see attachment for detail.
+                    <u></u><u></u></span></p>
+                          <p class='MsoNormal' style='line-height:14.25pt'><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'>Thank you<br /><b>Volcom ERP</b><u></u><u></u></span></p>
+
+                          </div>
+                          </div>
+                          </td>
+                         </tr>
+                        </tbody></table>
+                        <p class='MsoNormal' style='background-color:#eff0f1'><span style='display:block;height: 10px;'><u></u>&nbsp;<u></u></span></p>
+                        <p class='MsoNormal'><span style='display:none'><u></u>&nbsp;<u></u></span></p>
+                        <div align='center'>
+                        <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' style='background:white'>
+                         <tbody><tr>
+                          <td style='padding:6.0pt 6.0pt 6.0pt 6.0pt;text-align:center;'>
+                            <span style='text-align:center;font-size:7.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#a0a0a0;letter-spacing:.4pt;'>This email send directly from system. Do not reply.</b><u></u><u></u></span>
+                          <p class='MsoNormal' align='center' style='margin-bottom:12.0pt;text-align:center;padding-top:0px;'><img border='0' width='300' id='m_1811720018273078822_x0000_i1028' src='https://ci6.googleusercontent.com/proxy/xq6o45mp_D9Z7DHCK5WT7GKuQ2QDaLg1hyMxoHX5ofUIv_m7GwasoczpbAOn6l6Ze-UfLuIUAndSokPvO633nnO9=s0-d-e1-ft#http://www.volcom.co.id/enews/img/footer.jpg' class='CToWUd'><u></u><u></u></p>
+                          </td>
+                         </tr>
+                        </tbody></table>
+                        </div>
+                        </td>
+                       </tr>
+                      </tbody></table>
+                      </div>
+                      </td>
+                     </tr>
+                    </tbody></table>"
+        Return body_temp
+    End Function
+
     Function emailOnHold(ByVal to_par As String, ByVal content_par As String, ByVal dt_par As DataTable)
         Dim body_temp As String = "<table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='100%' style='width:100.0%;background:#eeeeee'>
             <tbody><tr>

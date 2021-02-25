@@ -103,10 +103,16 @@
             'marketplace order status
             load_schedule_mos()
 
+            load_qc()
+
+            load_polis()
+
             start_timer()
             WindowState = FormWindowState.Minimized
         End If
     End Sub
+
+
 
     Function get_opt_scheduler_field(ByVal field As String)
         'opt as var choose field
@@ -129,6 +135,21 @@
 
         TETimeDuty.EditValue = data.Rows(0)("prod_duty_time")
     End Sub
+
+    Sub load_qc()
+        Dim query As String = "SELECT qc_time FROM tb_opt_scheduler LIMIT 1"
+        Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+
+        TEQC.EditValue = data.Rows(0)("qc_time")
+    End Sub
+
+    Sub load_polis()
+        Dim query As String = "SELECT polis_time FROM tb_opt_scheduler LIMIT 1"
+        Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+
+        TEPolis.EditValue = data.Rows(0)("polis_time")
+    End Sub
+
     Sub load_schedule_monthly_leave_report()
         Dim query As String = ""
         query = "SELECT time_stock_leave FROM tb_opt_scheduler LIMIT 1"
@@ -449,6 +470,67 @@
                 'Sales Return Order
                 If Date.Parse(TESalesReturnOrder.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
                     ClassSalesReturnOrder.check_empty_pickup_date()
+                End If
+            End If
+
+            'qc
+            If get_opt_scheduler_field("is_active_qc").ToString = "1" Then
+                'Return Out reminder
+                If Date.Parse(TEQC.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                    Dim qqc As String = "SELECT h.id_report_status, h.report_status, a.id_prod_order_ret_out, a.prod_order_ret_out_date, a.prod_order_ret_out_due_date, a.prod_order_ret_out_note,  
+            a.prod_order_ret_out_number , b.prod_order_number, c.id_season, c.season, CONCAT(e.comp_number,' - ',e.comp_name) AS comp_from, CONCAT(g.comp_number,' - ',g.comp_name) AS comp_to, dsg.design_code AS `code`, dsg.design_display_name AS `name`, SUM(ad.prod_order_ret_out_det_qty) AS `qty` 
+            ,IFNULL(retin.qty_ret_in,0) AS qty_retin
+            ,SUM(ad.prod_order_ret_out_det_qty)-IFNULL(retin.qty_ret_in,0) AS diff_qty
+            ,DATEDIFF(DATE(NOW()),a.`prod_order_ret_out_due_date`) AS overdue
+            FROM tb_prod_order_ret_out a 
+            INNER JOIN tb_prod_order_ret_out_det ad ON ad.id_prod_order_ret_out = a.id_prod_order_ret_out 
+            INNER JOIN tb_prod_order b ON a.id_prod_order = b.id_prod_order 
+            INNER JOIN tb_prod_demand_design b1 ON b.id_prod_demand_design = b1.id_prod_demand_design 
+            INNER JOIN tb_m_design dsg ON dsg.id_design = b1.id_design 
+            INNER JOIN tb_prod_demand b2 ON b2.id_prod_demand = b1.id_prod_demand 
+            INNER JOIN tb_season c ON b2.id_season = c.id_season 
+            INNER JOIN tb_m_comp_contact d ON d.id_comp_contact = a.id_comp_contact_from 
+            INNER JOIN tb_m_comp e ON d.id_comp = e.id_comp 
+            INNER JOIN tb_m_comp_contact f ON f.id_comp_contact = a.id_comp_contact_to 
+            INNER JOIN tb_m_comp g ON f.id_comp = g.id_comp 
+            INNER JOIN tb_lookup_report_status h ON a.id_report_status = h.id_report_status 
+            LEFT JOIN 
+            (
+            	SELECT id_prod_order_ret_out,SUM(prod_order_ret_in_det_qty) AS qty_ret_in
+            	FROM `tb_prod_order_ret_in_det` retid
+            	INNER JOIN `tb_prod_order_ret_in` reti ON reti.`id_prod_order_ret_in`=retid.`id_prod_order_ret_in`
+            	WHERE reti.`id_report_status`!=5
+            	GROUP BY reti.`id_prod_order_ret_out`
+            )retin ON retin.id_prod_order_ret_out=a.`id_prod_order_ret_out`
+            WHERE a.`prod_order_ret_out_due_date` >= '2020-07-01' AND a.`prod_order_ret_out_due_date` <= DATE_ADD(DATE(NOW()),INTERVAL 3 DAY) AND a.`id_report_status`=6
+            GROUP BY a.id_prod_order_ret_out 
+            HAVING qty > qty_retin
+            ORDER BY a.id_prod_order_ret_out DESC"
+                    Dim dtqc As DataTable = execute_query(qqc, -1, True, "", "", "", "")
+                    If dtqc.Rows.Count > 0 Then
+                        Dim mail As ClassSendEmail = New ClassSendEmail()
+                        mail.par1 = dtqc.Rows.Count.ToString
+                        mail.send_mail_qc()
+                    End If
+                End If
+            End If
+
+            'polis
+            If get_opt_scheduler_field("is_active_polis").ToString = "1" Then
+                'Polis reminder
+                If Date.Parse(TEPolis.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                    Dim qpolis As String = "SELECT p.id_polis,DATEDIFF(p.end_date,DATE(NOW())) AS expired_in,pol_by.comp_name AS comp_name_polis,CONCAT(c.comp_number,' - ',c.`comp_name`) AS polis_object,c.`address_primary` AS polis_object_location,pd.`number` AS polis_number,pd.`description` AS polis_untuk,pd.`premi`,p.`start_date`,p.`end_date` 
+FROM tb_polis_det pd
+INNER JOIN tb_polis p ON p.`id_polis`=pd.`id_polis`
+INNER JOIN tb_m_comp c ON c.`id_comp`=p.`id_reff` AND p.`id_polis_cat`=1
+INNER JOIN tb_m_comp pol_by ON pol_by.id_comp=p.id_polis_by
+WHERE p.`is_active`=1 AND DATEDIFF(p.end_date,DATE(NOW()))<45"
+                    Dim dtpolis As DataTable = execute_query(qpolis, -1, True, "", "", "", "")
+                    If dtpolis.Rows.Count > 0 Then
+                        Dim mail As ClassSendEmail = New ClassSendEmail()
+                        mail.par1 = dtpolis.Rows.Count.ToString
+                        mail.send_mail_polis()
+                    End If
                 End If
             End If
 
