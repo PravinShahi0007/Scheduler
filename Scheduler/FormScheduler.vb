@@ -635,7 +635,7 @@ WHERE p.`is_active`=1 AND DATEDIFF(p.end_date,DATE(NOW()))<45"
                                 Try
                                     Dim qcr As String = "SELECT olr.id_sales_order, olr.id_sales_pos, olr.order_number
                                     FROM tb_ol_store_return_order olr
-                                    WHERE olr.is_process=2 AND !ISNULL(olr.id_sales_order) AND !ISNULL(olr.id_sales_pos)
+                                    WHERE olr.is_process=2 AND olr.is_manual_sync=2 AND !ISNULL(olr.id_sales_order) AND !ISNULL(olr.id_sales_pos)
                                     GROUP BY olr.id_sales_order, olr.id_sales_pos
                                     ORDER BY olr.created_date ASC "
                                     Dim dcr As DataTable = execute_query(qcr, -1, True, "", "", "", "")
