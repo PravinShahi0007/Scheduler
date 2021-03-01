@@ -990,6 +990,7 @@ INNER JOIN tb_polis p ON p.`id_polis`=pd.`id_polis`
 INNER JOIN tb_m_comp c ON c.`id_comp`=p.`id_reff` AND p.`id_polis_cat`=1
 INNER JOIN tb_m_comp pol_by ON pol_by.id_comp=p.id_polis_by
 WHERE p.`is_active`=1 AND DATEDIFF(p.end_date,DATE(NOW()))<45
+GROUP BY pd.`id_polis`
 ) tem"
         Dim dtmail As DataTable = execute_query(qmail, -1, True, "", "", "", "")
 

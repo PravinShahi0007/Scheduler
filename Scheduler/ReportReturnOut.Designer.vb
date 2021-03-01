@@ -31,7 +31,7 @@ Partial Public Class ReportReturnOut
         Me.GridColumn7 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn9 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn10 = New DevExpress.XtraGrid.Columns.GridColumn()
-        Me.GridColumn14 = New DevExpress.XtraGrid.Columns.GridColumn()
+        Me.GridColumnRetIn = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn1 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn2 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn3 = New DevExpress.XtraGrid.Columns.GridColumn()
@@ -74,10 +74,10 @@ Partial Public Class ReportReturnOut
         '
         'GVTemp
         '
-        Me.GVTemp.Columns.AddRange(New DevExpress.XtraGrid.Columns.GridColumn() {Me.ColRetOutNumber, Me.ColShipTo, Me.ColRecDate, Me.ColDueDate, Me.ColPSONumber, Me.GridColumn7, Me.GridColumn9, Me.GridColumn10, Me.GridColumn14, Me.GridColumn1, Me.GridColumn2, Me.GridColumn3})
+        Me.GVTemp.Columns.AddRange(New DevExpress.XtraGrid.Columns.GridColumn() {Me.ColRetOutNumber, Me.ColShipTo, Me.ColRecDate, Me.ColDueDate, Me.ColPSONumber, Me.GridColumn7, Me.GridColumn9, Me.GridColumn10, Me.GridColumnRetIn, Me.GridColumn1, Me.GridColumn2, Me.GridColumn3})
         Me.GVTemp.GridControl = Me.GCTemp
         Me.GVTemp.GroupCount = 1
-        Me.GVTemp.GroupSummary.AddRange(New DevExpress.XtraGrid.GridSummaryItem() {New DevExpress.XtraGrid.GridGroupSummaryItem(DevExpress.Data.SummaryItemType.Sum, "qty", Me.GridColumn10, "{0:n0}")})
+        Me.GVTemp.GroupSummary.AddRange(New DevExpress.XtraGrid.GridSummaryItem() {New DevExpress.XtraGrid.GridGroupSummaryItem(DevExpress.Data.SummaryItemType.Sum, "qty", Me.GridColumn10, "{0:n0}"), New DevExpress.XtraGrid.GridGroupSummaryItem(DevExpress.Data.SummaryItemType.Sum, "qty_retin", Me.GridColumnRetIn, "{0:N0}")})
         Me.GVTemp.Name = "GVTemp"
         Me.GVTemp.OptionsBehavior.AutoExpandAllGroups = True
         Me.GVTemp.OptionsBehavior.Editable = False
@@ -162,15 +162,16 @@ Partial Public Class ReportReturnOut
         Me.GridColumn10.VisibleIndex = 5
         Me.GridColumn10.Width = 50
         '
-        'GridColumn14
+        'GridColumnRetIn
         '
-        Me.GridColumn14.Caption = "Qty Return In"
-        Me.GridColumn14.DisplayFormat.FormatString = "N0"
-        Me.GridColumn14.DisplayFormat.FormatType = DevExpress.Utils.FormatType.Numeric
-        Me.GridColumn14.FieldName = "qty_retin"
-        Me.GridColumn14.Name = "GridColumn14"
-        Me.GridColumn14.Visible = True
-        Me.GridColumn14.VisibleIndex = 6
+        Me.GridColumnRetIn.Caption = "Qty Return In"
+        Me.GridColumnRetIn.DisplayFormat.FormatString = "N0"
+        Me.GridColumnRetIn.DisplayFormat.FormatType = DevExpress.Utils.FormatType.Numeric
+        Me.GridColumnRetIn.FieldName = "qty_retin"
+        Me.GridColumnRetIn.Name = "GridColumnRetIn"
+        Me.GridColumnRetIn.Summary.AddRange(New DevExpress.XtraGrid.GridSummaryItem() {New DevExpress.XtraGrid.GridColumnSummaryItem(DevExpress.Data.SummaryItemType.Sum, "qty_retin", "{0:N0}")})
+        Me.GridColumnRetIn.Visible = True
+        Me.GridColumnRetIn.VisibleIndex = 6
         '
         'GridColumn1
         '
@@ -304,7 +305,7 @@ Partial Public Class ReportReturnOut
     Friend WithEvents GridColumn7 As DevExpress.XtraGrid.Columns.GridColumn
     Friend WithEvents GridColumn9 As DevExpress.XtraGrid.Columns.GridColumn
     Friend WithEvents GridColumn10 As DevExpress.XtraGrid.Columns.GridColumn
-    Friend WithEvents GridColumn14 As DevExpress.XtraGrid.Columns.GridColumn
+    Friend WithEvents GridColumnRetIn As DevExpress.XtraGrid.Columns.GridColumn
     Friend WithEvents GridColumn1 As DevExpress.XtraGrid.Columns.GridColumn
     Friend WithEvents GridColumn2 As DevExpress.XtraGrid.Columns.GridColumn
     Friend WithEvents GridColumn3 As DevExpress.XtraGrid.Columns.GridColumn
