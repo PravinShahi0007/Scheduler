@@ -156,7 +156,7 @@
         Dim query As String = "SELECT po_og_time FROM tb_opt_scheduler LIMIT 1"
         Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
 
-        TEPolis.EditValue = data.Rows(0)("po_og_time")
+        TEPOOG.EditValue = data.Rows(0)("po_og_time")
     End Sub
 
     Sub load_schedule_monthly_leave_report()
