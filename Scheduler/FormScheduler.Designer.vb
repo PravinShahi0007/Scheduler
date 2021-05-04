@@ -104,13 +104,17 @@ Partial Class FormScheduler
         Me.PanelControl4 = New DevExpress.XtraEditors.PanelControl()
         Me.BtnRefMOS = New DevExpress.XtraEditors.SimpleButton()
         Me.XTPQC = New DevExpress.XtraTab.XtraTabPage()
-        Me.XTPPolis = New DevExpress.XtraTab.XtraTabPage()
         Me.BQC = New DevExpress.XtraEditors.SimpleButton()
         Me.Label14 = New System.Windows.Forms.Label()
         Me.TEQC = New DevExpress.XtraEditors.TimeEdit()
+        Me.XTPPolis = New DevExpress.XtraTab.XtraTabPage()
         Me.BPolis = New DevExpress.XtraEditors.SimpleButton()
         Me.Label15 = New System.Windows.Forms.Label()
         Me.TEPolis = New DevExpress.XtraEditors.TimeEdit()
+        Me.XTPPOOG = New DevExpress.XtraTab.XtraTabPage()
+        Me.BPOOG = New DevExpress.XtraEditors.SimpleButton()
+        Me.Label16 = New System.Windows.Forms.Label()
+        Me.TEPOOG = New DevExpress.XtraEditors.TimeEdit()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -155,9 +159,11 @@ Partial Class FormScheduler
         CType(Me.PanelControl4, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl4.SuspendLayout()
         Me.XTPQC.SuspendLayout()
-        Me.XTPPolis.SuspendLayout()
         CType(Me.TEQC.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.XTPPolis.SuspendLayout()
         CType(Me.TEPolis.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.XTPPOOG.SuspendLayout()
+        CType(Me.TEPOOG.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Timer
@@ -336,7 +342,7 @@ Partial Class FormScheduler
         Me.XtraTabControl1.SelectedTabPage = Me.XTPSchedule
         Me.XtraTabControl1.Size = New System.Drawing.Size(878, 189)
         Me.XtraTabControl1.TabIndex = 6
-        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail, Me.XTPWarningLate, Me.XTPGetKurs, Me.XTPFailOrder, Me.XTPSalesReturn, Me.XTPMarketplaceOrderStt, Me.XTPQC, Me.XTPPolis})
+        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail, Me.XTPWarningLate, Me.XTPGetKurs, Me.XTPFailOrder, Me.XTPSalesReturn, Me.XTPMarketplaceOrderStt, Me.XTPQC, Me.XTPPolis, Me.XTPPOOG})
         '
         'XTPSchedule
         '
@@ -894,15 +900,6 @@ Partial Class FormScheduler
         Me.XTPQC.Size = New System.Drawing.Size(872, 161)
         Me.XTPQC.Text = "QC"
         '
-        'XTPPolis
-        '
-        Me.XTPPolis.Controls.Add(Me.BPolis)
-        Me.XTPPolis.Controls.Add(Me.Label15)
-        Me.XTPPolis.Controls.Add(Me.TEPolis)
-        Me.XTPPolis.Name = "XTPPolis"
-        Me.XTPPolis.Size = New System.Drawing.Size(872, 161)
-        Me.XTPPolis.Text = "Polis"
-        '
         'BQC
         '
         Me.BQC.Location = New System.Drawing.Point(221, 13)
@@ -930,6 +927,15 @@ Partial Class FormScheduler
         Me.TEQC.Size = New System.Drawing.Size(100, 20)
         Me.TEQC.TabIndex = 14
         '
+        'XTPPolis
+        '
+        Me.XTPPolis.Controls.Add(Me.BPolis)
+        Me.XTPPolis.Controls.Add(Me.Label15)
+        Me.XTPPolis.Controls.Add(Me.TEPolis)
+        Me.XTPPolis.Name = "XTPPolis"
+        Me.XTPPolis.Size = New System.Drawing.Size(872, 161)
+        Me.XTPPolis.Text = "Polis"
+        '
         'BPolis
         '
         Me.BPolis.Location = New System.Drawing.Point(221, 13)
@@ -956,6 +962,42 @@ Partial Class FormScheduler
         Me.TEPolis.Properties.Mask.EditMask = "HH:mm:ss"
         Me.TEPolis.Size = New System.Drawing.Size(100, 20)
         Me.TEPolis.TabIndex = 14
+        '
+        'XTPPOOG
+        '
+        Me.XTPPOOG.Controls.Add(Me.BPOOG)
+        Me.XTPPOOG.Controls.Add(Me.Label16)
+        Me.XTPPOOG.Controls.Add(Me.TEPOOG)
+        Me.XTPPOOG.Name = "XTPPOOG"
+        Me.XTPPOOG.Size = New System.Drawing.Size(872, 161)
+        Me.XTPPOOG.Text = "PO OG Reminder"
+        '
+        'BPOOG
+        '
+        Me.BPOOG.Location = New System.Drawing.Point(224, 16)
+        Me.BPOOG.Name = "BPOOG"
+        Me.BPOOG.Size = New System.Drawing.Size(66, 23)
+        Me.BPOOG.TabIndex = 19
+        Me.BPOOG.Text = "Save"
+        '
+        'Label16
+        '
+        Me.Label16.AutoSize = True
+        Me.Label16.Location = New System.Drawing.Point(14, 21)
+        Me.Label16.Name = "Label16"
+        Me.Label16.Size = New System.Drawing.Size(98, 13)
+        Me.Label16.TabIndex = 18
+        Me.Label16.Text = "Daily Reminder at :"
+        '
+        'TEPOOG
+        '
+        Me.TEPOOG.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
+        Me.TEPOOG.Location = New System.Drawing.Point(118, 18)
+        Me.TEPOOG.Name = "TEPOOG"
+        Me.TEPOOG.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.TEPOOG.Properties.Mask.EditMask = "HH:mm:ss"
+        Me.TEPOOG.Size = New System.Drawing.Size(100, 20)
+        Me.TEPOOG.TabIndex = 17
         '
         'FormScheduler
         '
@@ -1026,10 +1068,13 @@ Partial Class FormScheduler
         Me.PanelControl4.ResumeLayout(False)
         Me.XTPQC.ResumeLayout(False)
         Me.XTPQC.PerformLayout()
+        CType(Me.TEQC.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.XTPPolis.ResumeLayout(False)
         Me.XTPPolis.PerformLayout()
-        CType(Me.TEQC.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.TEPolis.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.XTPPOOG.ResumeLayout(False)
+        Me.XTPPOOG.PerformLayout()
+        CType(Me.TEPOOG.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1124,4 +1169,8 @@ Partial Class FormScheduler
     Friend WithEvents BPolis As DevExpress.XtraEditors.SimpleButton
     Friend WithEvents Label15 As Label
     Friend WithEvents TEPolis As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents XTPPOOG As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents BPOOG As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents Label16 As Label
+    Friend WithEvents TEPOOG As DevExpress.XtraEditors.TimeEdit
 End Class
