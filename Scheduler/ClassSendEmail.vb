@@ -1146,7 +1146,7 @@ GROUP BY pd.`id_polis`
             End If
         Next
 
-        Dim qmail As String = "SELECT SUM(CASE WHEN tem.expired_in <= 0 THEN 1 ELSE 0 END) AS jml_expired,SUM(CASE WHEN tem.expired_in > 0 THEN 1 ELSE 0 END) AS jml_expired_soon
+        Dim qmail As String = "SELECT SUM(CASE WHEN tem.expired_in < 0 THEN 1 ELSE 0 END) AS jml_expired,SUM(CASE WHEN tem.expired_in >= 0 THEN 1 ELSE 0 END) AS jml_expired_soon
 FROM 
 (
 SELECT po.`id_purc_order`,po.`purc_order_number`,po.`date_created`,po.`est_date_receive`,reqd.`id_item`,it.`item_desc`,reqd.`item_detail`,req.id_user_created,emp.`employee_name` AS req_by,req.`requirement_date`
