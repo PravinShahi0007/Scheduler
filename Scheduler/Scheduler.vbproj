@@ -245,6 +245,12 @@
     <Compile Include="ReportPolis.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ReportPROG.Designer.vb">
+      <DependentUpon>ReportPROG.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ReportPROG.vb">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ReportPurcOG.Designer.vb">
       <DependentUpon>ReportPurcOG.vb</DependentUpon>
     </Compile>
@@ -286,6 +292,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ReportPolis.resx">
       <DependentUpon>ReportPolis.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportPROG.resx">
+      <DependentUpon>ReportPROG.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ReportPurcOG.resx">
       <DependentUpon>ReportPurcOG.vb</DependentUpon>
