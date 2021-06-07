@@ -109,6 +109,8 @@
 
             load_po_og()
 
+            load_pr_og()
+
             start_timer()
             WindowState = FormWindowState.Minimized
         End If
@@ -157,6 +159,13 @@
         Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
 
         TEPOOG.EditValue = data.Rows(0)("po_og_time")
+    End Sub
+
+    Sub load_pr_og()
+        Dim query As String = "SELECT pr_og_time FROM tb_opt_scheduler LIMIT 1"
+        Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+
+        TEPROG.EditValue = data.Rows(0)("pr_og_time")
     End Sub
 
     Sub load_schedule_monthly_leave_report()
@@ -257,44 +266,44 @@
             'Duty Reminder
             If (Date.Parse(TETimeDuty.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
                 Dim query As String = "SELECT 
-                                                        tb.*,
-                                                        (
-                                                        tb.past_due_date + tb.soon_due + tb.pr_due
-                                                        ) AS total_notif 
-                                                    FROM
-                                                        (SELECT 
-                                                        SUM(
-                                                            IF(
-                                                     po.duty_is_pay = '2' 
-                                                     AND NOT ISNULL(po.pib_date),
-                                                     IF(DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) < 0, 1, 0),
-                                                     0
-                                                            )
-                                                        ) AS past_due_date,
-                                                        SUM(
-                                                            IF(
-                                                     po.duty_is_pay = '2'
-                                                     AND NOT ISNULL(po.pib_date),
-                                                     IF(
-                                                         DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) <= 30 
-                                                         AND DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) >= 0,
-                                                         1,
-                                                         0
-                                                     ),
-                                                     0
-                                                            )
-                                                        ) AS soon_due,
-                                                        SUM(
-                                                            IF(
-                                                     po.duty_is_pay = '2'
-                                                     AND po.duty_is_pr_proposed = '2' 
-                                                     AND NOT ISNULL(DATE_ADD(po.pib_date, INTERVAL 1 YEAR)),
-                                                     IF(DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) <= 60, 1, 0),
-                                                     0
-                                                            )
-                                                        ) AS pr_due 
-                                                        FROM
-                                                        tb_prod_order po) AS tb "
+                                                                    tb.*,
+                                                                    (
+                                                                    tb.past_due_date + tb.soon_due + tb.pr_due
+                                                                    ) AS total_notif 
+                                                                FROM
+                                                                    (SELECT 
+                                                                    SUM(
+                                                                        IF(
+                                                                 po.duty_is_pay = '2' 
+                                                                 AND NOT ISNULL(po.pib_date),
+                                                                 IF(DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) < 0, 1, 0),
+                                                                 0
+                                                                        )
+                                                                    ) AS past_due_date,
+                                                                    SUM(
+                                                                        IF(
+                                                                 po.duty_is_pay = '2'
+                                                                 AND NOT ISNULL(po.pib_date),
+                                                                 IF(
+                                                                     DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) <= 30 
+                                                                     AND DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) >= 0,
+                                                                     1,
+                                                                     0
+                                                                 ),
+                                                                 0
+                                                                        )
+                                                                    ) AS soon_due,
+                                                                    SUM(
+                                                                        IF(
+                                                                 po.duty_is_pay = '2'
+                                                                 AND po.duty_is_pr_proposed = '2' 
+                                                                 AND NOT ISNULL(DATE_ADD(po.pib_date, INTERVAL 1 YEAR)),
+                                                                 IF(DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) <= 60, 1, 0),
+                                                                 0
+                                                                        )
+                                                                    ) AS pr_due 
+                                                                    FROM
+                                                                    tb_prod_order po) AS tb "
                 Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
                 If Not data.Rows(0)("total_notif").ToString = "0" Then
                     Dim mail As ClassSendEmail = New ClassSendEmail()
@@ -332,12 +341,12 @@
 
                             'log
                             Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
-                                    VALUES('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "', NOW(), 'Evaluation Success'); "
+                                                VALUES('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "', NOW(), 'Evaluation Success'); "
                             execute_non_query(query_log, True, "", "", "", "")
                         Catch ex As Exception
                             'log
                             Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
-                                    VALUES('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "', NOW(), 'Evaluation Failed : " + addSlashes(ex.ToString) + "'); "
+                                                VALUES('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "', NOW(), 'Evaluation Failed : " + addSlashes(ex.ToString) + "'); "
                             execute_non_query(query_log, True, "", "", "", "")
                         End Try
 
@@ -366,7 +375,7 @@
                             Try
                                 'create mail var
                                 Dim qopt As String = "SELECT mail_head_pemberitahuan,mail_subject_pemberitahuan, mail_title_pemberitahuan , mail_content_head_pemberitahuan, mail_content_pemberitahuan ,mail_content_end_pemberitahuan
-                                            FROM tb_opt "
+                                                        FROM tb_opt "
                                 Dim dopt As DataTable = execute_query(qopt, -1, True, "", "", "", "")
                                 Dim mail_head As String = dopt.Rows(0)("mail_head_pemberitahuan").ToString
                                 Dim mail_subject As String = dopt.Rows(0)("mail_subject_pemberitahuan").ToString + " " + dt_grp.Rows(g)("sales_pos_due_date").ToString + " - " + dt_grp.Rows(g)("group").ToString
@@ -386,29 +395,29 @@
 
                                 'data send email
                                 Dim qcont As String = "SELECT cgho.comp_name AS `group_company`, UPPER(cg.description) AS `group_store`,
-                                            sp.id_sales_pos AS `id_report`, sp.sales_pos_number AS report_number, CONCAT(c.comp_number,' - ', c.comp_name) AS `store`,
-                                            CONCAT(DATE_FORMAT(sp.sales_pos_start_period,'%d-%m-%y'),' s/d ', DATE_FORMAT(sp.sales_pos_end_period,'%d-%m-%y')) AS `period`,
-                                            DATE_FORMAT(sp.sales_pos_due_date,'%d-%m-%y') AS `sales_pos_due_date`,
-                                            CAST(IF(typ.`is_receive_payment`=2,-1,1) * ((sp.`sales_pos_total`*((100-sp.sales_pos_discount)/100))-sp.`sales_pos_potongan`) AS DECIMAL(15,2))-IFNULL(pyd.`value`,0.00) AS `amount` 
-                                            FROM tb_mail_manage_det md
-                                            INNER JOIN tb_sales_pos sp ON sp.id_sales_pos = md.id_report
-                                            INNER JOIN tb_m_comp_contact cc ON cc.`id_comp_contact`= IF(sp.id_memo_type=8 OR sp.id_memo_type=9, sp.id_comp_contact_bill,sp.`id_store_contact_from`)
-                                            INNER JOIN tb_lookup_report_mark_type rmt ON rmt.report_mark_type=sp.report_mark_type
-                                            INNER JOIN tb_m_comp c ON c.`id_comp`=cc.`id_comp`
-                                            INNER JOIN tb_m_comp_group cg ON cg.id_comp_group = c.id_comp_group
-                                            INNER JOIN tb_m_comp cgho ON cgho.id_comp = c.id_store_company
-                                            INNER JOIN tb_lookup_memo_type typ ON typ.`id_memo_type`=sp.`id_memo_type`
-                                            LEFT JOIN (
-                                               SELECT pyd.id_report, pyd.report_mark_type, 
-                                               COUNT(IF(py.id_report_status!=5 AND py.id_report_status!=6,py.id_rec_payment,NULL)) AS `total_pending`,
-                                               SUM(pyd.value) AS  `value`
-                                               FROM tb_rec_payment_det pyd
-                                               INNER JOIN tb_rec_payment py ON py.`id_rec_payment`=pyd.`id_rec_payment`
-                                               INNER JOIN tb_sales_pos sp ON sp.id_sales_pos = pyd.id_report AND sp.is_close_rec_payment=2
-                                               WHERE py.`id_report_status`=6
-                                               GROUP BY pyd.id_report, pyd.report_mark_type
-                                            ) pyd ON pyd.id_report = sp.id_sales_pos AND pyd.report_mark_type = sp.report_mark_type
-                                            WHERE md.id_mail_manage=" + id_mail + " "
+                                                        sp.id_sales_pos AS `id_report`, sp.sales_pos_number AS report_number, CONCAT(c.comp_number,' - ', c.comp_name) AS `store`,
+                                                        CONCAT(DATE_FORMAT(sp.sales_pos_start_period,'%d-%m-%y'),' s/d ', DATE_FORMAT(sp.sales_pos_end_period,'%d-%m-%y')) AS `period`,
+                                                        DATE_FORMAT(sp.sales_pos_due_date,'%d-%m-%y') AS `sales_pos_due_date`,
+                                                        CAST(IF(typ.`is_receive_payment`=2,-1,1) * ((sp.`sales_pos_total`*((100-sp.sales_pos_discount)/100))-sp.`sales_pos_potongan`) AS DECIMAL(15,2))-IFNULL(pyd.`value`,0.00) AS `amount` 
+                                                        FROM tb_mail_manage_det md
+                                                        INNER JOIN tb_sales_pos sp ON sp.id_sales_pos = md.id_report
+                                                        INNER JOIN tb_m_comp_contact cc ON cc.`id_comp_contact`= IF(sp.id_memo_type=8 OR sp.id_memo_type=9, sp.id_comp_contact_bill,sp.`id_store_contact_from`)
+                                                        INNER JOIN tb_lookup_report_mark_type rmt ON rmt.report_mark_type=sp.report_mark_type
+                                                        INNER JOIN tb_m_comp c ON c.`id_comp`=cc.`id_comp`
+                                                        INNER JOIN tb_m_comp_group cg ON cg.id_comp_group = c.id_comp_group
+                                                        INNER JOIN tb_m_comp cgho ON cgho.id_comp = c.id_store_company
+                                                        INNER JOIN tb_lookup_memo_type typ ON typ.`id_memo_type`=sp.`id_memo_type`
+                                                        LEFT JOIN (
+                                                           SELECT pyd.id_report, pyd.report_mark_type, 
+                                                           COUNT(IF(py.id_report_status!=5 AND py.id_report_status!=6,py.id_rec_payment,NULL)) AS `total_pending`,
+                                                           SUM(pyd.value) AS  `value`
+                                                           FROM tb_rec_payment_det pyd
+                                                           INNER JOIN tb_rec_payment py ON py.`id_rec_payment`=pyd.`id_rec_payment`
+                                                           INNER JOIN tb_sales_pos sp ON sp.id_sales_pos = pyd.id_report AND sp.is_close_rec_payment=2
+                                                           WHERE py.`id_report_status`=6
+                                                           GROUP BY pyd.id_report, pyd.report_mark_type
+                                                        ) pyd ON pyd.id_report = sp.id_sales_pos AND pyd.report_mark_type = sp.report_mark_type
+                                                        WHERE md.id_mail_manage=" + id_mail + " "
                                 Dim dcont As DataTable = execute_query(qcont, -1, True, "", "", "", "")
                                 Dim tot_amo As Double = dt_grp.Rows(g)("amount").ToString
 
@@ -428,7 +437,7 @@
 
                                 'log
                                 Dim querylog As String = "INSERT INTO tb_ar_notice_log(`id_comp_group`, `group`, `log_time`, `log`, `is_success`) 
-                                            VALUES('" + dt_grp.Rows(g)("id_comp_group").ToString + "', '" + addSlashes(dt_grp.Rows(g)("group").ToString) + "', NOW(), '" + addSlashes(dt_grp.Rows(g)("group").ToString) + " - Email Sent successfully',1); " + mm.queryInsertLog("0", "2", "" + addSlashes(dt_grp.Rows(g)("group").ToString) + " - Sent successfully") + "; "
+                                                        VALUES('" + dt_grp.Rows(g)("id_comp_group").ToString + "', '" + addSlashes(dt_grp.Rows(g)("group").ToString) + "', NOW(), '" + addSlashes(dt_grp.Rows(g)("group").ToString) + " - Email Sent successfully',1); " + mm.queryInsertLog("0", "2", "" + addSlashes(dt_grp.Rows(g)("group").ToString) + " - Sent successfully") + "; "
                                 execute_non_query(querylog, True, "", "", "", "")
 
                                 'foolow up
@@ -436,7 +445,7 @@
                             Catch ex As Exception
                                 'Log
                                 Dim query_log As String = "INSERT INTO tb_ar_notice_log(`id_comp_group`, `group`, `log_time`, `log`, `is_success`) 
-                                            VALUES('" + dt_grp.Rows(g)("id_comp_group").ToString + "','" + addSlashes(dt_grp.Rows(g)("group").ToString) + "', NOW(), '" + addSlashes(dt_grp.Rows(g)("group").ToString) + " - Failed send email : " + addSlashes(ex.ToString) + "',2); " + mm.queryInsertLog("0", "3", " + group_name + - " + addSlashes(ex.ToString))
+                                                        VALUES('" + dt_grp.Rows(g)("id_comp_group").ToString + "','" + addSlashes(dt_grp.Rows(g)("group").ToString) + "', NOW(), '" + addSlashes(dt_grp.Rows(g)("group").ToString) + " - Failed send email : " + addSlashes(ex.ToString) + "',2); " + mm.queryInsertLog("0", "3", " + group_name + - " + addSlashes(ex.ToString))
                                 execute_non_query(query_log, True, "", "", "", "")
                             End Try
                         Next
@@ -488,34 +497,34 @@
                 'Return Out reminder
                 If Date.Parse(TEQC.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
                     Dim qqc As String = "SELECT h.id_report_status, h.report_status, a.id_prod_order_ret_out, a.prod_order_ret_out_date, a.prod_order_ret_out_due_date, a.prod_order_ret_out_note,  
-                        a.prod_order_ret_out_number , b.prod_order_number, c.id_season, c.season, CONCAT(e.comp_number,' - ',e.comp_name) AS comp_from, CONCAT(g.comp_number,' - ',g.comp_name) AS comp_to, dsg.design_code AS `code`, dsg.design_display_name AS `name`, SUM(ad.prod_order_ret_out_det_qty) AS `qty` 
-                        ,IFNULL(retin.qty_ret_in,0) AS qty_retin
-                        ,SUM(ad.prod_order_ret_out_det_qty)-IFNULL(retin.qty_ret_in,0) AS diff_qty
-                        ,DATEDIFF(DATE(NOW()),a.`prod_order_ret_out_due_date`) AS overdue
-                        FROM tb_prod_order_ret_out a 
-                        INNER JOIN tb_prod_order_ret_out_det ad ON ad.id_prod_order_ret_out = a.id_prod_order_ret_out 
-                        INNER JOIN tb_prod_order b ON a.id_prod_order = b.id_prod_order 
-                        INNER JOIN tb_prod_demand_design b1 ON b.id_prod_demand_design = b1.id_prod_demand_design 
-                        INNER JOIN tb_m_design dsg ON dsg.id_design = b1.id_design 
-                        INNER JOIN tb_prod_demand b2 ON b2.id_prod_demand = b1.id_prod_demand 
-                        INNER JOIN tb_season c ON b2.id_season = c.id_season 
-                        INNER JOIN tb_m_comp_contact d ON d.id_comp_contact = a.id_comp_contact_from 
-                        INNER JOIN tb_m_comp e ON d.id_comp = e.id_comp 
-                        INNER JOIN tb_m_comp_contact f ON f.id_comp_contact = a.id_comp_contact_to 
-                        INNER JOIN tb_m_comp g ON f.id_comp = g.id_comp 
-                        INNER JOIN tb_lookup_report_status h ON a.id_report_status = h.id_report_status 
-                        LEFT JOIN 
-                        (
-                        	SELECT id_prod_order_ret_out,SUM(prod_order_ret_in_det_qty) AS qty_ret_in
-                        	FROM `tb_prod_order_ret_in_det` retid
-                        	INNER JOIN `tb_prod_order_ret_in` reti ON reti.`id_prod_order_ret_in`=retid.`id_prod_order_ret_in`
-                        	WHERE reti.`id_report_status`!=5
-                        	GROUP BY reti.`id_prod_order_ret_out`
-                        )retin ON retin.id_prod_order_ret_out=a.`id_prod_order_ret_out`
-                        WHERE a.`prod_order_ret_out_due_date` >= '2020-07-01' AND a.`prod_order_ret_out_due_date` <= DATE_ADD(DATE(NOW()),INTERVAL 3 DAY) AND a.`id_report_status`=6
-                        GROUP BY a.id_prod_order_ret_out 
-                        HAVING qty > qty_retin
-                        ORDER BY a.id_prod_order_ret_out DESC"
+                                    a.prod_order_ret_out_number , b.prod_order_number, c.id_season, c.season, CONCAT(e.comp_number,' - ',e.comp_name) AS comp_from, CONCAT(g.comp_number,' - ',g.comp_name) AS comp_to, dsg.design_code AS `code`, dsg.design_display_name AS `name`, SUM(ad.prod_order_ret_out_det_qty) AS `qty` 
+                                    ,IFNULL(retin.qty_ret_in,0) AS qty_retin
+                                    ,SUM(ad.prod_order_ret_out_det_qty)-IFNULL(retin.qty_ret_in,0) AS diff_qty
+                                    ,DATEDIFF(DATE(NOW()),a.`prod_order_ret_out_due_date`) AS overdue
+                                    FROM tb_prod_order_ret_out a 
+                                    INNER JOIN tb_prod_order_ret_out_det ad ON ad.id_prod_order_ret_out = a.id_prod_order_ret_out 
+                                    INNER JOIN tb_prod_order b ON a.id_prod_order = b.id_prod_order 
+                                    INNER JOIN tb_prod_demand_design b1 ON b.id_prod_demand_design = b1.id_prod_demand_design 
+                                    INNER JOIN tb_m_design dsg ON dsg.id_design = b1.id_design 
+                                    INNER JOIN tb_prod_demand b2 ON b2.id_prod_demand = b1.id_prod_demand 
+                                    INNER JOIN tb_season c ON b2.id_season = c.id_season 
+                                    INNER JOIN tb_m_comp_contact d ON d.id_comp_contact = a.id_comp_contact_from 
+                                    INNER JOIN tb_m_comp e ON d.id_comp = e.id_comp 
+                                    INNER JOIN tb_m_comp_contact f ON f.id_comp_contact = a.id_comp_contact_to 
+                                    INNER JOIN tb_m_comp g ON f.id_comp = g.id_comp 
+                                    INNER JOIN tb_lookup_report_status h ON a.id_report_status = h.id_report_status 
+                                    LEFT JOIN 
+                                    (
+                                    	SELECT id_prod_order_ret_out,SUM(prod_order_ret_in_det_qty) AS qty_ret_in
+                                    	FROM `tb_prod_order_ret_in_det` retid
+                                    	INNER JOIN `tb_prod_order_ret_in` reti ON reti.`id_prod_order_ret_in`=retid.`id_prod_order_ret_in`
+                                    	WHERE reti.`id_report_status`!=5
+                                    	GROUP BY reti.`id_prod_order_ret_out`
+                                    )retin ON retin.id_prod_order_ret_out=a.`id_prod_order_ret_out`
+                                    WHERE a.`prod_order_ret_out_due_date` >= '2020-07-01' AND a.`prod_order_ret_out_due_date` <= DATE_ADD(DATE(NOW()),INTERVAL 3 DAY) AND a.`id_report_status`=6
+                                    GROUP BY a.id_prod_order_ret_out 
+                                    HAVING qty > qty_retin
+                                    ORDER BY a.id_prod_order_ret_out DESC"
                     Dim dtqc As DataTable = execute_query(qqc, -1, True, "", "", "", "")
                     If dtqc.Rows.Count > 0 Then
                         Dim mail As ClassSendEmail = New ClassSendEmail()
@@ -530,12 +539,12 @@
                 'Polis reminder
                 If Date.Parse(TEPolis.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
                     Dim qpolis As String = "SELECT p.id_polis,DATEDIFF(p.end_date,DATE(NOW())) AS expired_in,pol_by.comp_name AS comp_name_polis,CONCAT(c.comp_number,' - ',c.`comp_name`) AS polis_object,c.`address_primary` AS polis_object_location,pd.`number` AS polis_number,pd.`description` AS polis_untuk,pd.`premi`,p.`start_date`,p.`end_date` 
-            FROM tb_polis_det pd
-            INNER JOIN tb_polis p ON p.`id_polis`=pd.`id_polis`
-            INNER JOIN tb_m_comp c ON c.`id_comp`=p.`id_reff` AND p.`id_polis_cat`=1
-            INNER JOIN tb_m_comp pol_by ON pol_by.id_comp=p.id_polis_by
-            WHERE p.`is_active`=1 AND DATEDIFF(p.end_date,DATE(NOW()))<45
-            GROUP BY pd.`id_polis`"
+                        FROM tb_polis_det pd
+                        INNER JOIN tb_polis p ON p.`id_polis`=pd.`id_polis`
+                        INNER JOIN tb_m_comp c ON c.`id_comp`=p.`id_reff` AND p.`id_polis_cat`=1
+                        INNER JOIN tb_m_comp pol_by ON pol_by.id_comp=p.id_polis_by
+                        WHERE p.`is_active`=1 AND DATEDIFF(p.end_date,DATE(NOW()))<45
+                        GROUP BY pd.`id_polis`"
                     Dim dtpolis As DataTable = execute_query(qpolis, -1, True, "", "", "", "")
                     If dtpolis.Rows.Count > 0 Then
                         Dim mail As ClassSendEmail = New ClassSendEmail()
@@ -545,37 +554,73 @@
                 End If
             End If
 
+            'PO OG
             If get_opt_scheduler_field("is_active_po_og").ToString = "1" Then
-                'Polis reminder
                 If Date.Parse(TEPOOG.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
                     Dim qpoog As String = "SELECT po.`id_purc_order`,po.`purc_order_number`,po.`date_created`,po.`est_date_receive`,reqd.`id_item`,it.`item_desc`,reqd.`item_detail`,req.id_user_created,emp.`employee_name` AS req_by,req.`requirement_date`
-,IFNULL(rec.qty,0) AS rec_qty,reqd.`qty` AS req_qty,pod.`qty` AS po_qty,c.`comp_name`,DATEDIFF(po.`est_date_receive`,DATE(NOW())) AS expired_in
-FROM tb_purc_order_det pod
-INNER JOIN tb_purc_req_det reqd ON reqd.`id_purc_req_det`=pod.`id_purc_req_det`
-INNER JOIN tb_purc_req req ON req.`id_purc_req`=reqd.`id_purc_req` AND req.`id_report_status`='6'
-INNER JOIN tb_purc_order po ON po.id_purc_order=pod.id_purc_order AND po.`id_report_status`='6' AND po.`is_close_rec`=2
-INNER JOIN tb_item it ON it.`id_item`=reqd.`id_item`
-INNER JOIN tb_m_uom uom ON uom.id_uom=it.id_uom
-INNER JOIN tb_m_comp_contact cc ON po.`id_comp_contact`=cc.`id_comp_contact`
-INNER JOIN tb_m_comp c ON c.`id_comp`=cc.`id_comp`
-INNER JOIN tb_m_user usr_req ON usr_req.`id_user`=req.id_user_created
-INNER JOIN tb_m_employee emp ON emp.`id_employee`=usr_req.`id_employee`
-LEFT JOIN
-(
-	SELECT pod.`id_purc_order_det`,pod.`id_purc_req_det`,SUM(recd.`qty`) AS qty 
-	FROM tb_purc_rec_det recd
-	INNER JOIN tb_purc_order_det pod ON recd.id_purc_order_det=pod.id_purc_order_det
-	INNER JOIN tb_purc_rec rec ON recd.`id_purc_rec`=rec.id_purc_rec
-	WHERE rec.`id_report_status`!='5'
-	GROUP BY pod.`id_purc_req_det`
-)rec  ON rec.id_purc_req_det=reqd.`id_purc_req_det`
-WHERE DATE(po.est_date_receive)<DATE_ADD(NOW(),INTERVAL 4 DAY) AND reqd.`qty`>IFNULL(rec.qty,0)
-GROUP BY po.`id_purc_order`"
+            ,IFNULL(rec.qty,0) AS rec_qty,reqd.`qty` AS req_qty,pod.`qty` AS po_qty,c.`comp_name`,DATEDIFF(po.`est_date_receive`,DATE(NOW())) AS expired_in
+            FROM tb_purc_order_det pod
+            INNER JOIN tb_purc_req_det reqd ON reqd.`id_purc_req_det`=pod.`id_purc_req_det`
+            INNER JOIN tb_purc_req req ON req.`id_purc_req`=reqd.`id_purc_req` AND req.`id_report_status`='6'
+            INNER JOIN tb_purc_order po ON po.id_purc_order=pod.id_purc_order AND po.`id_report_status`='6' AND po.`is_close_rec`=2
+            INNER JOIN tb_item it ON it.`id_item`=reqd.`id_item`
+            INNER JOIN tb_m_uom uom ON uom.id_uom=it.id_uom
+            INNER JOIN tb_m_comp_contact cc ON po.`id_comp_contact`=cc.`id_comp_contact`
+            INNER JOIN tb_m_comp c ON c.`id_comp`=cc.`id_comp`
+            INNER JOIN tb_m_user usr_req ON usr_req.`id_user`=req.id_user_created
+            INNER JOIN tb_m_employee emp ON emp.`id_employee`=usr_req.`id_employee`
+            LEFT JOIN
+            (
+            	SELECT pod.`id_purc_order_det`,pod.`id_purc_req_det`,SUM(recd.`qty`) AS qty 
+            	FROM tb_purc_rec_det recd
+            	INNER JOIN tb_purc_order_det pod ON recd.id_purc_order_det=pod.id_purc_order_det
+            	INNER JOIN tb_purc_rec rec ON recd.`id_purc_rec`=rec.id_purc_rec
+            	WHERE rec.`id_report_status`!='5'
+            	GROUP BY pod.`id_purc_req_det`
+            )rec  ON rec.id_purc_req_det=reqd.`id_purc_req_det`
+            WHERE DATE(po.est_date_receive)<DATE_ADD(NOW(),INTERVAL 4 DAY) AND reqd.`qty`>IFNULL(rec.qty,0)
+            GROUP BY po.`id_purc_order`"
                     Dim dtpog As DataTable = execute_query(qpoog, -1, True, "", "", "", "")
                     If dtpog.Rows.Count > 0 Then
                         Dim mail As ClassSendEmail = New ClassSendEmail()
                         mail.par1 = dtpog.Rows.Count.ToString
                         mail.send_mail_po_og()
+                    End If
+                End If
+            End If
+
+            'PR OG
+            If get_opt_scheduler_field("is_active_pr_og").ToString = "1" Then
+                If Date.Parse(TEPROG.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                    Dim qprog As String = "SELECT pr.`id_purc_req`
+FROM tb_purc_req_det prd
+INNER JOIN tb_purc_req pr ON pr.`id_purc_req`=prd.`id_purc_req` AND pr.`id_report_status`=6 AND pr.`is_cancel`=2 AND prd.`is_close`=2 AND prd.`is_unable_fulfill`=2
+INNER JOIN tb_m_departement dep ON dep.`id_departement`=pr.`id_departement`
+INNER JOIN tb_m_user usrc ON usrc.`id_user`=pr.`id_user_created`
+INNER JOIN tb_m_employee empc ON empc.`id_employee`=usrc.`id_employee` AND empc.`id_employee_active`=1
+LEFT JOIN 
+(
+	SELECT pod.id_purc_req_det,SUM(pod.`qty`) AS qty,GROUP_CONCAT(DISTINCT po.purc_order_number ORDER BY po.purc_order_number) AS po_number
+	,GROUP_CONCAT(DISTINCT IF(po.is_submit=1,sts.report_status,'Created, Not submitted') ORDER BY po.purc_order_number) AS report_status,MAX(po.est_date_receive) AS est_date_receive
+	FROM tb_purc_order_det pod 
+	INNER JOIN tb_purc_order po ON po.id_purc_order=pod.id_purc_order AND po.id_report_status!=5 AND pod.`is_drop`=2
+	INNER JOIN tb_lookup_report_status sts ON sts.`id_report_status`=po.`id_report_status`
+	GROUP BY pod.id_purc_req_det
+) po ON po.id_purc_req_det =prd.`id_purc_req_det`
+LEFT JOIN 
+(
+	SELECT pod.`id_purc_req_det`,SUM(recd.`qty`) AS qty FROM tb_purc_rec_det recd
+	INNER JOIN tb_purc_order_det pod ON recd.id_purc_order_det=pod.id_purc_order_det
+	INNER JOIN tb_purc_rec rec ON recd.`id_purc_rec`=rec.id_purc_rec
+	WHERE rec.`id_report_status`!='5'
+	GROUP BY pod.`id_purc_req_det`
+)rec ON rec.id_purc_req_det=prd.`id_purc_req_det`
+WHERE (prd.`qty`>IFNULL(po.qty,0) OR prd.`qty`>IFNULL(rec.qty,0)) AND DATE(pr.requirement_date)<DATE_ADD(NOW(),INTERVAL 4 DAY) "
+                    Dim dtprog As DataTable = execute_query(qprog, -1, True, "", "", "", "")
+                    If dtprog.Rows.Count > 0 Then
+                        Dim mail As ClassSendEmail = New ClassSendEmail()
+                        mail.par1 = dtprog.Rows.Count.ToString
+                        mail.send_mail_pr_og()
                     End If
                 End If
             End If
@@ -941,5 +986,11 @@ GROUP BY po.`id_purc_order`"
         Dim query As String = "UPDATE tb_opt_scheduler SET po_og_time='" & Date.Parse(TEPOOG.EditValue.ToString).ToString("HH:mm:ss") & "'"
         execute_non_query(query, True, "", "", "", "")
         MsgBox("Email Notice PO OG Time saved.")
+    End Sub
+
+    Private Sub BPROG_Click(sender As Object, e As EventArgs) Handles BPROG.Click
+        Dim query As String = "UPDATE tb_opt_scheduler SET pr_og_time='" & Date.Parse(TEPROG.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        execute_non_query(query, True, "", "", "", "")
+        MsgBox("Email Notice PR OG Time saved.")
     End Sub
 End Class

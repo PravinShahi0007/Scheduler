@@ -24,7 +24,8 @@ LEFT JOIN
 	GROUP BY pod.`id_purc_req_det`
 )rec  ON rec.id_purc_req_det=reqd.`id_purc_req_det`
 WHERE DATE(po.est_date_receive)<DATE_ADD(NOW(),INTERVAL 4 DAY) AND reqd.`qty`>IFNULL(rec.qty,0)
-GROUP BY reqd.`id_purc_req_det`"
+GROUP BY reqd.`id_purc_req_det`
+ORDER BY po.est_date_receive"
         Dim dt As DataTable = execute_query(q, -1, True, "", "", "", "")
 
         Dim row_baru As DevExpress.XtraReports.UI.XRTableRow = XRDetail
