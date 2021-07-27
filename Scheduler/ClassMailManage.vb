@@ -28,7 +28,7 @@
         'insert member & detil
         Dim query_mail_detail As String = "/*member*/
         INSERT INTO tb_mail_manage_member(id_mail_manage, id_mail_member_type, id_user, id_comp_contact, mail_address) "
-        If rmt = "226" Then
+        If rmt = "226" Or rmt = "227" Then
             query_mail_detail += "SELECT " + id_mail_manage + " AS `id_mail_manage`, m.id_mail_member_type, NULL AS `id_user`, m.id_comp_contact, cc.email AS `mail_address`
             FROM tb_mail_manage_mapping m
             INNER JOIN tb_m_comp_contact cc ON cc.id_comp_contact = m.id_comp_contact
