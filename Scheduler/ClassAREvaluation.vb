@@ -235,8 +235,8 @@
                 sm.titl = mail_title
                 sm.par1 = mail_content_head + " " + dcont.Rows(0)("group_company").ToString
                 sm.par2 = mail_content
-                sm.comment = mail_content_end
-                sm.design_code = Double.Parse(tot_amo.ToString).ToString("N2")
+                sm.par3 = mail_content_end
+                sm.par4 = Double.Parse(tot_amo.ToString).ToString("N2")
                 sm.dt = dcont
                 sm.send_email_html()
 
