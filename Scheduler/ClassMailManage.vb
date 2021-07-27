@@ -45,7 +45,7 @@
         If rmt = "226" Then
             Dim arv As New ClassAREvaluation()
             query_mail_detail += arv.querylistNoticeInvoice("1", par1, id_mail_manage)
-        ElseIf rmt = "228" Then
+        ElseIf rmt = "227" Or rmt = "228" Then
             query_mail_detail += "SELECT " + id_mail_manage + " As `id_mail_manage`, e.report_mark_type, e.id_sales_pos, e.report_number, " + id_report_ref + ", " + report_mark_type_ref + ", '" + report_number_ref + "'
             FROM tb_ar_eval e WHERE e.eval_date='" + par1 + "'; "
         End If
