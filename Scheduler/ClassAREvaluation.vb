@@ -251,8 +251,8 @@
         Catch ex As Exception
             'Log
             Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log, is_success) 
-            VALUES('" + date_eval + "', NOW(), '" + group_name + " - Failed send email : " + addSlashes(ex.ToString) + "',2); " + mm.queryInsertLog("0", "3", " + group_name + - " + addSlashes(ex.ToString))
-            execute_non_query(query_log, True, "", "", "", "")
+        VALUES('" + date_eval + "', NOW(), '" + group_name + " - Failed send email : " + addSlashes(ex.ToString) + "',2); " + mm.queryInsertLog("0", "3", " + group_name + - " + addSlashes(ex.ToString))
+        execute_non_query(query_log, True, "", "", "", "")
         End Try
     End Sub
 End Class
