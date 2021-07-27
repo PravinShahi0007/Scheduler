@@ -18,7 +18,10 @@ Public Class ClassSendEmail
     Public titl As String = ""
     Public head As String = ""
     Public dt As DataTable
-
+    Public design_code As String = ""
+    Public design As String = ""
+    Public comment_by As String = ""
+    Public comment As String = ""
     Public is_daily As String = "-1"
 
 
@@ -152,7 +155,7 @@ Public Class ClassSendEmail
                 Dim query_log As String = "INSERT INTo tb_scheduler_attn_log(id_log_type,`datetime`,log) VALUES('3',NOW(),'Sending Monthly Remaining Leave Report (Department Head) to " & data_opt.Rows(0)("employee_name").ToString & "')"
                 execute_non_query(query_log, True, "", "", "", "")
             End If
-        ElseIf report_mark_type = "226" Then
+        ElseIf report_mark_type = "226" Or report_mark_type = "227" Then
             'EMAIL pemberitahuan/peringatan
             Dim mail_address_from As String = execute_query("SELECT m.mail_address FROM tb_mail_manage_member m WHERE m.id_mail_manage=" + id_report + " AND m.id_mail_member_type=1 ORDER BY m.id_mail_manage_member ASC LIMIT 1", 0, True, "", "", "", "")
 
@@ -214,81 +217,36 @@ Public Class ClassSendEmail
             client.Send(mail)
         ElseIf report_mark_type = "228" Then
             '--- on hold delivery
-            Dim mm As New ClassMailManage()
-            Dim id_mail As String = "-1"
-            Try
-                'cek rows
-                Dim query_cek_eval As String = "SELECT COUNT(e.id_ar_eval) AS jum_eval FROM tb_ar_eval e WHERE e.eval_date='" + par1 + "' "
-                Dim data_cek_eval As DataTable = execute_query(query_cek_eval, -1, True, "", "", "", "")
-                If data_cek_eval.Rows(0)("jum_eval") > 0 Then
-                    'create mail manage
-                    Dim mail_subject As String = get_setup_field("mail_subject_on_hold") + " - " + par2.ToString
-                    Dim mail_title As String = get_setup_field("mail_title_on_hold")
-                    Dim mail_content As String = get_setup_field("mail_content_on_hold")
-                    Dim query_mail_content_to As String = "SELECT CONCAT(e.employee_name, ' (',e.employee_position,')') AS `to_content_mail`
-                    FROM tb_opt o
-                    INNER JOIN tb_m_employee e ON e.id_employee = o.id_emp_wh_manager "
-                    Dim mail_content_to As String = execute_query(query_mail_content_to, 0, True, "", "", "", "")
-
-                    'send paramenter class
-                    mm.rmt = report_mark_type
-                    mm.mail_subject = mail_subject
-                    mm.mail_title = mail_title
-                    mm.par1 = par1
-                    mm.createEmail("-1", 0, "NULL", "NULL", "")
-                    id_mail = mm.id_mail_manage
-
-                    'send email
-                    Dim from_mail As MailAddress = New MailAddress("system@volcom.co.id", mail_title)
-                    Dim mail As MailMessage = New MailMessage()
-                    mail.From = from_mail
-                    Dim query_send_to As String = "SELECT  m.id_mail_member_type,m.mail_address, IF(ISNULL(m.id_comp_contact), e.employee_name, cc.contact_person) AS `display_name`
+            Dim mail_address_from As String = execute_query("SELECT m.mail_address FROM tb_mail_manage_member m WHERE m.id_mail_manage=" + id_report + " AND m.id_mail_member_type=1 ORDER BY m.id_mail_manage_member ASC LIMIT 1", 0, True, "", "", "", "")
+            Dim from_mail As MailAddress = New MailAddress(mail_address_from, design_code)
+            Dim mail As MailMessage = New MailMessage()
+            mail.From = from_mail
+            Dim query_send_to As String = "SELECT  m.id_mail_member_type,m.mail_address, IF(ISNULL(m.id_comp_contact), e.employee_name, cc.contact_person) AS `display_name`
                     FROM tb_mail_manage_member m 
                     LEFT JOIN tb_m_comp_contact cc ON cc.id_comp_contact = m.id_comp_contact
                     LEFT JOIN tb_m_user u ON u.id_user = m.id_user
                     LEFT JOIN tb_m_employee e ON e.id_employee = u.id_employee
-                    WHERE m.id_mail_manage=" + id_mail + " AND m.id_mail_member_type>1 
+                    WHERE m.id_mail_manage=" + id_report + " AND m.id_mail_member_type>1 
                     ORDER BY m.id_mail_member_type ASC,m.id_mail_manage_member ASC "
-                    Dim data_send_to As DataTable = execute_query(query_send_to, -1, True, "", "", "", "")
-                    For i As Integer = 0 To data_send_to.Rows.Count - 1
-                        Dim to_mail As MailAddress = New MailAddress(data_send_to.Rows(i)("mail_address").ToString, data_send_to.Rows(i)("display_name").ToString)
-                        If data_send_to.Rows(i)("id_mail_member_type").ToString = "2" Then
-                            mail.To.Add(to_mail)
-                        ElseIf data_send_to.Rows(i)("id_mail_member_type").ToString = "3" Then
-                            mail.CC.Add(to_mail)
-                        End If
-                    Next
-                    'include email management
-                    Dim management_mail As String = getMailManagement(report_mark_type)
-                    If management_mail <> "" Then
-                        mail.CC.Add(management_mail)
-                    End If
-
-                    mail.Subject = mail_subject
-                    mail.IsBodyHtml = True
-                    mail.Body = emailOnHold(mail_content_to, mail_content, mm.getDetailData())
-                    client.Send(mail)
-
-                    'log
-                    Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
-                    VALUES('" + par1 + "', NOW(), 'Email Sent successfully'); " + mm.queryInsertLog("0", "2", "Sent successfully")
-                    execute_non_query(query_log, True, "", "", "", "")
-
-                    'dispose memory
-                    mail.Dispose()
-                    data_cek_eval.Dispose()
+            Dim data_send_to As DataTable = execute_query(query_send_to, -1, True, "", "", "", "")
+            For i As Integer = 0 To data_send_to.Rows.Count - 1
+                Dim to_mail As MailAddress = New MailAddress(data_send_to.Rows(i)("mail_address").ToString, data_send_to.Rows(i)("display_name").ToString)
+                If data_send_to.Rows(i)("id_mail_member_type").ToString = "2" Then
+                    mail.To.Add(to_mail)
+                ElseIf data_send_to.Rows(i)("id_mail_member_type").ToString = "3" Then
+                    mail.CC.Add(to_mail)
                 End If
-            Catch ex As Exception
-                'Log
-                Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
-                VALUES('" + par1 + "', NOW(), 'Failed send email : " + addSlashes(ex.ToString) + "'); " + mm.queryInsertLog("0", "3", addSlashes(ex.ToString))
-                execute_non_query(query_log, True, "", "", "", "")
-            End Try
-            mm.id_mail_manage = "-1"
-            mm.mail_subject = ""
-            mm.mail_title = ""
-            mm.rmt = "-1"
-            mm.par1 = ""
+            Next
+            'include email management
+            Dim management_mail As String = getMailManagement(report_mark_type)
+            If management_mail <> "" Then
+                mail.CC.Add(management_mail)
+            End If
+
+            mail.Subject = design
+            mail.IsBodyHtml = True
+            mail.Body = emailOnHold(comment_by, comment, dt)
+            client.Send(mail)
         End If
         client.Dispose()
     End Sub

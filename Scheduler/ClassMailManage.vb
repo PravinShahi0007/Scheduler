@@ -3,6 +3,7 @@
     Public mail_subject As String = ""
     Public mail_title As String = ""
     Public rmt As String = "-1"
+    Public typ As String = "1"
     Public par1 As String = ""
     Public par2 As String = ""
     Public par3 As String = ""

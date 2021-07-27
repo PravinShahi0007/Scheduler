@@ -331,33 +331,60 @@
             'AR evaluation
             If get_opt_scheduler_field("is_active_evaluation_ar").ToString = "1" Then
                 If Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
-                    Dim qgd As String = "SELECT * FROM tb_ar_eval_setup_date WHERE ar_eval_setup_date='" + cur_datetime.ToString("yyyy-MM-dd") + "' "
-                    Dim dgd As DataTable = execute_query(qgd, -1, True, "", "", "", "")
-                    If dgd.Rows.Count > 0 Then 'ketemu tanggal evaluasi 
-                        Try
-                            'jalankan evaluasi
-                            Dim qins As String = "CALL getEvaluationAR('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "'); "
-                            execute_non_query(qins, True, "", "", "", "")
+                    'Pake tanggal evaluasi
+                    'Dim qgd As String = "SELECT * FROM tb_ar_eval_setup_date WHERE ar_eval_setup_date='" + cur_datetime.ToString("yyyy-MM-dd") + "' "
+                    'Dim dgd As DataTable = execute_query(qgd, -1, True, "", "", "", "")
+                    'If dgd.Rows.Count > 0 Then 'ketemu tanggal evaluasi 
+                    '    Try
+                    '        'jalankan evaluasi
+                    '        Dim qins As String = "CALL getEvaluationAR('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "'); "
+                    '        execute_non_query(qins, True, "", "", "", "")
 
-                            'log
-                            Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
-                                                VALUES('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "', NOW(), 'Evaluation Success'); "
-                            execute_non_query(query_log, True, "", "", "", "")
-                        Catch ex As Exception
-                            'log
-                            Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
-                                                VALUES('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "', NOW(), 'Evaluation Failed : " + addSlashes(ex.ToString) + "'); "
-                            execute_non_query(query_log, True, "", "", "", "")
-                        End Try
+                    '        'log
+                    '        Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
+                    '                            VALUES('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "', NOW(), 'Evaluation Success'); "
+                    '        execute_non_query(query_log, True, "", "", "", "")
+                    '    Catch ex As Exception
+                    '        'log
+                    '        Dim query_log As String = "INSERT INTO tb_ar_eval_log(eval_date, log_time, log) 
+                    '                            VALUES('" + cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") + "', NOW(), 'Evaluation Failed : " + addSlashes(ex.ToString) + "'); "
+                    '        execute_non_query(query_log, True, "", "", "", "")
+                    '    End Try
 
 
-                        'push email
-                        Dim em As New ClassSendEmail()
-                        em.report_mark_type = "228"
-                        em.par1 = cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss")
-                        em.par2 = cur_datetime.ToString("dd MMMM yyyy")
-                        em.send_email_html()
-                    End If
+                    '    'push email
+                    '    Dim em As New ClassSendEmail()
+                    '    em.report_mark_type = "228"
+                    '    em.par1 = cur_datetime.ToString("yyyy-MM-dd") + " " + Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss")
+                    '    em.par2 = cur_datetime.ToString("dd MMMM yyyy")
+                    '    em.send_email_html()
+                    'End If
+                    'setiap rabu
+                    Dim err As String = ""
+                    Dim date_now_origin As DateTime = cur_datetime
+                    Dim date_now As String = DateTime.Parse(date_now_origin).ToString("yyyy-MM-dd HH:mm:ss")
+                    Dim date_now_display As String = DateTime.Parse(date_now_origin).ToString("dd MMMM yyyy")
+                    Dim ev As New ClassAREvaluation()
+
+                    'hold delivery
+                    ev.holdDelivery(date_now)
+
+                    'sending mail hold delivery
+                    ev.sendEmailHoldDelivery(date_now, date_now_display)
+
+                    'sendiing email peringatan
+                    Dim qcg As String = "SELECT e.id_comp_group, e.id_store_company AS `id_ho`, cg.description AS `group`
+                    FROM tb_ar_eval e 
+                    INNER JOIN tb_m_comp_group cg ON cg.id_comp_group = e.id_comp_group
+                    WHERE e.eval_date='" + date_now + "'
+                    GROUP BY e.id_comp_group, e.id_store_company "
+                    Dim dcg As DataTable = execute_query(qcg, -1, True, "", "", "", "")
+                    For g As Integer = 0 To dcg.Rows.Count - 1
+                        Dim id_group As String = dcg.Rows(g)("id_comp_group").ToString
+                        Dim id_store_company As String = dcg.Rows(g)("id_ho").ToString
+                        Dim group As String = addSlashes(dcg.Rows(g)("group").ToString.ToUpper)
+                        ev.sendEmailPeringatan(date_now, id_group, id_store_company, group)
+                    Next
                 End If
             End If
 
