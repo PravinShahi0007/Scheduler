@@ -3,6 +3,7 @@
     Public password As String = get_setup_field("shopify_api_password")
     Public shop As String = get_setup_field("shopify_api_shop")
     Public id_comp_group As String = get_setup_field("shopify_comp_group")
+    Public api_new_version As String = get_setup_field("shopify_api_version")
 
     Private Function get_setup_field(ByVal field As String)
         'opt as var choose field
@@ -24,8 +25,8 @@
         Net.ServicePointManager.SecurityProtocol = CType(3072, Net.SecurityProtocolType)
         Dim check_time_set = get_setup_field("shopify_min_date_order_failed")
         Dim limit_order As String = get_setup_field("shopify_limit_order_failed")
-        Dim url_first As String = "https://" + username + ":" + password + "@" + shop + "/admin/api/2020-04/orders.json?fulfillment_status=unshipped&financial_status=pending&status=open&limit=" + limit_order + ""
-        Dim url As String = "https://" + username + ":" + password + "@" + shop + "/admin/api/2020-04/orders.json?limit=" + limit_order + ""
+        Dim url_first As String = "https://" + username + ":" + password + "@" + shop + "/admin/api/" + api_new_version + "/orders.json?fulfillment_status=unshipped&financial_status=pending&status=open&limit=" + limit_order + ""
+        Dim url As String = "https://" + username + ":" + password + "@" + shop + "/admin/api/" + api_new_version + "/orders.json?limit=" + limit_order + ""
         Dim page_info As String = ""
         Dim i As Integer = 0
         Dim is_loop As Boolean = True
@@ -174,7 +175,7 @@
     ]
   }
 }")
-        Dim result_post As String = SendRequest("https://" & username & ":" & password & "@" & shop & "/admin/api/2020-04/orders/" & id_order & "/cancel.json", dt, "application/json", "POST", username, password)
+        Dim result_post As String = SendRequest("https://" & username & ":" & password & "@" & shop & "/admin/api/" + api_new_version + "/orders/" & id_order & "/cancel.json", dt, "application/json", "POST", username, password)
     End Sub
 
     Sub set_tag_order(ByVal id_order As String)
@@ -191,7 +192,7 @@
     ""tags"": """ + curr_tag + """
   }
 }")
-        Dim result_post As String = SendRequest("https://" & username & ":" & password & "@" & shop & "/admin/api/2020-04/orders/" & id_order & ".json", dt, "application/json", "PUT", username, password)
+        Dim result_post As String = SendRequest("https://" & username & ":" & password & "@" & shop & "/admin/api/" + api_new_version + "/orders/" & id_order & ".json", dt, "application/json", "PUT", username, password)
     End Sub
 
     Private Function SendRequest(str_url As String, jsonDataBytes As Byte(), contentType As String, method As String, ByVal username As String, ByVal pass As String) As String
