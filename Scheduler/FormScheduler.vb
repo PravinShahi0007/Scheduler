@@ -390,96 +390,96 @@
             End If
 
             'Email Pemberitahuan - AR
-            '            If get_opt_scheduler_field("is_active_email_notice_ar").ToString = "1" Then
-            '                If Date.Parse(TEEmailNoticeAR.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
-            '                    'list group store
-            '                    Dim ar As New ClassAREvaluation()
-            '                    Dim query_grp As String = ar.querylistNoticeInvoice("2", "-1", "-1")
-            '                    Dim dt_grp As DataTable = execute_query(query_grp, -1, True, "", "", "", "")
-            '                    If dt_grp.Rows.Count > 0 Then
-            '                        For g As Integer = 0 To dt_grp.Rows.Count - 1
-            '                            Dim mm As New ClassMailManage()
-            '                            Dim id_mail As String = "-1"
-            '                            Try
-            '                                'create mail var
-            '                                Dim qopt As String = "SELECT mail_head_pemberitahuan,mail_subject_pemberitahuan, mail_title_pemberitahuan , mail_content_head_pemberitahuan, mail_content_pemberitahuan ,mail_content_end_pemberitahuan
-            '                                                        FROM tb_opt "
-            '                                Dim dopt As DataTable = execute_query(qopt, -1, True, "", "", "", "")
-            '                                Dim mail_head As String = dopt.Rows(0)("mail_head_pemberitahuan").ToString
-            '                                Dim mail_subject As String = dopt.Rows(0)("mail_subject_pemberitahuan").ToString + " " + dt_grp.Rows(g)("sales_pos_due_date").ToString + " - " + dt_grp.Rows(g)("group").ToString
-            '                                Dim mail_title As String = dopt.Rows(0)("mail_title_pemberitahuan").ToString
-            '                                Dim mail_content_head As String = dopt.Rows(0)("mail_content_head_pemberitahuan").ToString
-            '                                Dim mail_content As String = dopt.Rows(0)("mail_content_pemberitahuan").ToString
-            '                                Dim mail_content_end As String = dopt.Rows(0)("mail_content_end_pemberitahuan").ToString
+            If get_opt_scheduler_field("is_active_email_notice_ar").ToString = "1" Then
+                If Date.Parse(TEEmailNoticeAR.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                    'list group store
+                    Dim ar As New ClassAREvaluation()
+                    Dim query_grp As String = ar.querylistNoticeInvoice("2", "-1", "-1")
+                    Dim dt_grp As DataTable = execute_query(query_grp, -1, True, "", "", "", "")
+                    If dt_grp.Rows.Count > 0 Then
+                        For g As Integer = 0 To dt_grp.Rows.Count - 1
+                            Dim mm As New ClassMailManage()
+                            Dim id_mail As String = "-1"
+                            Try
+                                'create mail var
+                                Dim qopt As String = "SELECT mail_head_pemberitahuan,mail_subject_pemberitahuan, mail_title_pemberitahuan , mail_content_head_pemberitahuan, mail_content_pemberitahuan ,mail_content_end_pemberitahuan
+                                                                    FROM tb_opt "
+                                Dim dopt As DataTable = execute_query(qopt, -1, True, "", "", "", "")
+                                Dim mail_head As String = dopt.Rows(0)("mail_head_pemberitahuan").ToString
+                                Dim mail_subject As String = dopt.Rows(0)("mail_subject_pemberitahuan").ToString + " " + dt_grp.Rows(g)("sales_pos_due_date").ToString + " - " + dt_grp.Rows(g)("group").ToString
+                                Dim mail_title As String = dopt.Rows(0)("mail_title_pemberitahuan").ToString
+                                Dim mail_content_head As String = dopt.Rows(0)("mail_content_head_pemberitahuan").ToString
+                                Dim mail_content As String = dopt.Rows(0)("mail_content_pemberitahuan").ToString
+                                Dim mail_content_end As String = dopt.Rows(0)("mail_content_end_pemberitahuan").ToString
 
-            '                                'send paramenter class
-            '                                mm.rmt = "226"
-            '                                mm.par1 = "AND cg.id_comp_group=" + dt_grp.Rows(g)("id_comp_group").ToString + " AND c.id_store_company=" + dt_grp.Rows(g)("id_store_company").ToString + " "
-            '                                mm.par2 = dt_grp.Rows(g)("id_comp_group").ToString
-            '                                mm.par3 = dt_grp.Rows(g)("id_store_company").ToString
-            '                                mm.mail_subject = mail_subject
-            '                                mm.createEmail(dt_grp.Rows(g)("id_comp_group").ToString, "0", "NULL", "NULL", "")
-            '                                id_mail = mm.id_mail_manage
+                                'send paramenter class
+                                mm.rmt = "226"
+                                mm.par1 = "AND cg.id_comp_group=" + dt_grp.Rows(g)("id_comp_group").ToString + " AND c.id_store_company=" + dt_grp.Rows(g)("id_store_company").ToString + " "
+                                mm.par2 = dt_grp.Rows(g)("id_comp_group").ToString
+                                mm.par3 = dt_grp.Rows(g)("id_store_company").ToString
+                                mm.mail_subject = mail_subject
+                                mm.createEmail(dt_grp.Rows(g)("id_comp_group").ToString, "0", "NULL", "NULL", "")
+                                id_mail = mm.id_mail_manage
 
-            '                                'data send email
-            '                                Dim qcont As String = "SELECT cgho.comp_name AS `group_company`, UPPER(cg.description) AS `group_store`,
-            '                                                        sp.id_sales_pos AS `id_report`, sp.sales_pos_number AS report_number, CONCAT(c.comp_number,' - ', c.comp_name) AS `store`,
-            '                                                        CONCAT(DATE_FORMAT(sp.sales_pos_start_period,'%d-%m-%y'),' s/d ', DATE_FORMAT(sp.sales_pos_end_period,'%d-%m-%y')) AS `period`,
-            '                                                        DATE_FORMAT(sp.sales_pos_due_date,'%d-%m-%y') AS `sales_pos_due_date`,
-            '                                                        CAST(IF(typ.`is_receive_payment`=2,-1,1) * ((sp.`sales_pos_total`*((100-sp.sales_pos_discount)/100))-sp.`sales_pos_potongan`) AS DECIMAL(15,2))-IFNULL(pyd.`value`,0.00) AS `amount` 
-            '                                                        FROM tb_mail_manage_det md
-            '                                                        INNER JOIN tb_sales_pos sp ON sp.id_sales_pos = md.id_report
-            '                                                        INNER JOIN tb_m_comp_contact cc ON cc.`id_comp_contact`= IF(sp.id_memo_type=8 OR sp.id_memo_type=9, sp.id_comp_contact_bill,sp.`id_store_contact_from`)
-            '                                                        INNER JOIN tb_lookup_report_mark_type rmt ON rmt.report_mark_type=sp.report_mark_type
-            '                                                        INNER JOIN tb_m_comp c ON c.`id_comp`=cc.`id_comp`
-            '                                                        INNER JOIN tb_m_comp_group cg ON cg.id_comp_group = c.id_comp_group
-            '                                                        INNER JOIN tb_m_comp cgho ON cgho.id_comp = c.id_store_company
-            '                                                        INNER JOIN tb_lookup_memo_type typ ON typ.`id_memo_type`=sp.`id_memo_type`
-            '                                                        LEFT JOIN (
-            '                                                           SELECT pyd.id_report, pyd.report_mark_type, 
-            '                                                           COUNT(IF(py.id_report_status!=5 AND py.id_report_status!=6,py.id_rec_payment,NULL)) AS `total_pending`,
-            '                                                           SUM(pyd.value) AS  `value`
-            '                                                           FROM tb_rec_payment_det pyd
-            '                                                           INNER JOIN tb_rec_payment py ON py.`id_rec_payment`=pyd.`id_rec_payment`
-            '                                                           INNER JOIN tb_sales_pos sp ON sp.id_sales_pos = pyd.id_report AND sp.is_close_rec_payment=2
-            '                                                           WHERE py.`id_report_status`=6
-            '                                                           GROUP BY pyd.id_report, pyd.report_mark_type
-            '                                                        ) pyd ON pyd.id_report = sp.id_sales_pos AND pyd.report_mark_type = sp.report_mark_type
-            '                                                        WHERE md.id_mail_manage=" + id_mail + " "
-            '                                Dim dcont As DataTable = execute_query(qcont, -1, True, "", "", "", "")
-            '                                Dim tot_amo As Double = dt_grp.Rows(g)("amount").ToString
+                                'data send email
+                                Dim qcont As String = "SELECT cgho.comp_name AS `group_company`, UPPER(cg.description) AS `group_store`,
+                                                                    sp.id_sales_pos AS `id_report`, sp.sales_pos_number AS report_number, CONCAT(c.comp_number,' - ', c.comp_name) AS `store`,
+                                                                    CONCAT(DATE_FORMAT(sp.sales_pos_start_period,'%d-%m-%y'),' s/d ', DATE_FORMAT(sp.sales_pos_end_period,'%d-%m-%y')) AS `period`,
+                                                                    DATE_FORMAT(sp.sales_pos_due_date,'%d-%m-%y') AS `sales_pos_due_date`,
+                                                                    CAST(IF(typ.`is_receive_payment`=2,-1,1) * ((sp.`sales_pos_total`*((100-sp.sales_pos_discount)/100))-sp.`sales_pos_potongan`) AS DECIMAL(15,2))-IFNULL(pyd.`value`,0.00) AS `amount` 
+                                                                    FROM tb_mail_manage_det md
+                                                                    INNER JOIN tb_sales_pos sp ON sp.id_sales_pos = md.id_report
+                                                                    INNER JOIN tb_m_comp_contact cc ON cc.`id_comp_contact`= IF(sp.id_memo_type=8 OR sp.id_memo_type=9, sp.id_comp_contact_bill,sp.`id_store_contact_from`)
+                                                                    INNER JOIN tb_lookup_report_mark_type rmt ON rmt.report_mark_type=sp.report_mark_type
+                                                                    INNER JOIN tb_m_comp c ON c.`id_comp`=cc.`id_comp`
+                                                                    INNER JOIN tb_m_comp_group cg ON cg.id_comp_group = c.id_comp_group
+                                                                    INNER JOIN tb_m_comp cgho ON cgho.id_comp = c.id_store_company
+                                                                    INNER JOIN tb_lookup_memo_type typ ON typ.`id_memo_type`=sp.`id_memo_type`
+                                                                    LEFT JOIN (
+                                                                       SELECT pyd.id_report, pyd.report_mark_type, 
+                                                                       COUNT(IF(py.id_report_status!=5 AND py.id_report_status!=6,py.id_rec_payment,NULL)) AS `total_pending`,
+                                                                       SUM(pyd.value) AS  `value`
+                                                                       FROM tb_rec_payment_det pyd
+                                                                       INNER JOIN tb_rec_payment py ON py.`id_rec_payment`=pyd.`id_rec_payment`
+                                                                       INNER JOIN tb_sales_pos sp ON sp.id_sales_pos = pyd.id_report AND sp.is_close_rec_payment=2
+                                                                       WHERE py.`id_report_status`=6
+                                                                       GROUP BY pyd.id_report, pyd.report_mark_type
+                                                                    ) pyd ON pyd.id_report = sp.id_sales_pos AND pyd.report_mark_type = sp.report_mark_type
+                                                                    WHERE md.id_mail_manage=" + id_mail + " "
+                                Dim dcont As DataTable = execute_query(qcont, -1, True, "", "", "", "")
+                                Dim tot_amo As Double = dt_grp.Rows(g)("amount").ToString
 
-            '                                'send email
-            '                                Dim sm As New ClassSendEmail()
-            '                                sm.id_report = id_mail
-            '                                sm.report_mark_type = "226"
-            '                                sm.head = mail_head
-            '                                sm.subj = mail_subject
-            '                                sm.titl = mail_title
-            '                                sm.par1 = mail_content_head + " " + dcont.Rows(0)("group_company").ToString
-            '                                sm.par2 = mail_content
-            '                                sm.par3 = mail_content_end
-            '                                sm.par4 = Double.Parse(tot_amo.ToString).ToString("N2")
-            '                                sm.dt = dcont
-            '                                sm.send_email_html()
+                                'send email
+                                Dim sm As New ClassSendEmail()
+                                sm.id_report = id_mail
+                                sm.report_mark_type = "226"
+                                sm.head = mail_head
+                                sm.subj = mail_subject
+                                sm.titl = mail_title
+                                sm.par1 = mail_content_head + " " + dcont.Rows(0)("group_company").ToString
+                                sm.par2 = mail_content
+                                sm.par3 = mail_content_end
+                                sm.par4 = Double.Parse(tot_amo.ToString).ToString("N2")
+                                sm.dt = dcont
+                                sm.send_email_html()
 
-            '                                'log
-            '                                Dim querylog As String = "INSERT INTO tb_ar_notice_log(`id_comp_group`, `group`, `log_time`, `log`, `is_success`) 
-            '                                                        VALUES('" + dt_grp.Rows(g)("id_comp_group").ToString + "', '" + addSlashes(dt_grp.Rows(g)("group").ToString) + "', NOW(), '" + addSlashes(dt_grp.Rows(g)("group").ToString) + " - Email Sent successfully',1); " + mm.queryInsertLog("0", "2", "" + addSlashes(dt_grp.Rows(g)("group").ToString) + " - Sent successfully") + "; "
-            '                                execute_non_query(querylog, True, "", "", "", "")
+                                'log
+                                Dim querylog As String = "INSERT INTO tb_ar_notice_log(`id_comp_group`, `group`, `log_time`, `log`, `is_success`) 
+                                                                    VALUES('" + dt_grp.Rows(g)("id_comp_group").ToString + "', '" + addSlashes(dt_grp.Rows(g)("group").ToString) + "', NOW(), '" + addSlashes(dt_grp.Rows(g)("group").ToString) + " - Email Sent successfully',1); " + mm.queryInsertLog("0", "2", "" + addSlashes(dt_grp.Rows(g)("group").ToString) + " - Sent successfully") + "; "
+                                execute_non_query(querylog, True, "", "", "", "")
 
-            '                                'foolow up
-            '                                mm.insertLogFollowUp("")
-            '                            Catch ex As Exception
-            '                                'Log
-            '                                Dim query_log As String = "INSERT INTO tb_ar_notice_log(`id_comp_group`, `group`, `log_time`, `log`, `is_success`) 
-            '                                                        VALUES('" + dt_grp.Rows(g)("id_comp_group").ToString + "','" + addSlashes(dt_grp.Rows(g)("group").ToString) + "', NOW(), '" + addSlashes(dt_grp.Rows(g)("group").ToString) + " - Failed send email : " + addSlashes(ex.ToString) + "',2); " + mm.queryInsertLog("0", "3", " + group_name + - " + addSlashes(ex.ToString))
-            '                                execute_non_query(query_log, True, "", "", "", "")
-            '                            End Try
-            '                        Next
-            '                    End If
-            '                End If
-            '            End If
+                                'foolow up
+                                mm.insertLogFollowUp("")
+                            Catch ex As Exception
+                                'Log
+                                Dim query_log As String = "INSERT INTO tb_ar_notice_log(`id_comp_group`, `group`, `log_time`, `log`, `is_success`) 
+                                                                    VALUES('" + dt_grp.Rows(g)("id_comp_group").ToString + "','" + addSlashes(dt_grp.Rows(g)("group").ToString) + "', NOW(), '" + addSlashes(dt_grp.Rows(g)("group").ToString) + " - Failed send email : " + addSlashes(ex.ToString) + "',2); " + mm.queryInsertLog("0", "3", " + group_name + - " + addSlashes(ex.ToString))
+                                execute_non_query(query_log, True, "", "", "", "")
+                            End Try
+                        Next
+                    End If
+                End If
+            End If
 
             '            If get_opt_scheduler_field("is_active_warning_late").ToString = "1" Then
             '                'Warning Late
