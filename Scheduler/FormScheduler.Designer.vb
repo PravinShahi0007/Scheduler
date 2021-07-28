@@ -66,6 +66,8 @@ Partial Class FormScheduler
         Me.Label6 = New System.Windows.Forms.Label()
         Me.TECashAdvance = New DevExpress.XtraEditors.TimeEdit()
         Me.XTPEvaulationAR = New DevExpress.XtraTab.XtraTabPage()
+        Me.LEDayAREval = New DevExpress.XtraEditors.LookUpEdit()
+        Me.Label18 = New System.Windows.Forms.Label()
         Me.BtnEvaluationAR = New DevExpress.XtraEditors.SimpleButton()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.TEEvaluationAR = New DevExpress.XtraEditors.TimeEdit()
@@ -142,6 +144,7 @@ Partial Class FormScheduler
         Me.XTPCashAdvance.SuspendLayout()
         CType(Me.TECashAdvance.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.XTPEvaulationAR.SuspendLayout()
+        CType(Me.LEDayAREval.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TEEvaluationAR.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.XTPNoticeEmail.SuspendLayout()
         CType(Me.TEEmailNoticeAR.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -560,6 +563,8 @@ Partial Class FormScheduler
         '
         'XTPEvaulationAR
         '
+        Me.XTPEvaulationAR.Controls.Add(Me.LEDayAREval)
+        Me.XTPEvaulationAR.Controls.Add(Me.Label18)
         Me.XTPEvaulationAR.Controls.Add(Me.BtnEvaluationAR)
         Me.XTPEvaulationAR.Controls.Add(Me.Label7)
         Me.XTPEvaulationAR.Controls.Add(Me.TEEvaluationAR)
@@ -567,9 +572,27 @@ Partial Class FormScheduler
         Me.XTPEvaulationAR.Size = New System.Drawing.Size(872, 161)
         Me.XTPEvaulationAR.Text = "AR - Evaluation"
         '
+        'LEDayAREval
+        '
+        Me.LEDayAREval.Location = New System.Drawing.Point(90, 20)
+        Me.LEDayAREval.Name = "LEDayAREval"
+        Me.LEDayAREval.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.LEDayAREval.Properties.Columns.AddRange(New DevExpress.XtraEditors.Controls.LookUpColumnInfo() {New DevExpress.XtraEditors.Controls.LookUpColumnInfo("id_day", "ID Day", 20, DevExpress.Utils.FormatType.None, "", False, DevExpress.Utils.HorzAlignment.[Default], DevExpress.Data.ColumnSortOrder.Ascending), New DevExpress.XtraEditors.Controls.LookUpColumnInfo("day_name", "Day")})
+        Me.LEDayAREval.Size = New System.Drawing.Size(445, 20)
+        Me.LEDayAREval.TabIndex = 19
+        '
+        'Label18
+        '
+        Me.Label18.AutoSize = True
+        Me.Label18.Location = New System.Drawing.Point(14, 22)
+        Me.Label18.Name = "Label18"
+        Me.Label18.Size = New System.Drawing.Size(67, 13)
+        Me.Label18.TabIndex = 18
+        Me.Label18.Text = "Run Every : "
+        '
         'BtnEvaluationAR
         '
-        Me.BtnEvaluationAR.Location = New System.Drawing.Point(196, 16)
+        Me.BtnEvaluationAR.Location = New System.Drawing.Point(196, 47)
         Me.BtnEvaluationAR.Name = "BtnEvaluationAR"
         Me.BtnEvaluationAR.Size = New System.Drawing.Size(66, 23)
         Me.BtnEvaluationAR.TabIndex = 17
@@ -578,7 +601,7 @@ Partial Class FormScheduler
         'Label7
         '
         Me.Label7.AutoSize = True
-        Me.Label7.Location = New System.Drawing.Point(14, 21)
+        Me.Label7.Location = New System.Drawing.Point(14, 52)
         Me.Label7.Name = "Label7"
         Me.Label7.Size = New System.Drawing.Size(70, 13)
         Me.Label7.TabIndex = 16
@@ -587,7 +610,7 @@ Partial Class FormScheduler
         'TEEvaluationAR
         '
         Me.TEEvaluationAR.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
-        Me.TEEvaluationAR.Location = New System.Drawing.Point(90, 18)
+        Me.TEEvaluationAR.Location = New System.Drawing.Point(90, 49)
         Me.TEEvaluationAR.Name = "TEEvaluationAR"
         Me.TEEvaluationAR.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
         Me.TEEvaluationAR.Properties.Mask.EditMask = "HH:mm:ss"
@@ -1083,6 +1106,7 @@ Partial Class FormScheduler
         CType(Me.TECashAdvance.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.XTPEvaulationAR.ResumeLayout(False)
         Me.XTPEvaulationAR.PerformLayout()
+        CType(Me.LEDayAREval.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.TEEvaluationAR.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.XTPNoticeEmail.ResumeLayout(False)
         Me.XTPNoticeEmail.PerformLayout()
@@ -1222,4 +1246,6 @@ Partial Class FormScheduler
     Friend WithEvents BPROG As DevExpress.XtraEditors.SimpleButton
     Friend WithEvents Label17 As Label
     Friend WithEvents TEPROG As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents LEDayAREval As DevExpress.XtraEditors.LookUpEdit
+    Friend WithEvents Label18 As Label
 End Class

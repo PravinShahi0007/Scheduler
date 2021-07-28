@@ -26,6 +26,7 @@
                                UNION SELECT '0' AS id_day, 'Sunday' AS day_name"
         viewLookupQuery(LEDay, query, 0, "day_name", "id_day")
         viewLookupQuery(LEDayKurs, query, 0, "day_name", "id_day")
+        viewLookupQuery(LEDayAREval, query, 0, "day_name", "id_day")
     End Sub
     Public Sub viewLookupQuery(ByVal LE As DevExpress.XtraEditors.LookUpEdit, ByVal query As String, ByVal index_selected As Integer, ByVal display As String, ByVal value As String)
         Try
