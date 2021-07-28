@@ -205,10 +205,10 @@
     End Sub
 
     Sub load_evaluation_time()
-        Dim query As String = "SELECT evaluation_ar_time FROM tb_opt_scheduler LIMIT 1"
-        Dim time As String = execute_query(query, 0, True, "", "", "", "")
-
-        TEEvaluationAR.EditValue = time
+        Dim query As String = "SELECT evaluation_ar_time, evaluation_ar_day FROM tb_opt_scheduler LIMIT 1"
+        Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+        LEDayAREval.ItemIndex = LEDayAREval.Properties.GetDataSourceRowIndex("id_day", data.Rows(0)("evaluation_ar_day"))
+        TEEvaluationAR.EditValue = data.Rows(0)("evaluation_ar_time")
     End Sub
 
     Sub load_notice_ar_time()
@@ -331,7 +331,7 @@
 
             'AR evaluation
             If get_opt_scheduler_field("is_active_evaluation_ar").ToString = "1" Then
-                If Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                If LEDayAREval.EditValue = cur_datetime.DayOfWeek And Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
                     'Pake tanggal evaluasi
                     'Dim qgd As String = "SELECT * FROM tb_ar_eval_setup_date WHERE ar_eval_setup_date='" + cur_datetime.ToString("yyyy-MM-dd") + "' "
                     'Dim dgd As DataTable = execute_query(qgd, -1, True, "", "", "", "")
@@ -922,7 +922,8 @@
     End Sub
 
     Private Sub BtnEvaluationAR_Click(sender As Object, e As EventArgs) Handles BtnEvaluationAR.Click
-        Dim query As String = "UPDATE tb_opt_scheduler SET evaluation_ar_time='" & Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        Dim query As String = "UPDATE tb_opt_scheduler SET evaluation_ar_time='" & Date.Parse(TEEvaluationAR.EditValue.ToString).ToString("HH:mm:ss") & "',
+        evaluation_ar_day='" + LEDayAREval.EditValue.ToString + "' "
         execute_non_query(query, True, "", "", "", "")
         MsgBox("Evaluation AR Time saved.")
     End Sub
