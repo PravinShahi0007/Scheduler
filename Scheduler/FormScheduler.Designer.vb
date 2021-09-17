@@ -121,6 +121,10 @@ Partial Class FormScheduler
         Me.BPROG = New DevExpress.XtraEditors.SimpleButton()
         Me.Label17 = New System.Windows.Forms.Label()
         Me.TEPROG = New DevExpress.XtraEditors.TimeEdit()
+        Me.XTPSerahTerima = New DevExpress.XtraTab.XtraTabPage()
+        Me.BSerahTerimaQC = New DevExpress.XtraEditors.SimpleButton()
+        Me.Label19 = New System.Windows.Forms.Label()
+        Me.TESerahTerimaQC = New DevExpress.XtraEditors.TimeEdit()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -173,6 +177,8 @@ Partial Class FormScheduler
         CType(Me.TEPOOG.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.XTPPROG.SuspendLayout()
         CType(Me.TEPROG.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.XTPSerahTerima.SuspendLayout()
+        CType(Me.TESerahTerimaQC.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Timer
@@ -351,7 +357,7 @@ Partial Class FormScheduler
         Me.XtraTabControl1.SelectedTabPage = Me.XTPSchedule
         Me.XtraTabControl1.Size = New System.Drawing.Size(878, 189)
         Me.XtraTabControl1.TabIndex = 6
-        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail, Me.XTPWarningLate, Me.XTPGetKurs, Me.XTPFailOrder, Me.XTPSalesReturn, Me.XTPMarketplaceOrderStt, Me.XTPQC, Me.XTPPolis, Me.XTPPOOG, Me.XTPPROG})
+        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail, Me.XTPWarningLate, Me.XTPGetKurs, Me.XTPFailOrder, Me.XTPSalesReturn, Me.XTPMarketplaceOrderStt, Me.XTPQC, Me.XTPPolis, Me.XTPPOOG, Me.XTPPROG, Me.XTPSerahTerima})
         '
         'XTPSchedule
         '
@@ -1064,6 +1070,42 @@ Partial Class FormScheduler
         Me.TEPROG.Size = New System.Drawing.Size(100, 20)
         Me.TEPROG.TabIndex = 20
         '
+        'XTPSerahTerima
+        '
+        Me.XTPSerahTerima.Controls.Add(Me.BSerahTerimaQC)
+        Me.XTPSerahTerima.Controls.Add(Me.Label19)
+        Me.XTPSerahTerima.Controls.Add(Me.TESerahTerimaQC)
+        Me.XTPSerahTerima.Name = "XTPSerahTerima"
+        Me.XTPSerahTerima.Size = New System.Drawing.Size(872, 161)
+        Me.XTPSerahTerima.Text = "Serah Terima QC"
+        '
+        'BSerahTerimaQC
+        '
+        Me.BSerahTerimaQC.Location = New System.Drawing.Point(226, 11)
+        Me.BSerahTerimaQC.Name = "BSerahTerimaQC"
+        Me.BSerahTerimaQC.Size = New System.Drawing.Size(66, 23)
+        Me.BSerahTerimaQC.TabIndex = 25
+        Me.BSerahTerimaQC.Text = "Save"
+        '
+        'Label19
+        '
+        Me.Label19.AutoSize = True
+        Me.Label19.Location = New System.Drawing.Point(16, 16)
+        Me.Label19.Name = "Label19"
+        Me.Label19.Size = New System.Drawing.Size(98, 13)
+        Me.Label19.TabIndex = 24
+        Me.Label19.Text = "Daily Reminder at :"
+        '
+        'TESerahTerimaQC
+        '
+        Me.TESerahTerimaQC.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
+        Me.TESerahTerimaQC.Location = New System.Drawing.Point(120, 13)
+        Me.TESerahTerimaQC.Name = "TESerahTerimaQC"
+        Me.TESerahTerimaQC.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.TESerahTerimaQC.Properties.Mask.EditMask = "HH:mm:ss"
+        Me.TESerahTerimaQC.Size = New System.Drawing.Size(100, 20)
+        Me.TESerahTerimaQC.TabIndex = 23
+        '
         'FormScheduler
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -1144,6 +1186,9 @@ Partial Class FormScheduler
         Me.XTPPROG.ResumeLayout(False)
         Me.XTPPROG.PerformLayout()
         CType(Me.TEPROG.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.XTPSerahTerima.ResumeLayout(False)
+        Me.XTPSerahTerima.PerformLayout()
+        CType(Me.TESerahTerimaQC.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1248,4 +1293,8 @@ Partial Class FormScheduler
     Friend WithEvents TEPROG As DevExpress.XtraEditors.TimeEdit
     Friend WithEvents LEDayAREval As DevExpress.XtraEditors.LookUpEdit
     Friend WithEvents Label18 As Label
+    Friend WithEvents XTPSerahTerima As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents BSerahTerimaQC As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents Label19 As Label
+    Friend WithEvents TESerahTerimaQC As DevExpress.XtraEditors.TimeEdit
 End Class

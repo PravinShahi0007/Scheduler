@@ -112,6 +112,8 @@
 
             load_pr_og()
 
+            load_serah_terima_qc()
+
             start_timer()
             WindowState = FormWindowState.Minimized
         End If
@@ -167,6 +169,13 @@
         Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
 
         TEPROG.EditValue = data.Rows(0)("pr_og_time")
+    End Sub
+
+    Sub load_serah_terima_qc()
+        Dim query As String = "SELECT serah_terima_qc_time FROM tb_opt_scheduler LIMIT 1"
+        Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+
+        TESerahTerimaQC.EditValue = data.Rows(0)("serah_terima_qc_time")
     End Sub
 
     Sub load_schedule_monthly_leave_report()
@@ -228,8 +237,8 @@
     Private Sub Timer_Tick(sender As Object, e As EventArgs) Handles Timer.Tick
         Try
             Dim cur_datetime As Date = Now()
-            'disable when developed from here
 
+            'disable when developed from here
             For i As Integer = 0 To GVSchedule.RowCount - 1
                 If (Date.Parse(GVSchedule.GetRowCellValue(i, "time_var").ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
                     exec_process()
@@ -613,6 +622,31 @@
                         Dim mail As ClassSendEmail = New ClassSendEmail()
                         mail.par1 = dtpog.Rows.Count.ToString
                         mail.send_mail_po_og()
+                    End If
+                End If
+            End If
+
+            'Reminder Serah Terima
+            If get_opt_scheduler_field("is_active_serah_terima_qc").ToString = "1" Then
+                If Date.Parse(TESerahTerimaQC.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                    Dim qserah_terima As String = "SELECT pl.`id_pl_prod_order`,po.`prod_order_number`,pl.`pl_prod_order_number`,pl.`pl_prod_order_date`,d.`design_code`,d.`design_display_name`,rec.`id_pl_prod_order_rec`,pl.`id_comp_contact_to`
+                                            ,pl.`complete_date`,DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`)) AS diff_date_serah_terima
+                                            ,cat.`pl_category`
+                                            FROM `tb_pl_prod_order` pl 
+                                            INNER JOIN tb_prod_order po ON po.`id_prod_order`=pl.`id_prod_order`
+                                            INNER JOIN tb_prod_demand_design pdd ON pdd.`id_prod_demand_design`=po.`id_prod_demand_design`
+                                            INNER JOIN tb_m_design d ON d.`id_design`=pdd.`id_design`
+                                            INNER JOIN tb_m_comp_contact cc ON cc.`id_comp_contact`=pl.`id_comp_contact_to`
+                                            INNER JOIN tb_m_comp c ON c.`id_comp`=cc.`id_comp` AND c.id_departement='6'
+                                            INNER JOIN tb_lookup_pl_category cat ON cat.`id_pl_category`=pl.`id_pl_category`
+                                            LEFT JOIN `tb_pl_prod_order_rec` rec ON rec.`id_pl_prod_order`=pl.`id_pl_prod_order` AND rec.`id_report_status`!=5
+                                            WHERE pl.`id_report_status`=6 AND ISNULL(rec.`id_pl_prod_order_rec`)
+                                            AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
+                    Dim dt_serah_terima As DataTable = execute_query(qserah_terima, -1, True, "", "", "", "")
+                    If dt_serah_terima.Rows.Count > 0 Then
+                        Dim mail As ClassSendEmail = New ClassSendEmail()
+                        mail.par1 = dt_serah_terima.Rows.Count.ToString
+                        mail.send_mail_email_serah_terima_qc()
                     End If
                 End If
             End If
@@ -1021,5 +1055,11 @@
         Dim query As String = "UPDATE tb_opt_scheduler SET pr_og_time='" & Date.Parse(TEPROG.EditValue.ToString).ToString("HH:mm:ss") & "'"
         execute_non_query(query, True, "", "", "", "")
         MsgBox("Email Notice PR OG Time saved.")
+    End Sub
+
+    Private Sub BSerahTerimaQC_Click(sender As Object, e As EventArgs) Handles BSerahTerimaQC.Click
+        Dim query As String = "UPDATE tb_opt_scheduler SET serah_terima_qc_time='" & Date.Parse(TESerahTerimaQC.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        execute_non_query(query, True, "", "", "", "")
+        MsgBox("Email Notice Serah Terima QC saved.")
     End Sub
 End Class

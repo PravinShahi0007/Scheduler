@@ -257,6 +257,12 @@
     <Compile Include="ReportPurcOG.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ReportReminderSerahTerima.Designer.vb">
+      <DependentUpon>ReportReminderSerahTerima.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ReportReminderSerahTerima.vb">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ReportReturnOut.Designer.vb">
       <DependentUpon>ReportReturnOut.vb</DependentUpon>
     </Compile>
@@ -298,6 +304,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ReportPurcOG.resx">
       <DependentUpon>ReportPurcOG.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportReminderSerahTerima.resx">
+      <DependentUpon>ReportReminderSerahTerima.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ReportReturnOut.resx">
       <DependentUpon>ReportReturnOut.vb</DependentUpon>
