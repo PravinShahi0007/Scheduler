@@ -2,8 +2,13 @@
     Private Sub ReportReminderSerahTerima_BeforePrint(sender As Object, e As Printing.PrintEventArgs) Handles MyBase.BeforePrint
         Dim q As String = "SELECT pl.`id_pl_prod_order`,po.`prod_order_number`,pl.`pl_prod_order_number`,pl.`pl_prod_order_date`,d.`design_code`,d.`design_display_name`,rec.`id_pl_prod_order_rec`,pl.`id_comp_contact_to`
 ,pl.`complete_date`,DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`)) AS diff_date_serah_terima
-,cat.`pl_category`
+,cat.`pl_category`,det.qty AS qty_pl
 FROM `tb_pl_prod_order` pl 
+INNER JOIN 
+(
+	SELECT id_pl_prod_order,SUM(pl_prod_order_det_qty) AS qty FROM `tb_pl_prod_order_det`
+	GROUP BY id_pl_prod_order
+)det ON det.id_pl_prod_order=pl.`id_pl_prod_order`
 INNER JOIN tb_prod_order po ON po.`id_prod_order`=pl.`id_prod_order`
 INNER JOIN tb_prod_demand_design pdd ON pdd.`id_prod_demand_design`=po.`id_prod_demand_design`
 INNER JOIN tb_m_design d ON d.`id_design`=pdd.`id_design`

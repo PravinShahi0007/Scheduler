@@ -39,6 +39,7 @@ Partial Public Class ReportReminderSerahTerima
         Me.GridColumn5 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.GridColumn6 = New DevExpress.XtraGrid.Columns.GridColumn()
         Me.WinControlContainer1 = New DevExpress.XtraReports.UI.WinControlContainer()
+        Me.GridColumn8 = New DevExpress.XtraGrid.Columns.GridColumn()
         CType(Me.GCReport, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.GVReport, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -137,7 +138,7 @@ Partial Public Class ReportReminderSerahTerima
         '
         'GVReport
         '
-        Me.GVReport.Columns.AddRange(New DevExpress.XtraGrid.Columns.GridColumn() {Me.GridColumn1, Me.GridColumn2, Me.GridColumn3, Me.GridColumn7, Me.GridColumn4, Me.GridColumn5, Me.GridColumn6})
+        Me.GVReport.Columns.AddRange(New DevExpress.XtraGrid.Columns.GridColumn() {Me.GridColumn1, Me.GridColumn2, Me.GridColumn3, Me.GridColumn7, Me.GridColumn4, Me.GridColumn5, Me.GridColumn8, Me.GridColumn6})
         Me.GVReport.GridControl = Me.GCReport
         Me.GVReport.Name = "GVReport"
         Me.GVReport.OptionsView.ShowFooter = True
@@ -151,7 +152,7 @@ Partial Public Class ReportReminderSerahTerima
         Me.GridColumn1.Summary.AddRange(New DevExpress.XtraGrid.GridSummaryItem() {New DevExpress.XtraGrid.GridColumnSummaryItem(DevExpress.Data.SummaryItemType.Count, "pl_prod_order_number", "Jumlah pending = {0}")})
         Me.GridColumn1.Visible = True
         Me.GridColumn1.VisibleIndex = 0
-        Me.GridColumn1.Width = 230
+        Me.GridColumn1.Width = 219
         '
         'GridColumn2
         '
@@ -160,7 +161,7 @@ Partial Public Class ReportReminderSerahTerima
         Me.GridColumn2.Name = "GridColumn2"
         Me.GridColumn2.Visible = True
         Me.GridColumn2.VisibleIndex = 2
-        Me.GridColumn2.Width = 208
+        Me.GridColumn2.Width = 198
         '
         'GridColumn3
         '
@@ -171,7 +172,7 @@ Partial Public Class ReportReminderSerahTerima
         Me.GridColumn3.Name = "GridColumn3"
         Me.GridColumn3.Visible = True
         Me.GridColumn3.VisibleIndex = 3
-        Me.GridColumn3.Width = 250
+        Me.GridColumn3.Width = 238
         '
         'GridColumn7
         '
@@ -180,7 +181,7 @@ Partial Public Class ReportReminderSerahTerima
         Me.GridColumn7.Name = "GridColumn7"
         Me.GridColumn7.Visible = True
         Me.GridColumn7.VisibleIndex = 1
-        Me.GridColumn7.Width = 164
+        Me.GridColumn7.Width = 156
         '
         'GridColumn4
         '
@@ -189,7 +190,7 @@ Partial Public Class ReportReminderSerahTerima
         Me.GridColumn4.Name = "GridColumn4"
         Me.GridColumn4.Visible = True
         Me.GridColumn4.VisibleIndex = 4
-        Me.GridColumn4.Width = 136
+        Me.GridColumn4.Width = 129
         '
         'GridColumn5
         '
@@ -198,7 +199,7 @@ Partial Public Class ReportReminderSerahTerima
         Me.GridColumn5.Name = "GridColumn5"
         Me.GridColumn5.Visible = True
         Me.GridColumn5.VisibleIndex = 5
-        Me.GridColumn5.Width = 443
+        Me.GridColumn5.Width = 373
         '
         'GridColumn6
         '
@@ -212,8 +213,8 @@ Partial Public Class ReportReminderSerahTerima
         Me.GridColumn6.FieldName = "diff_date_serah_terima"
         Me.GridColumn6.Name = "GridColumn6"
         Me.GridColumn6.Visible = True
-        Me.GridColumn6.VisibleIndex = 6
-        Me.GridColumn6.Width = 185
+        Me.GridColumn6.VisibleIndex = 7
+        Me.GridColumn6.Width = 152
         '
         'WinControlContainer1
         '
@@ -221,6 +222,22 @@ Partial Public Class ReportReminderSerahTerima
         Me.WinControlContainer1.Name = "WinControlContainer1"
         Me.WinControlContainer1.SizeF = New System.Drawing.SizeF(1066.0!, 222.9167!)
         Me.WinControlContainer1.WinControl = Me.GCReport
+        '
+        'GridColumn8
+        '
+        Me.GridColumn8.AppearanceCell.Options.UseTextOptions = True
+        Me.GridColumn8.AppearanceCell.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Far
+        Me.GridColumn8.AppearanceHeader.Options.UseTextOptions = True
+        Me.GridColumn8.AppearanceHeader.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Far
+        Me.GridColumn8.Caption = "Qty Packing List"
+        Me.GridColumn8.DisplayFormat.FormatString = "N0"
+        Me.GridColumn8.DisplayFormat.FormatType = DevExpress.Utils.FormatType.Numeric
+        Me.GridColumn8.FieldName = "qty_pl"
+        Me.GridColumn8.Name = "GridColumn8"
+        Me.GridColumn8.Summary.AddRange(New DevExpress.XtraGrid.GridSummaryItem() {New DevExpress.XtraGrid.GridColumnSummaryItem(DevExpress.Data.SummaryItemType.Sum, "qty_pl", "{0:N0}")})
+        Me.GridColumn8.Visible = True
+        Me.GridColumn8.VisibleIndex = 6
+        Me.GridColumn8.Width = 151
         '
         'ReportReminderSerahTerima
         '
@@ -257,4 +274,5 @@ Partial Public Class ReportReminderSerahTerima
     Friend WithEvents GridColumn4 As DevExpress.XtraGrid.Columns.GridColumn
     Friend WithEvents GridColumn5 As DevExpress.XtraGrid.Columns.GridColumn
     Friend WithEvents GridColumn6 As DevExpress.XtraGrid.Columns.GridColumn
+    Friend WithEvents GridColumn8 As DevExpress.XtraGrid.Columns.GridColumn
 End Class

@@ -1607,7 +1607,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
                           <p class='MsoNormal' style='line-height:14.25pt'><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'>This is daily reminder for Receiving Packing List Serah Terima QC.
                           "
         If Not jml_expired.ToString = "0" Then
-            body_temp += "<br/> - " & jml_expired & " overdue for receiving (More than 18 days pending)."
+            body_temp += "<br/> - " & jml_expired & " packing list(s) overdue for receiving (More than 18 days pending)."
         End If
         body_temp += "<br/>Make sure to follow up immediately. Please see attachment for detail.
                     <u></u><u></u></span></p>
