@@ -939,22 +939,18 @@ ORDER BY a.id_prod_order_ret_out DESC
             End If
         Next
 
-        Dim qmail As String = "SELECT SUM(CASE WHEN tem.expired_in <= 0 THEN 1 ELSE 0 END) AS jml_expired,SUM(CASE WHEN tem.expired_in > 0 THEN 1 ELSE 0 END) AS jml_expired_soon
-FROM
-(
-SELECT p.id_polis,DATEDIFF(p.end_date,DATE(NOW())) AS expired_in,pol_by.comp_name AS comp_name_polis,CONCAT(c.comp_number,' - ',c.`comp_name`) AS polis_object,c.`address_primary` AS polis_object_location,pd.`number` AS polis_number,pd.`description` AS polis_untuk,pd.`premi`,p.`start_date`,p.`end_date` 
-FROM tb_polis_det pd
-INNER JOIN tb_polis p ON p.`id_polis`=pd.`id_polis`
+        Dim qmail As String = "SELECT p.`number` AS polis_number,COUNT(DISTINCT(p.`id_reff`)) AS jml_toko,IF(COUNT(DISTINCT(p.`id_reff`))>1,'Kolektif','Mandiri') AS jenis_polis,DATEDIFF(p.end_date,DATE(NOW())) AS expired_in,pol_by.comp_name AS comp_name_polis,d.`description` AS polis_untuk,p.`premi`,p.`start_date`,p.`end_date` 
+FROM tb_polis p 
 INNER JOIN tb_m_comp c ON c.`id_comp`=p.`id_reff` AND p.`id_polis_cat`=1
 INNER JOIN tb_m_comp pol_by ON pol_by.id_comp=p.id_polis_by
-WHERE p.`is_active`=1 AND DATEDIFF(p.end_date,DATE(NOW()))<45
-GROUP BY pd.`id_polis`
-) tem"
+INNER JOIN `tb_lookup_desc_premi` d ON d.`id_desc_premi`=p.`id_desc_premi`
+WHERE p.`is_active`=1 AND DATEDIFF(p.end_date,DATE(NOW()))<60
+GROUP BY p.number,p.`id_polis_by`,p.`end_date`"
         Dim dtmail As DataTable = execute_query(qmail, -1, True, "", "", "", "")
 
         mail.Subject = "Polis Reminder (" & Now.ToString("dd MMMM yyyy") & ")"
         mail.IsBodyHtml = True
-        mail.Body = email_polis(dtmail.Rows(0)("jml_expired").ToString, dtmail.Rows(0)("jml_expired_soon").ToString)
+        mail.Body = email_polis(dtmail)
         client.Send(mail)
         '
         Report.Dispose()
@@ -968,78 +964,118 @@ GROUP BY pd.`id_polis`
         execute_non_query(query_log, True, "", "", "", "")
     End Sub
 
-    Function email_polis(ByVal jml_expired As String, ByVal jml_expired_soon As String)
+    Function email_polis(ByVal dtbody As DataTable)
         Dim body_temp As String = ""
         '
         body_temp = "<table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='100%' style='width:100.0%;background:#eeeeee'>
-                     <tbody><tr>
-                      <td style='padding:30.0pt 30.0pt 30.0pt 30.0pt'>
-                      <div align='center'>
+    <tbody><tr>
+      <td style='padding:30.0pt 30.0pt 30.0pt 30.0pt'>
+      <div align='center'>
 
-                      <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:6.25in;background:white'>
-                       <tbody><tr>
-                        <td style='padding:0in 0in 0in 0in'></td>
-                       </tr>
-                       <tr>
-                        <td style='padding:0in 0in 0in 0in'>
-                        <p class='MsoNormal' align='center' style='text-align:center'><a href='http://www.volcom.co.id/' title='Volcom' target='_blank' data-saferedirecturl='https://www.google.com/url?hl=en&amp;q=http://www.volcom.co.id/&amp;source=gmail&amp;ust=1480121870771000&amp;usg=AFQjCNEjXvEZWgDdR-Wlke7nn0fmc1ZUuA'><span style='text-decoration:none'><img border='0' width='180' id='m_1811720018273078822_x0000_i1025' src='https://ci3.googleusercontent.com/proxy/x-zXDZUS-2knkEkbTh3HzgyAAusw1Wz7dqV-lbnl39W_4F6T97fJ2_b9doP3nYi0B6KHstdb-tK8VAF_kOaLt2OH=s0-d-e1-ft#http://www.volcom.co.id/enews/img/volcom.jpg' alt='Volcom' class='CToWUd'></span></a><u></u><u></u></p>
-                        </td>
-                       </tr>
-                       <tr>
-                        <td style='padding:0in 0in 0in 0in'></td>
-                       </tr>
-                       <tr>
-                        <td style='padding:0in 0in 0in 0in'>
-                        <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:6.25in;background:white'>
-                         <tbody><tr>
-                          <td style='padding:0in 0in 0in 0in'>
+      <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:6.25in;background:white'>
+       <tbody><tr>
+        <td style='padding:0in 0in 0in 0in'></td>
+       </tr>
+       <tr>
+        <td style='padding:0in 0in 0in 0in'>
+        <p class='MsoNormal' align='center' style='text-align:center'><a href='http://www.volcom.co.id/' title='Volcom' target='_blank' data-saferedirecturl='https://www.google.com/url?hl=en&amp;q=http://www.volcom.co.id/&amp;source=gmail&amp;ust=1480121870771000&amp;usg=AFQjCNEjXvEZWgDdR-Wlke7nn0fmc1ZUuA'><span style='text-decoration:none'><img border='0' width='180' id='m_1811720018273078822_x0000_i1025' src='https://d3k81ch9hvuctc.cloudfront.net/company/VFgA3P/images/de2b6f13-9275-426d-ae31-640f3dcfc744.jpeg' alt='Volcom' class='CToWUd'></span></a><u></u><u></u></p>
+        </td>
+       </tr>
+       <tr>
+        <td style='padding:0in 0in 0in 0in'></td>
+       </tr>
+       <tr>
+        <td style='padding:0in 0in 0in 0in'>
+        <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:6.25in;background:white'>
+         <tbody><tr>
+          <td style='padding:0in 0in 0in 0in'>
 
-                          </td>
-                         </tr>
-                        </tbody></table>
-                        <p class='MsoNormal' style='background-color:#eff0f1'><span style='display:block;background-color:#eff0f1;height: 5px;'><u></u>&nbsp;<u></u></span></p>
-                        <p class='MsoNormal'><span style='display:none'><u></u>&nbsp;<u></u></span></p>
-                        <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' style='background:white'>
-                         <tbody><tr>
-                          <td style='padding:15.0pt 15.0pt 15.0pt 15.0pt'>
-                          <div>
-                          <p class='MsoNormal' style='line-height:14.25pt'><b><span style='font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>Dear Team,</span></b><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'><u></u><u></u></span></p>
-                          <p class='MsoNormal' style='line-height:14.25pt'><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'>This is daily reminder for Polis Asuransi.
-                          "
-        If Not jml_expired.ToString = "0" Then
-            body_temp += "<br/> - " & jml_expired & " expired polis."
-        End If
-        If Not jml_expired_soon.ToString = "0" Then
-            body_temp += "<br/> - " & jml_expired_soon & " polis expired soon."
-        End If
-        body_temp += "<br/>Make sure to follow up immediately. Please see attachment for detail.
-                    <u></u><u></u></span></p>
-                          <p class='MsoNormal' style='line-height:14.25pt'><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'>Thank you<br /><b>Volcom ERP</b><u></u><u></u></span></p>
+          </td>
+         </tr>
+        </tbody></table>
 
-                          </div>
-                          </div>
-                          </td>
-                         </tr>
-                        </tbody></table>
-                        <p class='MsoNormal' style='background-color:#eff0f1'><span style='display:block;height: 10px;'><u></u>&nbsp;<u></u></span></p>
-                        <p class='MsoNormal'><span style='display:none'><u></u>&nbsp;<u></u></span></p>
-                        <div align='center'>
-                        <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' style='background:white'>
-                         <tbody><tr>
-                          <td style='padding:6.0pt 6.0pt 6.0pt 6.0pt;text-align:center;'>
-                            <span style='text-align:center;font-size:7.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#a0a0a0;letter-spacing:.4pt;'>This email send directly from system. Do not reply.</b><u></u><u></u></span>
-                          <p class='MsoNormal' align='center' style='margin-bottom:12.0pt;text-align:center;padding-top:0px;'><img border='0' width='300' id='m_1811720018273078822_x0000_i1028' src='https://ci6.googleusercontent.com/proxy/xq6o45mp_D9Z7DHCK5WT7GKuQ2QDaLg1hyMxoHX5ofUIv_m7GwasoczpbAOn6l6Ze-UfLuIUAndSokPvO633nnO9=s0-d-e1-ft#http://www.volcom.co.id/enews/img/footer.jpg' class='CToWUd'><u></u><u></u></p>
-                          </td>
-                         </tr>
-                        </tbody></table>
-                        </div>
-                        </td>
-                       </tr>
-                      </tbody></table>
-                      </div>
-                      </td>
-                     </tr>
-                    </tbody></table>"
+
+                <p class='MsoNormal' style='background-color:#eff0f1'><span style='display:block;background-color:#eff0f1;height: 5px;'><u></u>&nbsp;<u></u></span></p>
+                <p class='MsoNormal'><span style='display:none'><u></u>&nbsp;<u></u></span></p>
+                
+
+                <!-- start body -->
+                <table width='100%' class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' style='background:white'>
+                 <tbody>
+                 <tr>
+                  <td style='padding:15.0pt 15.0pt 5.0pt 15.0pt' colspan='3'>
+                  <div>
+                  <p class='MsoNormal' style='line-height:14.25pt'><span style='font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>Dear Team, </span><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'><u></u><u></u></span></p>
+                  </div>
+                  </td>
+
+                 </tr>
+                 <tr>
+                  <td style='padding:15.0pt 15.0pt 5.0pt 15.0pt' colspan='3'>
+                  <div>
+                  <p class='MsoNormal' style='line-height:14.25pt'><span style='font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>Terdapat polis asuransi yang akan/sudah expired dengan detail sebagai berikut: </span><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'><u></u><u></u></span></p>
+                  </div>
+                  </td>
+                 </tr>
+                 <tr>
+                  <td style='padding:1.0pt 15.0pt 15.0pt 15.0pt' colspan='3'>
+                  <table width='100%' class='m_1811720018273078822MsoNormalTable' border='1' cellspacing='0' cellpadding='5' style='background:white; font-size: 12px; font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#000000'>
+                  <tr style='background-color:black; font-size: 12px; font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#ffffff'>
+                    <th>Vendor</th>
+                    <th>Tipe Polis</th>
+                    <th>Nomor Polis</th>
+                    <th>Keterangan</th>
+                    <th>Jumlah Toko</th>
+                    <th>Expired dalam (hari)</th>
+                  </tr> 
+
+                <!-- row data --> "
+        For d As Integer = 0 To dtbody.Rows.Count - 1
+            body_temp += "
+      <td>" + dtbody.Rows(d)("comp_name_polis").ToString() + "</td>
+      <td>" + Decimal.Parse(dtbody.Rows(d)("polis_untuk").ToString()).ToString("N0") + "</td>
+      <td>" + Decimal.Parse(dtbody.Rows(d)("polis_number").ToString()).ToString("N0") + "</td>
+      <td>" + Decimal.Parse(dtbody.Rows(d)("jenis_polis").ToString()).ToString("N0") + "</td>
+      <td>" + Decimal.Parse(dtbody.Rows(d)("jml_toko").ToString()).ToString("N0") + "</td>
+      <td>" + Decimal.Parse(dtbody.Rows(d)("expired_in").ToString()).ToString("N0") + "</td>
+      </tr>"
+        Next
+        body_temp += "</table>
+                  </td>
+                 </tr>
+                  <tr>
+                    <td style='padding:15.0pt 15.0pt 15.0pt 15.0pt' colspan='3'>
+                    <div>
+                    <p class='MsoNormal' style='line-height:14.25pt'><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'>Thank you<br /><b>Volcom ERP</b><u></u><u></u></span></p>
+
+                    </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- end body -->
+
+
+                <p class='MsoNormal' style='background-color:#eff0f1'><span style='display:block;height: 10px;'><u></u>&nbsp;<u></u></span></p>
+                <p class='MsoNormal'><span style='display:none'><u></u>&nbsp;<u></u></span></p>
+                <div align='center'>
+                <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' style='background:white'>
+         <tbody><tr>
+          <td style='padding:6.0pt 6.0pt 6.0pt 6.0pt;text-align:center;'>
+            <span style='text-align:center;font-size:7.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#a0a0a0;letter-spacing:.4pt;'>This email send directly from Volcom ERP. Do not reply.</b><u></u><u></u></span>
+          <p class='MsoNormal' align='center' style='margin-bottom:12.0pt;text-align:center;padding-top:0px;'><br></p>
+          </td>
+         </tr>
+        </tbody></table>
+        </div>
+        </td>
+       </tr>
+      </tbody></table>  
+      </div>
+      </td>
+     </tr>
+    </tbody>
+</table>"
         Return body_temp
     End Function
 
