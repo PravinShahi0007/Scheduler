@@ -1033,9 +1033,9 @@ GROUP BY p.number,p.`id_polis_by`,p.`end_date`"
         For d As Integer = 0 To dtbody.Rows.Count - 1
             body_temp += "
       <td>" + dtbody.Rows(d)("comp_name_polis").ToString() + "</td>
-      <td>" + Decimal.Parse(dtbody.Rows(d)("polis_untuk").ToString()).ToString("N0") + "</td>
-      <td>" + Decimal.Parse(dtbody.Rows(d)("polis_number").ToString()).ToString("N0") + "</td>
-      <td>" + Decimal.Parse(dtbody.Rows(d)("jenis_polis").ToString()).ToString("N0") + "</td>
+      <td>" + dtbody.Rows(d)("polis_untuk").ToString() + "</td>
+      <td>" + dtbody.Rows(d)("polis_number").ToString() + "</td>
+      <td>" + dtbody.Rows(d)("jenis_polis").ToString() + "</td>
       <td>" + Decimal.Parse(dtbody.Rows(d)("jml_toko").ToString()).ToString("N0") + "</td>
       <td>" + Decimal.Parse(dtbody.Rows(d)("expired_in").ToString()).ToString("N0") + "</td>
       </tr>"
