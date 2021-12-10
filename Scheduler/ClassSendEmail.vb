@@ -1573,7 +1573,7 @@ ORDER BY pr.requirement_date
             End If
         Next
 
-        Dim qmail As String = "SELECT prec.number,pir.pib_no,DATE_FORMAT(pir.pib_date,'%d %M %Y') AS pib_date,DATE_FORMAT(DATE_ADD(pir.pib_date,INTERVAL 1 YEAR),'%d %M %Y') AS second_due_date
+        Dim qmail As String = "SELECT prec.number,pir.pib_no,DATE_FORMAT(pir.pib_date,'%d %M %Y') AS pib_date,DATE_FORMAT(pir.vp_due_date,'%d %M %Y') AS second_due_date
 ,IF(pir.id_notif_type=2 OR pir.id_notif_type=4,'Second voluntary payment will due soon (45 days)',CONCAT('Article on PIB sell more than ',pir.`notif_qty_sales_percent`,'%')) AS notif_notes
 FROM tb_pib_review pir
 INNER JOIN tb_pre_cal_fgpo prec ON prec.`id_pre_cal_fgpo`=pir.`id_pre_cal_fgpo`

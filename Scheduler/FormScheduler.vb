@@ -276,56 +276,56 @@
                 mail_dept.send_email_html()
             End If
             'Duty Reminder
-            If (Date.Parse(TETimeDuty.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
-                Dim query As String = "SELECT 
-                                                                                tb.*,
-                                                                                (
-                                                                                tb.past_due_date + tb.soon_due + tb.pr_due
-                                                                                ) AS total_notif 
-                                                                            FROM
-                                                                                (SELECT 
-                                                                                SUM(
-                                                                                    IF(
-                                                                             po.duty_is_pay = '2' 
-                                                                             AND NOT ISNULL(po.pib_date),
-                                                                             IF(DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) < 0, 1, 0),
-                                                                             0
-                                                                                    )
-                                                                                ) AS past_due_date,
-                                                                                SUM(
-                                                                                    IF(
-                                                                             po.duty_is_pay = '2'
-                                                                             AND NOT ISNULL(po.pib_date),
-                                                                             IF(
-                                                                                 DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) <= 30 
-                                                                                 AND DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) >= 0,
-                                                                                 1,
-                                                                                 0
-                                                                             ),
-                                                                             0
-                                                                                    )
-                                                                                ) AS soon_due,
-                                                                                SUM(
-                                                                                    IF(
-                                                                             po.duty_is_pay = '2'
-                                                                             AND po.duty_is_pr_proposed = '2' 
-                                                                             AND NOT ISNULL(DATE_ADD(po.pib_date, INTERVAL 1 YEAR)),
-                                                                             IF(DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) <= 60, 1, 0),
-                                                                             0
-                                                                                    )
-                                                                                ) AS pr_due 
-                                                                                FROM
-                                                                                tb_prod_order po) AS tb "
-                Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
-                If Not data.Rows(0)("total_notif").ToString = "0" Then
-                    Dim mail As ClassSendEmail = New ClassSendEmail()
-                    mail.past_due_date = data.Rows(0)("past_due_date")
-                    mail.soon_due = data.Rows(0)("soon_due")
-                    mail.pr_due = data.Rows(0)("pr_due")
-                    mail.total_notif = data.Rows(0)("total_notif")
-                    mail.send_mail_duty()
-                End If
-            End If
+            'If (Date.Parse(TETimeDuty.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss")) Then
+            '    Dim query As String = "SELECT 
+            '                                                                    tb.*,
+            '                                                                    (
+            '                                                                    tb.past_due_date + tb.soon_due + tb.pr_due
+            '                                                                    ) AS total_notif 
+            '                                                                FROM
+            '                                                                    (SELECT 
+            '                                                                    SUM(
+            '                                                                        IF(
+            '                                                                 po.duty_is_pay = '2' 
+            '                                                                 AND NOT ISNULL(po.pib_date),
+            '                                                                 IF(DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) < 0, 1, 0),
+            '                                                                 0
+            '                                                                        )
+            '                                                                    ) AS past_due_date,
+            '                                                                    SUM(
+            '                                                                        IF(
+            '                                                                 po.duty_is_pay = '2'
+            '                                                                 AND NOT ISNULL(po.pib_date),
+            '                                                                 IF(
+            '                                                                     DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) <= 30 
+            '                                                                     AND DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) >= 0,
+            '                                                                     1,
+            '                                                                     0
+            '                                                                 ),
+            '                                                                 0
+            '                                                                        )
+            '                                                                    ) AS soon_due,
+            '                                                                    SUM(
+            '                                                                        IF(
+            '                                                                 po.duty_is_pay = '2'
+            '                                                                 AND po.duty_is_pr_proposed = '2' 
+            '                                                                 AND NOT ISNULL(DATE_ADD(po.pib_date, INTERVAL 1 YEAR)),
+            '                                                                 IF(DATEDIFF(DATE_ADD(po.pib_date, INTERVAL 1 YEAR), NOW()) <= 60, 1, 0),
+            '                                                                 0
+            '                                                                        )
+            '                                                                    ) AS pr_due 
+            '                                                                    FROM
+            '                                                                    tb_prod_order po) AS tb "
+            '    Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+            '    If Not data.Rows(0)("total_notif").ToString = "0" Then
+            '        Dim mail As ClassSendEmail = New ClassSendEmail()
+            '        mail.past_due_date = data.Rows(0)("past_due_date")
+            '        mail.soon_due = data.Rows(0)("soon_due")
+            '        mail.pr_due = data.Rows(0)("pr_due")
+            '        mail.total_notif = data.Rows(0)("total_notif")
+            '        mail.send_mail_duty()
+            '    End If
+            'End If
 
             If get_opt_scheduler_field("is_active_notif_cash_advance").ToString = "1" Then
                 'Cash Advance
