@@ -2119,6 +2119,213 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
         Return body_temp
     End Function
 
+    Sub send_email_eos()
+        Dim qry As String = "SELECT p.id_pp_change, p.number, 
+        DATE_FORMAT(p.effective_date,'%d-%m-%Y') AS `start_date`, 
+        DATE_FORMAT(p.plan_end_date,'%d-%m-%Y') AS `end_date`, 
+        p.note, datediff(DATE(NOW()), p.plan_end_date) AS `count_day`, o.eos_body_mail1, o.eos_body_mail2
+        FROM tb_pp_change p 
+        JOIN tb_opt o
+        WHERE p.id_report_status=6 AND p.id_design_mkd=1 AND p.plan_end_date>=NOW()
+        GROUP BY p.id_pp_change
+        HAVING count_day IN (" + comment_by + ") "
+        Dim deos As DataTable = execute_query(qry, -1, True, "", "", "", "")
+        If deos.Rows.Count > 0 Then
+            Dim is_ssl = get_setup_field("system_email_is_ssl").ToString
+            Dim client As SmtpClient = New SmtpClient()
+            If is_ssl = "1" Then
+                client.Port = get_setup_field("system_email_ssl_port").ToString
+                client.DeliveryMethod = SmtpDeliveryMethod.Network
+                client.UseDefaultCredentials = False
+                client.Host = get_setup_field("system_email_ssl_server").ToString
+                client.EnableSsl = True
+                client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email_ssl").ToString, get_setup_field("system_email_ssl_pass").ToString)
+            Else
+                client.Port = get_setup_field("system_email_port").ToString
+                client.DeliveryMethod = SmtpDeliveryMethod.Network
+                client.UseDefaultCredentials = False
+                client.Host = get_setup_field("system_email_server").ToString
+                client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email").ToString, get_setup_field("system_email_pass").ToString)
+            End If
+
+            Dim from_mail As MailAddress = New MailAddress("system@volcom.co.id", "EOS Notifications (" & Now.ToString("dd MMMM yyyy") & ") - Volcom ERP")
+            Dim mail As MailMessage = New MailMessage()
+            mail.From = from_mail
+
+            'Send to
+            Dim query_send_to As String = "SELECT md.id_user,emp.`email_external`,emp.`employee_name`, IFNULL(external_recipient,'-') AS `external_recipient` 
+            FROM tb_mail_to md
+            LEFT JOIN tb_m_user usr ON usr.`id_user`=md.id_user
+            LEFT JOIN tb_m_employee emp ON emp.`id_employee`=usr.`id_employee`
+            WHERE is_to='1' AND md.report_mark_type=372 "
+            Dim data_send_to As DataTable = execute_query(query_send_to, -1, True, "", "", "", "")
+            For i As Integer = 0 To data_send_to.Rows.Count - 1
+                If Not data_send_to.Rows(i)("id_user").ToString = "0" Then
+                    'internal
+                    If Not data_send_to.Rows(i)("email_external").ToString = "" Then
+                        Dim to_mail As MailAddress = New MailAddress(data_send_to.Rows(i)("email_external").ToString, data_send_to.Rows(i)("employee_name").ToString)
+                        mail.To.Add(to_mail)
+                    End If
+                Else
+                    'external
+                    Dim ext_to As String() = Split(data_send_to.Rows(i)("external_recipient").ToString, ";")
+                    Dim ext_to_title As String = ext_to(0)
+                    Dim ext_to_mail As String = ext_to(1)
+                    Dim to_mail As MailAddress = New MailAddress(ext_to_mail, ext_to_title)
+                    mail.To.Add(to_mail)
+                End If
+            Next
+            'CC
+            Dim query_send_cc As String = "SELECT md.id_user,emp.`email_external`,emp.`employee_name`, IFNULL(external_recipient,'-') AS `external_recipient` 
+            FROM tb_mail_to md
+            LEFT JOIN tb_m_user usr ON usr.`id_user`=md.id_user
+            LEFT JOIN tb_m_employee emp ON emp.`id_employee`=usr.`id_employee`
+            WHERE is_to='2' AND md.report_mark_type=372 "
+            Dim data_send_cc As DataTable = execute_query(query_send_cc, -1, True, "", "", "", "")
+            For i As Integer = 0 To data_send_cc.Rows.Count - 1
+                If Not data_send_cc.Rows(i)("id_user").ToString = "0" Then
+                    'internal
+                    If Not data_send_cc.Rows(i)("email_external").ToString = "" Then
+                        Dim cc_mail As MailAddress = New MailAddress(data_send_cc.Rows(i)("email_external").ToString, data_send_cc.Rows(i)("employee_name").ToString)
+                        mail.CC.Add(cc_mail)
+                    End If
+                Else
+                    'external
+                    Dim ext_cc As String() = Split(data_send_cc.Rows(i)("external_recipient").ToString, ";")
+                    Dim ext_cc_title As String = ext_cc(0)
+                    Dim ext_cc_mail As String = ext_cc(1)
+                    Dim cc_mail As MailAddress = New MailAddress(ext_cc_mail, ext_cc_title)
+                    mail.CC.Add(cc_mail)
+                End If
+            Next
+
+            mail.Subject = "EOS Notification (" & Now.ToString("dd MMMM yyyy") & ")"
+            mail.IsBodyHtml = True
+            mail.Body = email_eos_notif(deos)
+            client.Send(mail)
+            '
+
+            mail.Dispose()
+            client.Dispose()
+
+            'log
+            Dim query_log As String = "INSERT INTO tb_eos_reminder_log(`log_date`,`log_note`) VALUES(NOW(),'Success')"
+            execute_non_query(query_log, True, "", "", "", "")
+        End If
+    End Sub
+
+    Function email_eos_notif(ByVal dt_par As DataTable)
+        Dim body As String = "<table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='100%' style='width:100.0%;background:#eeeeee'>
+    <tbody><tr>
+      <td style='padding:30.0pt 30.0pt 30.0pt 30.0pt'>
+      <div align='center'>
+
+      <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:6.25in;background:white'>
+       <tbody><tr>
+        <td style='padding:0in 0in 0in 0in'></td>
+       </tr>
+       <tr>
+        <td style='padding:0in 0in 0in 0in'>
+        <p class='MsoNormal' align='center' style='text-align:center'><a href='http://www.volcom.co.id/' title='Volcom' target='_blank' data-saferedirecturl='https://www.google.com/url?hl=en&amp;q=http://www.volcom.co.id/&amp;source=gmail&amp;ust=1480121870771000&amp;usg=AFQjCNEjXvEZWgDdR-Wlke7nn0fmc1ZUuA'><span style='text-decoration:none'><img border='0' width='180' id='m_1811720018273078822_x0000_i1025' src='https://d3k81ch9hvuctc.cloudfront.net/company/VFgA3P/images/de2b6f13-9275-426d-ae31-640f3dcfc744.jpeg' alt='Volcom' class='CToWUd'></span></a><u></u><u></u></p>
+        </td>
+       </tr>
+       <tr>
+        <td style='padding:0in 0in 0in 0in'></td>
+       </tr>
+       <tr>
+        <td style='padding:0in 0in 0in 0in'>
+        <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:6.25in;background:white'>
+         <tbody><tr>
+          <td style='padding:0in 0in 0in 0in'>
+
+          </td>
+         </tr>
+        </tbody></table>
+
+
+        <p class='MsoNormal' style='background-color:#eff0f1'><span style='display:block;background-color:#eff0f1;height: 5px;'><u></u>&nbsp;<u></u></span></p>
+        <p class='MsoNormal'><span style='display:none'><u></u>&nbsp;<u></u></span></p>
+    
+
+        <!-- start body -->
+        <table width='100%' class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' style='background:white'>
+         <tbody>
+
+         <tr>
+            <td style='padding:15.0pt 15.0pt 5.0pt 15.0pt' colspan='3'>
+                <p style='font-size:10.0pt; font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060; border-spacing:0 7px;'>Dear Team,</p>
+                <p style='margin-bottom:5pt; line-height:20.25pt; font-size:10.0pt; font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060; border-spacing:0 7px;'>" + dt_par.Rows(0)("eos_body_mail1").ToString + "</p>
+            
+             </td>
+         </tr>
+
+        
+        <tr>
+          <td style='padding:1.0pt 15.0pt 15.0pt 15.0pt' colspan='3'>
+            <table width='80%' class='m_1811720018273078822MsoNormalTable' border='1' cellspacing='0' cellpadding='5' style='background:white; font-size: 12px; font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#000000'>
+            <tr style='background-color:black; font-size: 12px; font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#ffffff'>
+              <th>No.</th>
+              <th>Tanggal Mulai</th>
+              <th>Tanggal Berakhir</th>
+              <th>Remark</th>
+            </tr> 
+          <!-- row data --> "
+        For i As Integer = 0 To dt_par.Rows.Count - 1
+            body += "<tr>
+              <td>" + dt_par.Rows(0)("number").ToString + "</td>
+              <td>" + dt_par.Rows(0)("start_date").ToString + "</td>
+              <td>" + dt_par.Rows(0)("end_date").ToString + "</td>
+              <td>H" + dt_par.Rows(0)("count_day").ToString + "</td>
+            </tr> "
+        Next
+        body += "</table>
+          </td>
+
+         </tr>
+
+         <tr>
+            <td style='padding:5.0pt 15.0pt 5.0pt 15.0pt' colspan='3'>
+                <p style='line-height:20.25pt;font-size:10.0pt; font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060; border-spacing:0 7px;'>" + dt_par.Rows(0)("eos_body_mail2").ToString + "
+             </td>
+         </tr>
+
+
+  <tr>
+          <td style='padding:15.0pt 15.0pt 15.0pt 15.0pt' colspan='3'>
+          <div>
+          <p class='MsoNormal' style='line-height:14.25pt'><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'>Terima kasih, <br /><b>Volcom ERP</b><u></u><u></u></span></p>
+
+          </div>
+          </td>
+         </tr>
+        </tbody>
+      </table>
+      <!-- end body -->
+
+
+        <p class='MsoNormal' style='background-color:#eff0f1'><span style='display:block;height: 10px;'><u></u>&nbsp;<u></u></span></p>
+        <p class='MsoNormal'><span style='display:none'><u></u>&nbsp;<u></u></span></p>
+        <div align='center'>
+        <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' style='background:white'>
+         <tbody><tr>
+          <td style='padding:6.0pt 6.0pt 6.0pt 6.0pt;text-align:center;'>
+            <span style='text-align:center;font-size:7.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#a0a0a0;letter-spacing:.4pt;'>This email send directly from system. Do not reply.</b><u></u><u></u></span>
+          <p class='MsoNormal' align='center' style='margin-bottom:12.0pt;text-align:center;padding-top:0px;'><br></p>
+          </td>
+         </tr>
+        </tbody></table>
+        </div>
+        </td>
+       </tr>
+      </tbody></table>  
+      </div>
+      </td>
+     </tr>
+    </tbody>
+</table> "
+        Return body
+    End Function
+
     Function get_opt_scheduler_field(ByVal field As String)
         'opt as var choose field
         Dim ret_var, query As String
