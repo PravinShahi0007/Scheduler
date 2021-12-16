@@ -118,6 +118,8 @@
 
             load_eos()
 
+            load_price_eos()
+
             start_timer()
             WindowState = FormWindowState.Minimized
         End If
@@ -1138,5 +1140,29 @@
 
     Private Sub BtnRefreshEOS_Click(sender As Object, e As EventArgs) Handles BtnRefreshEOS.Click
         load_eos()
+    End Sub
+
+    Sub load_price_eos()
+        'time
+        Dim query As String = "SELECT o.eos_mail_sch_time FROM tb_opt_scheduler o LIMIT 1"
+        query = ""
+        Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+        TEEOSNotif.EditValue = data.Rows(0)("eos_mail_sch_time")
+
+        'range days
+        Dim qlist As String = "SELECT er.sch_day, er.note FROM tb_eos_mail_sch er "
+        Dim dlist As DataTable = execute_query(qlist, -1, True, "", "", "", "")
+        GCPriceEOS.DataSource = dlist
+        GVPriceEOS.BestFitColumns()
+    End Sub
+
+    Private Sub BtnPriceEOS_Click(sender As Object, e As EventArgs) Handles BtnPriceEOS.Click
+        Dim query As String = "UPDATE tb_opt_scheduler SET eos_mail_sch_time='" & Date.Parse(TEPriceEOSNotif.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        execute_non_query(query, True, "", "", "", "")
+        MsgBox("EOS Price Time saved.")
+    End Sub
+
+    Private Sub BtnRefreshPriceEOS_Click(sender As Object, e As EventArgs) Handles BtnRefreshPriceEOS.Click
+        load_price_eos()
     End Sub
 End Class

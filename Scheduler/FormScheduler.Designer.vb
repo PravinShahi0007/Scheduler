@@ -137,6 +137,14 @@ Partial Class FormScheduler
         Me.BtnEOS = New DevExpress.XtraEditors.SimpleButton()
         Me.Label21 = New System.Windows.Forms.Label()
         Me.TEEOSNotif = New DevExpress.XtraEditors.TimeEdit()
+        Me.XTPEOSPrice = New DevExpress.XtraTab.XtraTabPage()
+        Me.GCPriceEOS = New DevExpress.XtraGrid.GridControl()
+        Me.GVPriceEOS = New DevExpress.XtraGrid.Views.Grid.GridView()
+        Me.PanelControl6 = New DevExpress.XtraEditors.PanelControl()
+        Me.BtnRefreshPriceEOS = New DevExpress.XtraEditors.SimpleButton()
+        Me.BtnPriceEOS = New DevExpress.XtraEditors.SimpleButton()
+        Me.Label22 = New System.Windows.Forms.Label()
+        Me.TEPriceEOSNotif = New DevExpress.XtraEditors.TimeEdit()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -199,6 +207,12 @@ Partial Class FormScheduler
         CType(Me.PanelControl5, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl5.SuspendLayout()
         CType(Me.TEEOSNotif.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.XTPEOSPrice.SuspendLayout()
+        CType(Me.GCPriceEOS, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.GVPriceEOS, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.PanelControl6, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.PanelControl6.SuspendLayout()
+        CType(Me.TEPriceEOSNotif.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Timer
@@ -377,7 +391,7 @@ Partial Class FormScheduler
         Me.XtraTabControl1.SelectedTabPage = Me.XTPSchedule
         Me.XtraTabControl1.Size = New System.Drawing.Size(878, 189)
         Me.XtraTabControl1.TabIndex = 6
-        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail, Me.XTPWarningLate, Me.XTPGetKurs, Me.XTPFailOrder, Me.XTPSalesReturn, Me.XTPMarketplaceOrderStt, Me.XTPQC, Me.XTPPolis, Me.XTPPOOG, Me.XTPPROG, Me.XTPSerahTerima, Me.XTPPIBReview, Me.XTPEOS})
+        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail, Me.XTPWarningLate, Me.XTPGetKurs, Me.XTPFailOrder, Me.XTPSalesReturn, Me.XTPMarketplaceOrderStt, Me.XTPQC, Me.XTPPolis, Me.XTPPOOG, Me.XTPPROG, Me.XTPSerahTerima, Me.XTPPIBReview, Me.XTPEOS, Me.XTPEOSPrice})
         '
         'XTPSchedule
         '
@@ -1234,6 +1248,78 @@ Partial Class FormScheduler
         Me.TEEOSNotif.Size = New System.Drawing.Size(100, 20)
         Me.TEEOSNotif.TabIndex = 26
         '
+        'XTPEOSPrice
+        '
+        Me.XTPEOSPrice.Controls.Add(Me.GCPriceEOS)
+        Me.XTPEOSPrice.Controls.Add(Me.PanelControl6)
+        Me.XTPEOSPrice.Name = "XTPEOSPrice"
+        Me.XTPEOSPrice.Size = New System.Drawing.Size(872, 161)
+        Me.XTPEOSPrice.Text = "EOS Price"
+        '
+        'GCPriceEOS
+        '
+        Me.GCPriceEOS.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.GCPriceEOS.Location = New System.Drawing.Point(0, 41)
+        Me.GCPriceEOS.MainView = Me.GVPriceEOS
+        Me.GCPriceEOS.Name = "GCPriceEOS"
+        Me.GCPriceEOS.Size = New System.Drawing.Size(872, 120)
+        Me.GCPriceEOS.TabIndex = 3
+        Me.GCPriceEOS.ViewCollection.AddRange(New DevExpress.XtraGrid.Views.Base.BaseView() {Me.GVPriceEOS})
+        '
+        'GVPriceEOS
+        '
+        Me.GVPriceEOS.GridControl = Me.GCPriceEOS
+        Me.GVPriceEOS.Name = "GVPriceEOS"
+        Me.GVPriceEOS.OptionsView.ShowGroupPanel = False
+        '
+        'PanelControl6
+        '
+        Me.PanelControl6.Controls.Add(Me.BtnRefreshPriceEOS)
+        Me.PanelControl6.Controls.Add(Me.BtnPriceEOS)
+        Me.PanelControl6.Controls.Add(Me.Label22)
+        Me.PanelControl6.Controls.Add(Me.TEPriceEOSNotif)
+        Me.PanelControl6.Dock = System.Windows.Forms.DockStyle.Top
+        Me.PanelControl6.Location = New System.Drawing.Point(0, 0)
+        Me.PanelControl6.Name = "PanelControl6"
+        Me.PanelControl6.Size = New System.Drawing.Size(872, 41)
+        Me.PanelControl6.TabIndex = 2
+        '
+        'BtnRefreshPriceEOS
+        '
+        Me.BtnRefreshPriceEOS.Dock = System.Windows.Forms.DockStyle.Right
+        Me.BtnRefreshPriceEOS.Location = New System.Drawing.Point(795, 2)
+        Me.BtnRefreshPriceEOS.Name = "BtnRefreshPriceEOS"
+        Me.BtnRefreshPriceEOS.Size = New System.Drawing.Size(75, 37)
+        Me.BtnRefreshPriceEOS.TabIndex = 1
+        Me.BtnRefreshPriceEOS.Text = "Refresh"
+        '
+        'BtnPriceEOS
+        '
+        Me.BtnPriceEOS.Location = New System.Drawing.Point(223, 9)
+        Me.BtnPriceEOS.Name = "BtnPriceEOS"
+        Me.BtnPriceEOS.Size = New System.Drawing.Size(66, 23)
+        Me.BtnPriceEOS.TabIndex = 28
+        Me.BtnPriceEOS.Text = "Save"
+        '
+        'Label22
+        '
+        Me.Label22.AutoSize = True
+        Me.Label22.Location = New System.Drawing.Point(13, 14)
+        Me.Label22.Name = "Label22"
+        Me.Label22.Size = New System.Drawing.Size(98, 13)
+        Me.Label22.TabIndex = 27
+        Me.Label22.Text = "Daily Reminder at :"
+        '
+        'TEPriceEOSNotif
+        '
+        Me.TEPriceEOSNotif.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
+        Me.TEPriceEOSNotif.Location = New System.Drawing.Point(117, 11)
+        Me.TEPriceEOSNotif.Name = "TEPriceEOSNotif"
+        Me.TEPriceEOSNotif.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.TEPriceEOSNotif.Properties.Mask.EditMask = "HH:mm:ss"
+        Me.TEPriceEOSNotif.Size = New System.Drawing.Size(100, 20)
+        Me.TEPriceEOSNotif.TabIndex = 26
+        '
         'FormScheduler
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -1327,6 +1413,13 @@ Partial Class FormScheduler
         Me.PanelControl5.ResumeLayout(False)
         Me.PanelControl5.PerformLayout()
         CType(Me.TEEOSNotif.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.XTPEOSPrice.ResumeLayout(False)
+        CType(Me.GCPriceEOS, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.GVPriceEOS, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.PanelControl6, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.PanelControl6.ResumeLayout(False)
+        Me.PanelControl6.PerformLayout()
+        CType(Me.TEPriceEOSNotif.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1447,4 +1540,12 @@ Partial Class FormScheduler
     Friend WithEvents BtnEOS As DevExpress.XtraEditors.SimpleButton
     Friend WithEvents Label21 As Label
     Friend WithEvents TEEOSNotif As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents XTPEOSPrice As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents GCPriceEOS As DevExpress.XtraGrid.GridControl
+    Friend WithEvents GVPriceEOS As DevExpress.XtraGrid.Views.Grid.GridView
+    Friend WithEvents PanelControl6 As DevExpress.XtraEditors.PanelControl
+    Friend WithEvents BtnRefreshPriceEOS As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents BtnPriceEOS As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents Label22 As Label
+    Friend WithEvents TEPriceEOSNotif As DevExpress.XtraEditors.TimeEdit
 End Class
