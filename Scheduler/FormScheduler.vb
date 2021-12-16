@@ -728,7 +728,7 @@
             '    End If
             'End If
 
-            '' eos send mail price
+            ' eos send mail price
             If get_opt_scheduler_field("is_active_eos_mail_sch").ToString = "1" Then
                 If Date.Parse(TEPriceEOSNotif.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
                     Dim day_coll As String = ""
@@ -777,16 +777,6 @@
                             Next
                         Next
                     End If
-
-                    Try
-                        Dim mail As ClassSendEmail = New ClassSendEmail()
-                        mail.comment_by = day_coll
-                        mail.send_email_price_eos()
-                    Catch ex As Exception
-                        'log
-                        Dim query_log As String = "INSERT INTO tb_pp_change_email_log(`log_date`,`log_note`) VALUES(NOW(),'Error : " + addSlashes(ex.ToString) + "')"
-                        execute_non_query(query_log, True, "", "", "", "")
-                    End Try
                 End If
             End If
 
@@ -1207,9 +1197,8 @@
     Sub load_price_eos()
         'time
         Dim query As String = "SELECT o.eos_mail_sch_time FROM tb_opt_scheduler o LIMIT 1"
-        query = ""
         Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
-        TEEOSNotif.EditValue = data.Rows(0)("eos_mail_sch_time")
+        TEPriceEOSNotif.EditValue = data.Rows(0)("eos_mail_sch_time")
 
         'range days
         Dim qlist As String = "SELECT er.sch_day, er.note FROM tb_eos_mail_sch er "

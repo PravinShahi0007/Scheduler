@@ -55,7 +55,14 @@
 			    GROUP BY p.id_design
 		    )
 	    ) normal_prc ON normal_prc.id_design = ppd.id_design
-        WHERE ppd.id_pp_change=" + id + " AND ISNULL(pv.id_product) AND (ppd.propose_price_final>0 AND !ISNULL(ppd.propose_price_final))
+        LEFT JOIN (
+	        SELECT fd.id_design 
+	        FROM tb_m_design_first_del fd 
+	        INNER JOIN tb_m_comp c ON c.id_comp = fd.id_comp
+	        WHERE c.id_comp_group IN (" + id_store + ")
+	        GROUP BY fd.id_design
+        ) fd ON fd.id_design = ppd.id_design
+        WHERE ppd.id_pp_change=" + id + " AND ISNULL(pv.id_product) AND (ppd.propose_price_final>0 AND !ISNULL(ppd.propose_price_final)) AND !ISNULL(fd.id_design)
         ORDER BY ket ASC, class ASC, deskripsi ASC, kode_lengkap ASC  "
         Dim ddet As DataTable = execute_query(qdet, -1, True, "", "", "", "")
         GCData.DataSource = ddet

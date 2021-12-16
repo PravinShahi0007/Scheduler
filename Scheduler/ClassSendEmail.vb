@@ -2370,7 +2370,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
         Dim subj As String = data.Rows(0)("subject").ToString
         Dim start_date As String = data.Rows(0)("start_date").ToString
         Dim store As String = data.Rows(0)("description").ToString
-        Dim body_mail As String = data.Rows(0)("price_eos_body_mail1").ToString
+        Dim body_mail As String = data.Rows(0)("price_eos_body_mail1").ToString.Replace("#start_date#", start_date)
 
         Dim from_mail As MailAddress = New MailAddress("system@volcom.co.id", subj)
         Dim mail As MailMessage = New MailMessage()
