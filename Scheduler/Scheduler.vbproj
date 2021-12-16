@@ -239,6 +239,12 @@
     <Compile Include="ReportEmpLeaveStock.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ReportMkdEOS.designer.vb">
+      <DependentUpon>ReportMkdEOS.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ReportMkdEOS.vb">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ReportPIBReviewNotif.Designer.vb">
       <DependentUpon>ReportPIBReviewNotif.vb</DependentUpon>
     </Compile>
@@ -301,6 +307,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ReportEmpAttn.resx">
       <DependentUpon>ReportEmpAttn.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportMkdEOS.resx">
+      <DependentUpon>ReportMkdEOS.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ReportPIBReviewNotif.resx">
       <DependentUpon>ReportPIBReviewNotif.vb</DependentUpon>

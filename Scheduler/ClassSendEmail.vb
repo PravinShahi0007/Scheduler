@@ -2361,11 +2361,11 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
 
         'send email turun harga
         Dim query As String = "SELECT CONCAT('VOLCOM INDONESIA - PRICE LIST VOLCOM EOSS ', UPPER(DATE_FORMAT(pp.effective_date,'%M %Y')),' - ', cg.description) AS `subject`,
-            DATE_FORMAT(pp.effective_date,'%d %M %Y') AS `start_date`, cg.description, o.price_eos_body_mail1
-            FROM tb_pp_change pp 
-            JOIN tb_m_comp_group cg ON cg.id_comp_group=" + par1 + "
-            JOIN tb_opt o 
-            WHERE pp.id_pp_change=" + id_report + " "
+        DATE_FORMAT(pp.effective_date,'%d %M %Y') AS `start_date`, cg.description, o.price_eos_body_mail1
+        FROM tb_pp_change pp 
+        JOIN tb_m_comp_group cg ON cg.id_comp_group=" + par1 + "
+        JOIN tb_opt o 
+        WHERE pp.id_pp_change=" + id_report + " "
         Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
         Dim subj As String = data.Rows(0)("subject").ToString
         Dim start_date As String = data.Rows(0)("start_date").ToString
