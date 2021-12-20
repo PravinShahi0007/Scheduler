@@ -2506,4 +2506,8 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
 </table> "
         client.Send(mail)
     End Sub
+
+    Sub send_email_bsp()
+
+    End Sub
 End Class

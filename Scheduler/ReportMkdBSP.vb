@@ -1,5 +1,4 @@
 ﻿Public Class ReportMkdBSP
-    Public Shared id As String = "-1"
     Public Shared id_store As String = "-1"
 
     Private Sub ReportMkdBSP_BeforePrint(sender As Object, e As Printing.PrintEventArgs) Handles MyBase.BeforePrint

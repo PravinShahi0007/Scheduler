@@ -785,7 +785,48 @@
             ' big sale mail price
             If get_opt_scheduler_field("is_active_bsp_mail_sch").ToString = "1" Then
                 If Date.Parse(TEBSPNotif.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                    Dim day_coll As String = ""
+                    For i As Integer = 0 To GVBSP.RowCount - 1
+                        If i > 0 Then
+                            day_coll += ","
+                        End If
+                        day_coll += GVBSP.GetRowCellValue(i, "sch_day").ToString
+                    Next
 
+                    'cari yang sesuai jadwl
+                    Dim qry As String = "SELECT p.id_bsp, p.number, p.id_comp, CONCAT(c.comp_number, ' - ', c.comp_name) AS `comp`,
+                    DATE_FORMAT(p.start_date,'%d-%m-%Y') AS `start_date`, 
+                    DATE_FORMAT(p.start_date,'%d %M %Y') AS `start_date_display`,
+                    DATE_FORMAT(p.end_date,'%d-%m-%Y') AS `end_date`, 
+                    DATE_FORMAT(p.end_date,'%d %M %Y') AS `end_date_display`,
+                    p.note, datediff(DATE(NOW()), p.start_date) AS `count_day`, o.bsp_body_mail1
+                    FROM tb_bsp p 
+                    INNER JOIN tb_m_comp c ON c.id_comp = p.id_comp 
+                    JOIN tb_opt o
+                    WHERE p.id_report_status=6
+                    GROUP BY p.id_bsp
+                    HAVING count_day IN (10,-7)
+                    HAVING count_day IN (" + day_coll + ") "
+                    Dim dbs As DataTable = execute_query(qry, -1, True, "", "", "", "")
+                    If dbs.Rows.Count > 0 Then
+                        For b As Integer = 0 To dbs.Rows.Count - 1
+                            Dim id_bsp As String = dbs.Rows(b)("id_bsp").ToString
+                            Dim id_comp As String = dbs.Rows(b)("id_comp").ToString
+                            Dim comp As String = dbs.Rows(b)("comp").ToString
+                            Try
+                                Dim sm As New ClassSendEmail()
+                                sm.report_mark_type = "373"
+                                sm.id_report = id_bsp
+                                sm.par1 = id_comp
+                                sm.send_email_bsp()
+                                Dim qlog As String = "INSERT INTO tb_bsp_mail_log(id_bsp, log_note, log_date) VALUES(" + id_bsp + ", Success: Sending mail to " + addSlashes(comp) + ", NOW()); "
+                                execute_non_query(qlog, True, "", "", "", "")
+                            Catch ex As Exception
+                                Dim qlog As String = "INSERT INTO tb_bsp_mail_log(id_bsp, log_note, log_date) VALUES(" + id_bsp + ", Error:" + addSlashes(ex.ToString) + ", NOW()); "
+                                execute_non_query(qlog, True, "", "", "", "")
+                            End Try
+                        Next
+                    End If
                 End If
             End If
 
