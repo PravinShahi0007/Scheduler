@@ -1356,6 +1356,7 @@ Partial Class FormScheduler
         '
         Me.GVBSP.GridControl = Me.GCBSP
         Me.GVBSP.Name = "GVBSP"
+        Me.GVBSP.OptionsBehavior.Editable = False
         Me.GVBSP.OptionsView.ShowGroupPanel = False
         '
         'PanelControl7
