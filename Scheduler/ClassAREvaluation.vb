@@ -30,7 +30,7 @@
             q_select = "SELECT cg.id_comp_group, cg.description AS `group`,cho.comp_name AS `group_company`, CONCAT(c.comp_number,' - ', c.comp_name) AS `store`, c.id_store_company, sp.sales_pos_number,
             CONCAT(DATE_FORMAT(sp.sales_pos_start_period,'%d-%m-%y'),' s/d ', DATE_FORMAT(sp.sales_pos_end_period,'%d-%m-%y')) AS `period`,
             DATE_FORMAT(sp.sales_pos_due_date,'%d-%m-%y') AS `sales_pos_due_date`,
-            SUM(CAST(IF(typ.`is_receive_payment`=2,-1,1) * ((sp.`sales_pos_total`*((100-sp.sales_pos_discount)/100))-sp.`sales_pos_potongan`) AS DECIMAL(15,2))-IFNULL(pyd.`value`,0.00)) AS amount "
+            SUM(CAST(IF(typ.`is_receive_payment`=2,-1,1) * sp.netto AS DECIMAL(15,2))-IFNULL(pyd.`value`,0.00)) AS amount "
             q_group_by = "c.id_comp_group,c.id_store_company "
             q_having = " HAVING amount>0 "
             q_order_by = "c.id_comp_group ASC "
