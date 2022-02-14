@@ -761,7 +761,7 @@ a.prod_order_ret_out_number , b.prod_order_number, c.id_season, c.season, CONCAT
 ,SUM(ad.prod_order_ret_out_det_qty)-IFNULL(retin.qty_ret_in,0) AS diff_qty
 ,DATEDIFF(DATE(NOW()),a.`prod_order_ret_out_due_date`) AS overdue
 FROM tb_prod_order_ret_out a 
-INNER JOIN tb_prod_order_ret_out_det ad ON ad.id_prod_order_ret_out = a.id_prod_order_ret_out 
+INNER JOIN tb_prod_order_ret_out_det ad ON ad.id_prod_order_ret_out = a.id_prod_order_ret_out AND a.is_closed=2 
 INNER JOIN tb_prod_order b ON a.id_prod_order = b.id_prod_order 
 INNER JOIN tb_prod_demand_design b1 ON b.id_prod_demand_design = b1.id_prod_demand_design 
 INNER JOIN tb_m_design dsg ON dsg.id_design = b1.id_design 
