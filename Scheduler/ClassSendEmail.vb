@@ -2961,10 +2961,12 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
                 <table width='100%' class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' style='background:white'>
                  <tbody>
                  <tr>
-                  <td style='padding:15.0pt 15.0pt 15.0pt 15.0pt' colspan='3'>
+                  <td style='padding:15.0pt 15.0pt 0.0pt 15.0pt' colspan='3'>
                   <div>
-                  <p class='MsoNormal' style='line-height:14.25pt'><b><span style='font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;font-size:20px;'>DROP & CHANGES</span></b><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'><u></u><u></u></span></p>
-                  <p class='MsoNormal' style='line-height:0.1pt'><b><span style='font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060; font-size:12px;'>" + tgl_sekarang + "</span></b><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'><u></u><u></u></span></p>
+                    <b><span style='font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060; font-size:20px;'>DROP & CHANGES</span></b><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'><u></u><u></u></span>
+                  </div>
+                  <div>
+                    <b><span style='font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060; font-size:12px;'>" + tgl_sekarang + "</span></b><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'><u></u><u></u></span>
                   </div>
                   </td>
                  </tr>
@@ -2987,13 +2989,13 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
         For i As Integer = 0 To ddet.rows.count - 1
             mail.Body += "<tr>
                       <td>" + (i + 1).ToString + "</td>
-                      <td>" + ddet.Rows(0)("season").ToString + "</td>
-                      <td>" + ddet.Rows(0)("stt").ToString + "</td>
-                      <td>" + ddet.Rows(0)("design_code").ToString + "</td>
-                      <td>" + ddet.Rows(0)("class").ToString + "</td>
-                      <td>" + ddet.Rows(0)("design_name").ToString + "</td>
-                      <td>" + ddet.Rows(0)("sht").ToString + "</td>
-                      <td>" + ddet.Rows(0)("color").ToString + "</td>
+                      <td>" + ddet.Rows(i)("season").ToString + "</td>
+                      <td>" + ddet.Rows(i)("stt").ToString + "</td>
+                      <td>" + ddet.Rows(i)("design_code").ToString + "</td>
+                      <td>" + ddet.Rows(i)("class").ToString + "</td>
+                      <td>" + ddet.Rows(i)("design_name").ToString + "</td>
+                      <td>" + ddet.Rows(i)("sht").ToString + "</td>
+                      <td>" + ddet.Rows(i)("color").ToString + "</td>
                     </tr> "
         Next
 
