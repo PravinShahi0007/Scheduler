@@ -2873,10 +2873,17 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
             client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email").ToString, get_setup_field("system_email_pass").ToString)
         End If
 
-        Dim subject_mail As String = "DROP & CHANGES NOTIFICATION"
+        'data
+        Dim qd As String = "SELECT UPPER(DATE_FORMAT(DATE(NOW()),'%d %M %Y')) AS `tgl_sekarang`, UPPER(o.app_name) AS `app_name`, o.mail_volcom_logo, o.dc_subject_mail
+        FROM tb_opt o "
+        Dim dd As DataTable = execute_query(qd, -1, True, "", "", "", "")
+        Dim subject_mail As String = dd.Rows(0)("dc_subject_mail").ToString
+        Dim tgl_sekarang As String = dd.Rows(0)("tgl_sekarang").ToString
+        Dim app_name_email As String = dd.Rows(0)("app_name").ToString
+        Dim mail_volcom_logo As String = dd.Rows(0)("mail_volcom_logo").ToString
 
 
-        Dim from_mail As MailAddress = New MailAddress("system@volcom.co.id", subject_mail + " - VOLCOM ERP")
+        Dim from_mail As MailAddress = New MailAddress("system@volcom.co.id", subject_mail + " - " + app_name_email)
         Dim mail As MailMessage = New MailMessage()
         mail.From = from_mail
 
@@ -2914,7 +2921,8 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
             mail.CC.Add(to_mail)
         Next
 
-        mail.Subject = subject_mail
+
+        mail.Subject = subject_mail + " - " + tgl_sekarang
         mail.IsBodyHtml = True
 
         mail.Body = " <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='100%' style='width:100.0%;background:#eeeeee'>
@@ -2928,7 +2936,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
                </tr>
                <tr>
                 <td style='padding:0in 0in 0in 0in'>
-                 <p class='MsoNormal' align='center' style='text-align:center'><a href='http://www.volcom.co.id/' title='Volcom' target='_blank' data-saferedirecturl='https://www.google.com/url?hl=en&amp;q=http://www.volcom.co.id/&amp;source=gmail&amp;ust=1480121870771000&amp;usg=AFQjCNEjXvEZWgDdR-Wlke7nn0fmc1ZUuA'><span style='text-decoration:none'><img border='0' width='180' id='m_1811720018273078822_x0000_i1025' src='https://d3k81ch9hvuctc.cloudfront.net/company/VFgA3P/images/de2b6f13-9275-426d-ae31-640f3dcfc744.jpeg' alt='Volcom' class='CToWUd'></span></a><u></u><u></u></p>
+                 <p class='MsoNormal' align='center' style='text-align:center'><a href='http://www.volcom.co.id/' title='Volcom' target='_blank' data-saferedirecturl='https://www.google.com/url?hl=en&amp;q=http://www.volcom.co.id/&amp;source=gmail&amp;ust=1480121870771000&amp;usg=AFQjCNEjXvEZWgDdR-Wlke7nn0fmc1ZUuA'><span style='text-decoration:none'><img border='0' width='180' id='m_1811720018273078822_x0000_i1025' src='" + mail_volcom_logo + "' alt='Volcom' class='CToWUd'></span></a><u></u><u></u></p>
                 </td>
                </tr>
                <tr>
@@ -2956,7 +2964,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
                   <td style='padding:15.0pt 15.0pt 15.0pt 15.0pt' colspan='3'>
                   <div>
                   <p class='MsoNormal' style='line-height:14.25pt'><b><span style='font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;font-size:20px;'>DROP & CHANGES</span></b><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'><u></u><u></u></span></p>
-                  <p class='MsoNormal' style='line-height:0.1pt'><b><span style='font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060; font-size:12px;'>23 MARCH 2022</span></b><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'><u></u><u></u></span></p>
+                  <p class='MsoNormal' style='line-height:0.1pt'><b><span style='font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060; font-size:12px;'>" + tgl_sekarang + "</span></b><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'><u></u><u></u></span></p>
                   </div>
                   </td>
                  </tr>
@@ -2973,30 +2981,23 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
                       <th>Description</th>
                       <th>Silhouette</th>
                       <th>Color</th>
-                    </tr>
-      
-                    <tr>
-                      <td>1</td>
-                      <td>S2 22</td>
-                      <td>DROP</td>
-                      <td>340100127</td>
-                      <td>MSF</td>
-                      <td>MSF SHATTER BLK</td>
-                      <td>TEES</td>
-                      <td>BLK</td>
-                    </tr> 
+                    </tr> "
+        Dim qdet As String = "CALL view_drop_changes_list()"
+        Dim ddet As DataTable = execute_query(qdet, -1, True, "", "", "", "")
+        For i As Integer = 0 To ddet.rows.count - 1
+            mail.Body += "<tr>
+                      <td>" + (i + 1).ToString + "</td>
+                      <td>" + ddet.Rows(0)("season").ToString + "</td>
+                      <td>" + ddet.Rows(0)("stt").ToString + "</td>
+                      <td>" + ddet.Rows(0)("design_code").ToString + "</td>
+                      <td>" + ddet.Rows(0)("class").ToString + "</td>
+                      <td>" + ddet.Rows(0)("design_name").ToString + "</td>
+                      <td>" + ddet.Rows(0)("sht").ToString + "</td>
+                      <td>" + ddet.Rows(0)("color").ToString + "</td>
+                    </tr> "
+        Next
 
-                    <tr>
-                      <td>2</td>
-                      <td>S2 22</td>
-                      <td>MOVE TO S3 22</td>
-                      <td>340100127</td>
-                      <td>MSF</td>
-                      <td>MSF SHATTER BLK</td>
-                      <td>TEES</td>
-                      <td>BLK</td>
-                    </tr> 
-                  </table>
+        mail.Body += "</table>
                   </td>
 
                  </tr>

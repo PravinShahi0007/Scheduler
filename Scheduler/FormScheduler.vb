@@ -841,13 +841,24 @@
                     Dim ll As New ClassLineList()
                     Dim dtl As DataTable = ll.dataNotifSummary
                     If dtl.Rows.Count > 0 Then
+                        'line list notif
                         Try
                             Dim sm As New ClassSendEmail()
                             sm.report_mark_type = "397"
                             sm.dt = dtl
                             sm.send_email_line_list()
                         Catch ex As Exception
-                            Dim qlog As String = "INSERT INTO tb_log_line_list_mail(log_note, log_date) VALUES('Error:" + addSlashes(ex.ToString) + "', NOW()); "
+                            Dim qlog As String = "INSERT INTO tb_log_line_list_mail(log_note, log_date) VALUES('Error Notif Line List:" + addSlashes(ex.ToString) + "', NOW()); "
+                            execute_non_query(qlog, True, "", "", "", "")
+                        End Try
+
+                        'drop/changes
+                        Try
+                            Dim sm As New ClassSendEmail()
+                            sm.report_mark_type = "394"
+                            sm.send_email_drop_changes()
+                        Catch ex As Exception
+                            Dim qlog As String = "INSERT INTO tb_log_line_list_mail(log_note, log_date) VALUES('Error Notif Drop/Changes:" + addSlashes(ex.ToString) + "', NOW()); "
                             execute_non_query(qlog, True, "", "", "", "")
                         End Try
                     End If
