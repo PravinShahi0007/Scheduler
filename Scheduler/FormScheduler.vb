@@ -854,9 +854,13 @@
 
                         'drop/changes
                         Try
-                            Dim sm As New ClassSendEmail()
-                            sm.report_mark_type = "394"
-                            sm.send_email_drop_changes()
+                            Dim qcek As String = "CALL view_drop_changes_list()"
+                            Dim dcek As DataTable = execute_query(qcek, -1, True, "", "", "", "")
+                            If dcek.Rows.Count > 0 Then
+                                Dim sm As New ClassSendEmail()
+                                sm.report_mark_type = "394"
+                                sm.send_email_drop_changes()
+                            End If
                         Catch ex As Exception
                             Dim qlog As String = "INSERT INTO tb_log_line_list_mail(log_note, log_date) VALUES('Error Notif Drop/Changes:" + addSlashes(ex.ToString) + "', NOW()); "
                             execute_non_query(qlog, True, "", "", "", "")
