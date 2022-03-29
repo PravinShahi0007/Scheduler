@@ -2978,6 +2978,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
                       <th>No</th>
                       <th>Season</th>
                       <th>Status</th>
+                      <th>Reason</th>
                       <th>Code</th>
                       <th>Class</th>
                       <th>Description</th>
@@ -2991,6 +2992,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
                       <td>" + (i + 1).ToString + "</td>
                       <td>" + ddet.Rows(i)("season").ToString + "</td>
                       <td>" + ddet.Rows(i)("stt").ToString + "</td>
+                      <td>" + ddet.Rows(i)("note").ToString + "</td>
                       <td>" + ddet.Rows(i)("design_code").ToString + "</td>
                       <td>" + ddet.Rows(i)("class").ToString + "</td>
                       <td>" + ddet.Rows(i)("design_name").ToString + "</td>
