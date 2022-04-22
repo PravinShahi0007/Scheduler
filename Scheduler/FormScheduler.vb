@@ -865,6 +865,20 @@
                             Dim qlog As String = "INSERT INTO tb_log_line_list_mail(log_note, log_date) VALUES('Error Notif Drop/Changes:" + addSlashes(ex.ToString) + "', NOW()); "
                             execute_non_query(qlog, True, "", "", "", "")
                         End Try
+
+                        'eta update
+                        Try
+                            Dim qeta As String = "CALL view_eta_changes_list()"
+                            Dim deta As DataTable = execute_query(qeta, -1, True, "", "", "", "")
+                            If deta.Rows.Count > 0 Then
+                                Dim sm As New ClassSendEmail()
+                                sm.report_mark_type = "406"
+                                sm.send_email_eta_changes()
+                            End If
+                        Catch ex As Exception
+                            Dim qlog As String = "INSERT INTO tb_log_line_list_mail(log_note, log_date) VALUES('Error Notif ETA Update:" + addSlashes(ex.ToString) + "', NOW()); "
+                            execute_non_query(qlog, True, "", "", "", "")
+                        End Try
                     End If
                 End If
             End If

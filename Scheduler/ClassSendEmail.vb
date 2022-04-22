@@ -3044,4 +3044,286 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
         </table> "
         client.Send(mail)
     End Sub
+
+    Sub send_email_eta_changes()
+        Dim is_ssl = get_setup_field("system_email_is_ssl").ToString
+        Dim client As SmtpClient = New SmtpClient()
+        If is_ssl = "1" Then
+            client.Port = get_setup_field("system_email_ssl_port").ToString
+            client.DeliveryMethod = SmtpDeliveryMethod.Network
+            client.UseDefaultCredentials = False
+            client.Host = get_setup_field("system_email_ssl_server").ToString
+            client.EnableSsl = True
+            client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email_ssl").ToString, get_setup_field("system_email_ssl_pass").ToString)
+        Else
+            client.Port = get_setup_field("system_email_port").ToString
+            client.DeliveryMethod = SmtpDeliveryMethod.Network
+            client.UseDefaultCredentials = False
+            client.Host = get_setup_field("system_email_server").ToString
+            client.Credentials = New System.Net.NetworkCredential(get_setup_field("system_email").ToString, get_setup_field("system_email_pass").ToString)
+        End If
+
+        'data
+        Dim qd As String = "SELECT UPPER(DATE_FORMAT(DATE(NOW()),'%d %M %Y')) AS `tgl_sekarang`, UPPER(o.app_name) AS `app_name`, 
+        o.mail_volcom_logo, o.eta_title_mail, o.eta_subject_mail, o.eta_body_mail1, o.eta_body_mail2, o.eta_body_mail3
+        FROM tb_opt o "
+        Dim dd As DataTable = execute_query(qd, -1, True, "", "", "", "")
+        Dim subject_mail As String = dd.Rows(0)("eta_subject_mail").ToString
+        Dim tgl_sekarang As String = dd.Rows(0)("tgl_sekarang").ToString
+        Dim app_name_email As String = dd.Rows(0)("app_name").ToString
+        Dim mail_volcom_logo As String = dd.Rows(0)("mail_volcom_logo").ToString
+        Dim mail_title As String = dd.Rows(0)("eta_title_mail").ToString
+        Dim body1 As String = dd.Rows(0)("eta_body_mail1").ToString
+        Dim body2 As String = dd.Rows(0)("eta_body_mail2").ToString
+        Dim body3 As String = dd.Rows(0)("eta_body_mail3").ToString
+
+
+        Dim from_mail As MailAddress = New MailAddress("system@volcom.co.id", subject_mail + " - " + app_name_email)
+        Dim mail As MailMessage = New MailMessage()
+        mail.From = from_mail
+
+        'Send to
+        Dim query_send_mail As String = "SELECT IF(md.id_user=0,SUBSTRING_INDEX(external_recipient,';',-1),emp.`email_external`) AS email_external, IF(md.id_user=0,SUBSTRING_INDEX(external_recipient,';',1),emp.`employee_name`) AS employee_name
+            FROM tb_mail_to md
+            LEFT JOIN tb_m_user usr ON usr.`id_user`=md.id_user
+            LEFT JOIN tb_m_employee emp ON emp.`id_employee`=usr.`id_employee`
+            WHERE md.report_mark_type='" + report_mark_type + "' AND is_to='1' AND IF(ISNULL(md.id_user),TRUE,IF(IFNULL(emp.id_employee_active,1)=1,TRUE,FALSE))
+            UNION ALL
+            SELECT IF(ISNULL(emp.employee_name),md.email,emp.email_external) AS email_external, IF(ISNULL(emp.employee_name),md.name,emp.employee_name) AS employee_name
+            FROM tb_mail_to_group md
+            LEFT JOIN tb_m_employee emp ON emp.id_employee=md.id_employee
+            WHERE md.report_mark_type='" + report_mark_type + "' AND id_comp_group='" + par1 + "' AND is_to='1' AND IF(ISNULL(md.id_employee),TRUE,IF(IFNULL(emp.id_employee_active,1)=1,TRUE,FALSE))"
+        Dim data_send_mail As DataTable = execute_query(query_send_mail, -1, True, "", "", "", "")
+        For i As Integer = 0 To data_send_mail.Rows.Count - 1
+            Dim to_mail As MailAddress = New MailAddress(data_send_mail.Rows(i)("email_external").ToString, data_send_mail.Rows(i)("employee_name").ToString)
+            mail.To.Add(to_mail)
+        Next
+
+        'Send CC
+        Dim query_send_cc As String = "SELECT IF(md.id_user=0,SUBSTRING_INDEX(external_recipient,';',-1),emp.`email_external`) AS email_external, IF(md.id_user=0,SUBSTRING_INDEX(external_recipient,';',1),emp.`employee_name`) AS employee_name
+            FROM tb_mail_to md
+            LEFT JOIN tb_m_user usr ON usr.`id_user`=md.id_user
+            LEFT JOIN tb_m_employee emp ON emp.`id_employee`=usr.`id_employee`
+            WHERE md.report_mark_type='" + report_mark_type + "' AND is_to='2' AND IF(ISNULL(md.id_user),TRUE,IF(IFNULL(emp.id_employee_active,1)=1,TRUE,FALSE))
+            UNION ALL
+            SELECT IF(ISNULL(emp.employee_name),md.email,emp.email_external) AS email_external, IF(ISNULL(emp.employee_name),md.name,emp.employee_name) AS employee_name
+            FROM tb_mail_to_group md
+            LEFT JOIN tb_m_employee emp ON emp.id_employee=md.id_employee
+            WHERE md.report_mark_type='" + report_mark_type + "' AND id_comp_group='" + par1 + "' AND is_to='2' AND IF(ISNULL(md.id_employee),TRUE,IF(IFNULL(emp.id_employee_active,1)=1,TRUE,FALSE)) "
+        Dim data_send_cc As DataTable = execute_query(query_send_cc, -1, True, "", "", "", "")
+        For i As Integer = 0 To data_send_cc.Rows.Count - 1
+            Dim to_mail As MailAddress = New MailAddress(data_send_cc.Rows(i)("email_external").ToString, data_send_cc.Rows(i)("employee_name").ToString)
+            mail.CC.Add(to_mail)
+        Next
+
+        mail.Subject = subject_mail + " - " + tgl_sekarang
+        mail.IsBodyHtml = True
+
+        'detail data
+        Dim qdet As String = "CALL view_eta_changes_list()"
+        Dim ddet As DataTable = execute_query(qdet, -1, True, "", "", "", "")
+        Dim ddet_local As DataRow() = ddet.Select("[src]='LOCAL' ")
+        Dim ddet_import As DataRow() = ddet.Select("[src]='IMPORT' ")
+
+        mail.Body = "<table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='100%' style='width:100.0%;background:#eeeeee'>
+        <tbody><tr>
+          <td style='padding:30.0pt 30.0pt 30.0pt 30.0pt'>
+          <div align='center'>
+
+          <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:6.25in;background:white'>
+           <tbody><tr>
+            <td style='padding:0in 0in 0in 0in'></td>
+           </tr>
+           <tr>
+            <td style='padding:0in 0in 0in 0in'>
+             <p class='MsoNormal' align='center' style='text-align:center'><a href='http://www.volcom.co.id/' title='Volcom' target='_blank' data-saferedirecturl='https://www.google.com/url?hl=en&amp;q=http://www.volcom.co.id/&amp;source=gmail&amp;ust=1480121870771000&amp;usg=AFQjCNEjXvEZWgDdR-Wlke7nn0fmc1ZUuA'><span style='text-decoration:none'><img border='0' width='180' id='m_1811720018273078822_x0000_i1025' src='" + mail_volcom_logo + "' alt='Volcom' class='CToWUd'></span></a><u></u><u></u></p>
+            </td>
+           </tr>
+           <tr>
+            <td style='padding:0in 0in 0in 0in'></td>
+           </tr>
+           <tr>
+            <td style='padding:0in 0in 0in 0in'>
+            <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:6.25in;background:white'>
+             <tbody><tr>
+              <td style='padding:0in 0in 0in 0in'>
+
+              </td>
+             </tr>
+            </tbody></table>
+
+
+            <p class='MsoNormal' style='background-color:#eff0f1'><span style='display:block;background-color:#eff0f1;height: 5px;'><u></u>&nbsp;<u></u></span></p>
+            <p class='MsoNormal'><span style='display:none'><u></u>&nbsp;<u></u></span></p>
+        
+
+            <!-- start body -->
+            <table width='100%' class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' style='background:white'>
+             <tbody>
+             <tr>
+              <td style='padding:15.0pt 15.0pt 0.0pt 15.0pt' colspan='3'>
+              <div>
+                <b><span style='font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060; font-size:16px;'>" + mail_title + "</span></b><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'><u></u><u></u></span>
+              </div>
+              </td>
+             </tr>
+
+             <tr>
+              <td style='padding:15.0pt 15.0pt 10pt 15.0pt' colspan='3'>
+              <div style='margin-bottom: 5pt;'>
+                <span class='MsoNormal' style='line-height:15.25pt; font-size: 10pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>" + body1 + "</span>
+              </div
+
+              <div>
+                <span class='MsoNormal' style='line-height:15.25pt; font-size: 10pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>" + body2 + "</span>
+              </div>
+              </td>
+             </tr>
+
+             <tr>
+              <td style='padding:.0pt 15.0pt 5pt 15.0pt' colspan='3'>
+              <div>
+                <b><span style='font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060; font-size:12px;'>LOCAL</span></b>
+              </div>
+              </td>
+             </tr>
+ 
+             <tr>
+              <td style='padding:0pt 15.0pt 15.0pt 15.0pt' colspan='3'>
+                 <table width='100%' class='m_1811720018273078822MsoNormalTable' border='1' cellspacing='0' cellpadding='5' style='background:white; font-size: 12px; font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#000000; margin-top: -10px;'>
+                  <tr style='background-color:black; font-size: 12px; font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#ffffff'>
+                    <th>No</th>
+                    <th>Season</th>
+                    <th>Code</th>
+                    <th>Class</th>
+                    <th>Description</th>
+                    <th>Silhouette</th>
+                    <th>Color</th>
+                    <th>ETA AWAL</th>
+                    <th>UPDATE ETA</th>
+                    <th>SELISIH HARI</th>
+                  </tr> "
+        Dim no_local = "1"
+        If ddet_local.Length <= 0 Then
+            'tidak ada data
+            mail.Body += "<tr>
+                    <td colspan='10'>Tidak ada data</td>
+            </tr> "
+        Else
+            For i As Integer = 0 To ddet_local.Length - 1
+                mail.Body += "<tr>
+                    <td>" + no_local.ToString + "</td>
+                    <td>" + ddet_local(i)("season").ToString + "</td>
+                    <td>" + ddet_local(i)("code").ToString + "</td>
+                    <td>" + ddet_local(i)("class").ToString + "</td>
+                    <td>" + ddet_local(i)("product_name").ToString + "</td>
+                    <td>" + ddet_local(i)("sht").ToString + "</td>
+                    <td>" + ddet_local(i)("color").ToString + "</td>
+                    <td>" + ddet_local(i)("eta_awal").ToString + "</td>
+                    <td>" + ddet_local(i)("eta_update").ToString + "</td>
+                    <td>" + ddet_local(i)("diff").ToString + "</td>
+                </tr> "
+                no_local += 1
+            Next
+        End If
+        mail.Body += "</table>
+              </td>
+             </tr>
+
+              <tr>
+              <td style='padding:.0pt 15.0pt 5pt 15.0pt' colspan='3'>
+              <div>
+                <b><span style='font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060; font-size:12px;'>IMPORT</span></b>
+              </div>
+              </td>
+             </tr>
+ 
+             <tr>
+              <td style='padding:0pt 15.0pt 10.0pt 15.0pt' colspan='3'>
+                 <table width='100%' class='m_1811720018273078822MsoNormalTable' border='1' cellspacing='0' cellpadding='5' style='background:white; font-size: 12px; font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#000000; margin-top: -10px;'>
+                  <tr style='background-color:black; font-size: 12px; font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#ffffff'>
+                    <th>No</th>
+                    <th>Season</th>
+                    <th>Code</th>
+                    <th>Class</th>
+                    <th>Description</th>
+                    <th>Silhouette</th>
+                    <th>Color</th>
+                    <th>ETA AWAL</th>
+                    <th>UPDATE ETA</th>
+                    <th>SELISIH HARI</th>
+                  </tr> "
+        Dim no_import = "1"
+        If ddet_import.Length <= 0 Then
+            'tidak ada data
+            mail.Body += "<tr>
+                    <td colspan='10'>Tidak ada data</td>
+            </tr> "
+        Else
+            For i As Integer = 0 To ddet_import.Length - 1
+                mail.Body += "<tr>
+                    <td>" + no_local.ToString + "</td>
+                    <td>" + ddet_import(i)("season").ToString + "</td>
+                    <td>" + ddet_import(i)("code").ToString + "</td>
+                    <td>" + ddet_import(i)("class").ToString + "</td>
+                    <td>" + ddet_import(i)("product_name").ToString + "</td>
+                    <td>" + ddet_import(i)("sht").ToString + "</td>
+                    <td>" + ddet_import(i)("color").ToString + "</td>
+                    <td>" + ddet_import(i)("eta_awal").ToString + "</td>
+                    <td>" + ddet_import(i)("eta_update").ToString + "</td>
+                    <td>" + ddet_import(i)("diff").ToString + "</td>
+                </tr> "
+                no_import += 1
+            Next
+        End If
+        mail.Body += "</table>
+              </td>
+             </tr>
+
+             <tr>
+              <td style='padding:15.0pt 15.0pt 15.0pt 15.0pt' colspan='3'>
+              <div style='margin-bottom: 5pt;'>
+                <span class='MsoNormal' style='line-height:15.25pt; font-size: 10pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>" + body3 + "</span>
+              </div
+              </td>
+             </tr>
+
+ 
+      <tr>
+              <td style='padding:15.0pt 15.0pt 15.0pt 15.0pt' colspan='3'>
+              <div>
+              <p class='MsoNormal' style='line-height:14.25pt'><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'>Terima kasih<br /><b>Volcom ERP</b><u></u><u></u></span></p>
+
+              </div>
+              </td>
+             </tr>
+            </tbody>
+          </table>
+          <!-- end body -->
+
+
+            <p class='MsoNormal' style='background-color:#eff0f1'><span style='display:block;height: 10px;'><u></u>&nbsp;<u></u></span></p>
+            <p class='MsoNormal'><span style='display:none'><u></u>&nbsp;<u></u></span></p>
+            <div align='center'>
+        
+
+            <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' style='background:white'>
+             <tbody><tr>
+              <td style='padding:6.0pt 6.0pt 6.0pt 6.0pt;text-align:center;'>
+                <span style='text-align:center;font-size:7.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#a0a0a0;letter-spacing:.4pt;'>This email send directly from system. Do not reply.</b><u></u><u></u></span>
+                  <p class='MsoNormal' align='center' style='margin-bottom:12.0pt;text-align:center;padding-top:0px;'><br></p>
+              </td>
+             </tr>
+            </tbody></table>
+            </div>
+            </td>
+           </tr>
+          </tbody></table>
+          </div>
+          </td>
+         </tr>
+        </tbody>
+    </table> "
+        client.Send(mail)
+    End Sub
 End Class
