@@ -124,6 +124,9 @@
 
             load_line_list()
 
+            'reminder SKO
+            load_ko()
+
             start_timer()
             WindowState = FormWindowState.Minimized
         End If
@@ -597,6 +600,16 @@
                         mail.par1 = dtpolis.Rows.Count.ToString
                         mail.send_mail_polis()
                     End If
+                End If
+            End If
+
+            'reminder SKO
+            If get_opt_scheduler_field("is_active_ko_notif").ToString = "1" Then
+                'reminder SKO
+                If Date.Parse(TEReminderKO.EditValue.ToString).ToString("HH:mm:ss") = cur_datetime.ToString("HH:mm:ss") Then
+                    Dim mail As ClassSendEmail = New ClassSendEmail()
+                    mail.report_mark_type = "408"
+                    mail.send_email_html()
                 End If
             End If
 
@@ -1354,5 +1367,19 @@
         Dim query As String = "UPDATE tb_opt_scheduler SET line_list_sch_time='" & Date.Parse(TELineList.EditValue.ToString).ToString("HH:mm:ss") & "'"
         execute_non_query(query, True, "", "", "", "")
         MsgBox("Email Line List Notif saved.")
+    End Sub
+
+    Sub load_ko()
+        Dim query As String = ""
+        query = "SELECT ko_notif_time FROM tb_opt_scheduler LIMIT 1"
+        Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+
+        TEReminderKO.EditValue = data.Rows(0)("ko_notif_time")
+    End Sub
+
+    Private Sub BReminderKO_Click(sender As Object, e As EventArgs) Handles BReminderKO.Click
+        Dim query As String = "UPDATE tb_opt_scheduler SET ko_notif_time='" & Date.Parse(TEReminderKO.EditValue.ToString).ToString("HH:mm:ss") & "'"
+        execute_non_query(query, True, "", "", "", "")
+        MsgBox("Email reminder KO saved.")
     End Sub
 End Class

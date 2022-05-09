@@ -247,6 +247,261 @@ Public Class ClassSendEmail
             mail.IsBodyHtml = True
             mail.Body = emailOnHold(comment_by, comment, dt)
             client.Send(mail)
+        ElseIf report_mark_type = "408" Then
+            Dim query As String = "SELECT dsg.design_code,dsg.design_display_name,cd.class,cd.sht,po.prod_order_number,cd.color
+,CONCAT(IF(r.is_md=1,'',CONCAT(cd.prm,' ')),cd.class,' ',dsg.design_name,' ',cd.color) AS  design_display_name
+,DATE_FORMAT(DATE(DATE_ADD(NOW(),INTERVAL 10 DAY)),'%d %M %Y') AS dte
+,c.id_comp,c.comp_name
+FROM tb_prod_order po
+INNER JOIN tb_prod_order_wo wo ON wo.id_prod_order=po.id_prod_order AND wo.is_main_vendor=1
+INNER JOIN tb_m_ovh_price prc ON prc.id_ovh_price=wo.id_ovh_price
+INNER JOIN tb_m_comp_contact cc ON cc.id_comp_contact=prc.id_comp_contact
+INNER JOIN tb_m_comp c ON c.id_comp=cc.id_comp
+LEFT JOIN (
+	SELECT kod.* FROM (
+		SELECT MAX(kod.id_prod_order_ko_det) AS id_prod_order_ko_det
+		FROM tb_prod_order_ko_det kod
+		INNER JOIN tb_prod_order_ko ko ON ko.id_prod_order_ko=kod.id_prod_order_ko AND ko.is_locked=1 AND ko.is_void=2 AND NOT ISNULL(kod.id_prod_order)
+		GROUP BY kod.id_prod_order 
+	)ko
+	INNER JOIN tb_prod_order_ko_det kod ON kod.`id_prod_order_ko_det`=ko.id_prod_order_ko_det 
+	INNER JOIN tb_prod_order_ko ko ON ko.id_prod_order_ko=kod.id_prod_order_ko
+) ko ON ko.id_prod_order=po.id_prod_order
+INNER JOIN tb_prod_demand_design pdd ON pdd.id_prod_demand_design=po.id_prod_demand_design
+INNER JOIN tb_m_design dsg ON dsg.id_design=pdd.id_design
+INNER JOIN tb_season s ON s.id_season=dsg.id_season
+INNER JOIN tb_range r ON r.id_range=s.id_range
+LEFT JOIN (
+	SELECT dc.id_design, 
+	MAX(CASE WHEN cd.id_code=32 THEN cd.id_code_detail END) AS `id_division`,
+	MAX(CASE WHEN cd.id_code=32 THEN cd.code_detail_name END) AS `division`,
+	MAX(CASE WHEN cd.id_code=30 THEN cd.id_code_detail END) AS `id_class`,
+	MAX(CASE WHEN cd.id_code=30 THEN cd.display_name END) AS `class`,
+	MAX(CASE WHEN cd.id_code=14 THEN cd.id_code_detail END) AS `id_color`,
+	MAX(CASE WHEN cd.id_code=14 THEN cd.display_name END) AS `color`,
+	MAX(CASE WHEN cd.id_code=14 THEN cd.code_detail_name END) AS `color_desc`,
+	MAX(CASE WHEN cd.id_code=43 THEN cd.id_code_detail END) AS `id_sht`,
+	MAX(CASE WHEN cd.id_code=43 THEN cd.code_detail_name END) AS `sht`,
+	MAX(CASE WHEN cd.id_code=34 THEN cd.code_detail_name END) AS `prm`
+	FROM tb_m_design_code dc
+	INNER JOIN tb_m_code_detail cd ON cd.id_code_detail = dc.id_code_detail 
+	AND cd.id_code IN (32,30,14, 43, 34)
+	GROUP BY dc.id_design
+) cd ON cd.id_design = dsg.id_design
+WHERE po.id_report_status=6 AND NOT ISNULL(ko.id_prod_order) AND DATE(NOW()) = DATE(DATE_SUB((DATE_ADD(prod_order_wo_del_date,INTERVAL ko.lead_time_prod DAY)), INTERVAL 10 DAY))
+GROUP BY c.id_comp"
+            Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
+            If data.Rows.Count > 0 Then
+                For c = 0 To data.Rows.Count - 1
+                    'looping per comp
+                    'send email sample development update
+                    Dim subj As String = "Volcom Reminder for FGPO, ETA Bali - " & data.Rows(0)("dte").ToString
+
+                    Dim from_mail As MailAddress = New MailAddress("system@volcom.co.id", subj)
+                    Dim mail As MailMessage = New MailMessage()
+                    mail.From = from_mail
+
+                    Dim qv As String = "SELECT email,`name`,is_to FROM tb_mail_to_group c
+WHERE c.id_comp='" & data.Rows(c)("id_comp").ToString & "' AND report_mark_type='408'"
+                    Dim dtv As DataTable = execute_query(qv, -1, True, "", "", "", "")
+                    For i = 0 To dtv.Rows.Count - 1
+                        If dtv.Rows(i)("is_to").ToString = "1" Then
+                            Dim vendor_mail As MailAddress = New MailAddress(dtv.Rows(i)("email").ToString, dtv.Rows(i)("name").ToString)
+                            mail.To.Add(vendor_mail)
+                        Else
+                            Dim vendor_mail As MailAddress = New MailAddress(dtv.Rows(i)("email").ToString, dtv.Rows(i)("name").ToString)
+                            mail.CC.Add(vendor_mail)
+                        End If
+                    Next
+
+                    Dim query_send_mail As String = "SELECT IF(md.id_user=0,SUBSTRING_INDEX(external_recipient,';',-1),emp.`email_external`) AS email_external, IF(md.id_user=0,SUBSTRING_INDEX(external_recipient,';',1),emp.`employee_name`) AS employee_name
+            FROM tb_mail_to md
+            LEFT JOIN tb_m_user usr ON usr.`id_user`=md.id_user
+            LEFT JOIN tb_m_employee emp ON emp.`id_employee`=usr.`id_employee`
+            WHERE md.report_mark_type='" + report_mark_type + "' AND is_to='1' AND IF(ISNULL(md.id_user),TRUE,IF(IFNULL(emp.id_employee_active,1)=1,TRUE,FALSE))"
+                    Dim data_send_mail As DataTable = execute_query(query_send_mail, -1, True, "", "", "", "")
+                    For i As Integer = 0 To data_send_mail.Rows.Count - 1
+                        Dim to_mail As MailAddress = New MailAddress(data_send_mail.Rows(i)("email_external").ToString, data_send_mail.Rows(i)("employee_name").ToString)
+                        mail.To.Add(to_mail)
+                    Next
+
+                    'Send CC
+                    Dim query_send_cc As String = "SELECT IF(md.id_user=0,SUBSTRING_INDEX(external_recipient,';',-1),emp.`email_external`) AS email_external, IF(md.id_user=0,SUBSTRING_INDEX(external_recipient,';',1),emp.`employee_name`) AS employee_name
+            FROM tb_mail_to md
+            LEFT JOIN tb_m_user usr ON usr.`id_user`=md.id_user
+            LEFT JOIN tb_m_employee emp ON emp.`id_employee`=usr.`id_employee`
+            WHERE md.report_mark_type='" + report_mark_type + "' AND is_to='2' AND IF(ISNULL(md.id_user),TRUE,IF(IFNULL(emp.id_employee_active,1)=1,TRUE,FALSE)) "
+                    Dim data_send_cc As DataTable = execute_query(query_send_cc, -1, True, "", "", "", "")
+                    For i As Integer = 0 To data_send_cc.Rows.Count - 1
+                        Dim to_mail As MailAddress = New MailAddress(data_send_cc.Rows(i)("email_external").ToString, data_send_cc.Rows(i)("employee_name").ToString)
+                        mail.CC.Add(to_mail)
+                    Next
+
+                    mail.Subject = subj
+                    mail.IsBodyHtml = True
+
+                    Dim qdet As String = "SELECT dsg.design_code,dsg.design_display_name,cd.class,cd.sht,po.prod_order_number,cd.color
+,ko.revision
+,DATE_FORMAT(DATE(DATE_ADD(prod_order_wo_del_date,INTERVAL ko.lead_time_prod DAY)),'%d %M %Y') AS dte
+,FORMAT(SUM(pod.prod_order_qty),0,'ID_id') AS qty
+,po.prod_order_number
+,ko.number
+FROM tb_prod_order po
+INNER JOIN tb_prod_order_det pod ON pod.id_prod_order=po.id_prod_order
+INNER JOIN tb_prod_order_wo wo ON wo.id_prod_order=po.id_prod_order AND wo.is_main_vendor=1
+INNER JOIN tb_m_ovh_price prc ON prc.id_ovh_price=wo.id_ovh_price
+INNER JOIN tb_m_comp_contact cc ON cc.id_comp_contact=prc.id_comp_contact
+INNER JOIN tb_m_comp c ON c.id_comp=cc.id_comp AND c.id_comp='" & data.Rows(c)("id_comp").ToString & "'
+LEFT JOIN (
+	SELECT kod.*,ko.number FROM (
+		SELECT MAX(kod.id_prod_order_ko_det) AS id_prod_order_ko_det
+		FROM tb_prod_order_ko_det kod
+		INNER JOIN tb_prod_order_ko ko ON ko.id_prod_order_ko=kod.id_prod_order_ko AND ko.is_locked=1 AND ko.is_void=2 AND NOT ISNULL(kod.id_prod_order)
+		GROUP BY kod.id_prod_order 
+	)ko
+	INNER JOIN tb_prod_order_ko_det kod ON kod.`id_prod_order_ko_det`=ko.id_prod_order_ko_det 
+	INNER JOIN tb_prod_order_ko ko ON ko.id_prod_order_ko=kod.id_prod_order_ko
+) ko ON ko.id_prod_order=po.id_prod_order
+INNER JOIN tb_prod_demand_design pdd ON pdd.id_prod_demand_design=po.id_prod_demand_design
+INNER JOIN tb_m_design dsg ON dsg.id_design=pdd.id_design
+INNER JOIN tb_season s ON s.id_season=dsg.id_season
+INNER JOIN tb_range r ON r.id_range=s.id_range
+LEFT JOIN (
+	SELECT dc.id_design, 
+	MAX(CASE WHEN cd.id_code=32 THEN cd.id_code_detail END) AS `id_division`,
+	MAX(CASE WHEN cd.id_code=32 THEN cd.code_detail_name END) AS `division`,
+	MAX(CASE WHEN cd.id_code=30 THEN cd.id_code_detail END) AS `id_class`,
+	MAX(CASE WHEN cd.id_code=30 THEN cd.display_name END) AS `class`,
+	MAX(CASE WHEN cd.id_code=14 THEN cd.id_code_detail END) AS `id_color`,
+	MAX(CASE WHEN cd.id_code=14 THEN cd.display_name END) AS `color`,
+	MAX(CASE WHEN cd.id_code=14 THEN cd.code_detail_name END) AS `color_desc`,
+	MAX(CASE WHEN cd.id_code=43 THEN cd.id_code_detail END) AS `id_sht`,
+	MAX(CASE WHEN cd.id_code=43 THEN cd.code_detail_name END) AS `sht`,
+	MAX(CASE WHEN cd.id_code=34 THEN cd.code_detail_name END) AS `prm`
+	FROM tb_m_design_code dc
+	INNER JOIN tb_m_code_detail cd ON cd.id_code_detail = dc.id_code_detail 
+	AND cd.id_code IN (32,30,14, 43, 34)
+	GROUP BY dc.id_design
+) cd ON cd.id_design = dsg.id_design
+WHERE po.id_report_status=6 AND NOT ISNULL(ko.id_prod_order) AND DATE(NOW()) = DATE(DATE_SUB((DATE_ADD(prod_order_wo_del_date,INTERVAL ko.lead_time_prod DAY)), INTERVAL 10 DAY))
+GROUP BY po.id_prod_order"
+                    Dim dt_det As DataTable = execute_query(qdet, -1, True, "", "", "", "")
+
+                    mail.Body = "<table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='100%' style='width:100.0%;background:#eeeeee'>
+  <tbody><tr>
+    <td style='padding:30.0pt 30.0pt 30.0pt 30.0pt'>
+    <div align='center'>
+
+    <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:6.25in;background:white'>
+     <tbody><tr>
+      <td style='padding:0in 0in 0in 0in'></td>
+     </tr>
+     <tr>
+      <td style='padding:0in 0in 0in 0in'>
+      <p class='MsoNormal' align='center' style='text-align:center'><a href='http://www.volcom.co.id/' title='Volcom' target='_blank' data-saferedirecturl='https://www.google.com/url?hl=en&amp;q=http://www.volcom.co.id/&amp;source=gmail&amp;ust=1480121870771000&amp;usg=AFQjCNEjXvEZWgDdR-Wlke7nn0fmc1ZUuA'><span style='text-decoration:none'><img border='0' width='180' id='m_1811720018273078822_x0000_i1025' src='https://d3k81ch9hvuctc.cloudfront.net/company/VFgA3P/images/de2b6f13-9275-426d-ae31-640f3dcfc744.jpeg' alt='Volcom' class='CToWUd'></span></a><u></u><u></u></p>
+      </td>
+     </tr>
+     <tr>
+      <td style='padding:0in 0in 0in 0in'></td>
+     </tr>
+     <tr>
+      <td style='padding:0in 0in 0in 0in'>
+      <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:1000px;background:white'>
+       <tbody><tr>
+        <td style='padding:0in 0in 0in 0in'>
+
+        </td>
+       </tr>
+      </tbody></table>
+
+
+      <p class='MsoNormal' style='background-color:#eff0f1'><span style='display:block;background-color:#eff0f1;height: 5px;'><u></u>&nbsp;<u></u></span></p>
+      <p class='MsoNormal'><span style='display:none'><u></u>&nbsp;<u></u></span></p>
+  
+
+      <!-- start body -->
+      <table width='100%' class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' style='background:white'>
+       <tbody>
+
+       <tr>
+          <td style='padding:15.0pt 15.0pt 5.0pt 15.0pt' colspan='3'>
+              <p style='font-size:10.0pt; font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060; border-spacing:0 7px;'>Dear " & data.Rows(c)("comp_name").ToString & ",</p>
+              <p style='margin-bottom:5pt; line-height:20.25pt; font-size:10.0pt; font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060; border-spacing:0 7px;'>Email ini adalah pengingat untuk tanggal barang hasil produksi diterima di Gudang barang jadi Volcom (ETA Bali):
+              <br><br>
+              <table width='100%' class='m_1811720018273078822MsoNormalTable' border='1' cellspacing='0' cellpadding='5' style='text-align:center; background:white; font-size: 12px; font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060'>
+                <tr>
+                  <th>No</th>
+                  <th>FGPO#</th>
+                  <th>CLASS</th>
+                  <th>ARTIKEL</th>
+                  <th>SILHOUETTE</th>
+                  <th>COLOR</th>
+                  <th>QTY</th>
+                  <th>KO#</th>
+                  <th>REVISI#</th>
+                  <th>ETA BALI</th>
+                </tr>"
+                    For i = 0 To dt_det.Rows.Count - 1
+                        mail.Body += "<tr>
+                  <td>" & (i + 1).ToString & "</td>
+                  <td>" & dt_det.Rows(i)("prod_order_number").ToString & "</td>
+                  <td>" & dt_det.Rows(i)("class").ToString & "</td>
+                  <td>" & dt_det.Rows(i)("design_display_name").ToString & "</td>
+                  <td>" & dt_det.Rows(i)("sht").ToString & "</td>
+                  <td>" & dt_det.Rows(i)("color").ToString & "</td>
+                  <td>" & dt_det.Rows(i)("qty").ToString & "</td>
+                  <td>" & dt_det.Rows(i)("number").ToString & "</td>
+                  <td>" & dt_det.Rows(i)("revision").ToString & "</td>
+                  <td>" & dt_det.Rows(i)("dte").ToString & "</td>
+                </tr>"
+                    Next
+
+                    mail.Body += "</table>
+</p>
+          
+           </td>
+       </tr>
+
+<tr>
+        <td style='padding:15.0pt 15.0pt 15.0pt 15.0pt' colspan='3'>
+        <div>
+        <p class='MsoNormal' style='line-height:14.25pt'><span style='font-size:10.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#606060;letter-spacing:.4pt'>Mohon dipastikan barang hasil produksi diterima sesuai dengan tanggal yang disetujui diatas.
+          <br /><br />Terima kasih.
+          <br />Purchasing Dept.
+          <br />PT. Volcom Indonesia
+           <br /><u></u><u></u></span></p>
+
+        </div>
+        </td>
+       </tr>
+      </tbody>
+    </table>
+    <!-- end body -->
+
+
+      <p class='MsoNormal' style='background-color:#eff0f1'><span style='display:block;height: 10px;'><u></u>&nbsp;<u></u></span></p>
+      <p class='MsoNormal'><span style='display:none'><u></u>&nbsp;<u></u></span></p>
+      <div align='center'>
+      <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' style='background:white'>
+       <tbody><tr>
+        <td style='padding:6.0pt 6.0pt 6.0pt 6.0pt;text-align:center;'>
+          <span style='text-align:center;font-size:7.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&quot;;color:#a0a0a0;letter-spacing:.4pt;'>This email send directly from system. Do not reply.</b><u></u><u></u></span>
+        <p class='MsoNormal' align='center' style='margin-bottom:12.0pt;text-align:center;padding-top:0px;'><br></p>
+        </td>
+       </tr>
+      </tbody></table>
+      </div>
+      </td>
+     </tr>
+    </tbody></table>  
+    </div>
+    </td>
+   </tr>
+  </tbody>
+</table>"
+                    client.Send(mail)
+                Next
+            End If
         End If
         client.Dispose()
     End Sub

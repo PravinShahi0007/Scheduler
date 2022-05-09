@@ -157,6 +157,11 @@ Partial Class FormScheduler
         Me.BtnLineList = New DevExpress.XtraEditors.SimpleButton()
         Me.Label24 = New System.Windows.Forms.Label()
         Me.TELineList = New DevExpress.XtraEditors.TimeEdit()
+        Me.XTPKO = New DevExpress.XtraTab.XtraTabPage()
+        Me.BReminderKO = New DevExpress.XtraEditors.SimpleButton()
+        Me.Label25 = New System.Windows.Forms.Label()
+        Me.TEReminderKO = New DevExpress.XtraEditors.TimeEdit()
+        Me.XTPSampleTrack = New DevExpress.XtraTab.XtraTabPage()
         Me.ContextMenuStrip.SuspendLayout()
         CType(Me.PanelControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelControl1.SuspendLayout()
@@ -233,6 +238,8 @@ Partial Class FormScheduler
         CType(Me.TEBSPNotif.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.XTPLineList.SuspendLayout()
         CType(Me.TELineList.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.XTPKO.SuspendLayout()
+        CType(Me.TEReminderKO.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Timer
@@ -411,7 +418,7 @@ Partial Class FormScheduler
         Me.XtraTabControl1.SelectedTabPage = Me.XTPSchedule
         Me.XtraTabControl1.Size = New System.Drawing.Size(878, 189)
         Me.XtraTabControl1.TabIndex = 6
-        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail, Me.XTPWarningLate, Me.XTPGetKurs, Me.XTPFailOrder, Me.XTPSalesReturn, Me.XTPMarketplaceOrderStt, Me.XTPQC, Me.XTPPolis, Me.XTPPOOG, Me.XTPPROG, Me.XTPSerahTerima, Me.XTPPIBReview, Me.XTPEOS, Me.XTPEOSPrice, Me.XTPBSP, Me.XTPLineList})
+        Me.XtraTabControl1.TabPages.AddRange(New DevExpress.XtraTab.XtraTabPage() {Me.XTPSchedule, Me.XTPAttendance, Me.XTPLeaveRemaining, Me.XTPProduction, Me.XTPEmpAppraisal, Me.XTPCashAdvance, Me.XTPEvaulationAR, Me.XTPNoticeEmail, Me.XTPWarningLate, Me.XTPGetKurs, Me.XTPFailOrder, Me.XTPSalesReturn, Me.XTPMarketplaceOrderStt, Me.XTPQC, Me.XTPPolis, Me.XTPPOOG, Me.XTPPROG, Me.XTPSerahTerima, Me.XTPPIBReview, Me.XTPEOS, Me.XTPEOSPrice, Me.XTPBSP, Me.XTPLineList, Me.XTPKO, Me.XTPSampleTrack})
         '
         'XTPSchedule
         '
@@ -1449,6 +1456,48 @@ Partial Class FormScheduler
         Me.TELineList.Size = New System.Drawing.Size(100, 20)
         Me.TELineList.TabIndex = 26
         '
+        'XTPKO
+        '
+        Me.XTPKO.Controls.Add(Me.BReminderKO)
+        Me.XTPKO.Controls.Add(Me.Label25)
+        Me.XTPKO.Controls.Add(Me.TEReminderKO)
+        Me.XTPKO.Name = "XTPKO"
+        Me.XTPKO.Size = New System.Drawing.Size(872, 161)
+        Me.XTPKO.Text = "Reminder KO"
+        '
+        'BReminderKO
+        '
+        Me.BReminderKO.Location = New System.Drawing.Point(221, 11)
+        Me.BReminderKO.Name = "BReminderKO"
+        Me.BReminderKO.Size = New System.Drawing.Size(66, 23)
+        Me.BReminderKO.TabIndex = 31
+        Me.BReminderKO.Text = "Save"
+        '
+        'Label25
+        '
+        Me.Label25.AutoSize = True
+        Me.Label25.Location = New System.Drawing.Point(11, 16)
+        Me.Label25.Name = "Label25"
+        Me.Label25.Size = New System.Drawing.Size(98, 13)
+        Me.Label25.TabIndex = 30
+        Me.Label25.Text = "Daily Reminder at :"
+        '
+        'TEReminderKO
+        '
+        Me.TEReminderKO.EditValue = New Date(2016, 9, 26, 0, 0, 0, 0)
+        Me.TEReminderKO.Location = New System.Drawing.Point(115, 13)
+        Me.TEReminderKO.Name = "TEReminderKO"
+        Me.TEReminderKO.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.TEReminderKO.Properties.Mask.EditMask = "HH:mm:ss"
+        Me.TEReminderKO.Size = New System.Drawing.Size(100, 20)
+        Me.TEReminderKO.TabIndex = 29
+        '
+        'XTPSampleTrack
+        '
+        Me.XTPSampleTrack.Name = "XTPSampleTrack"
+        Me.XTPSampleTrack.Size = New System.Drawing.Size(872, 161)
+        Me.XTPSampleTrack.Text = "Sample Development Tracking"
+        '
         'FormScheduler
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -1559,6 +1608,9 @@ Partial Class FormScheduler
         Me.XTPLineList.ResumeLayout(False)
         Me.XTPLineList.PerformLayout()
         CType(Me.TELineList.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.XTPKO.ResumeLayout(False)
+        Me.XTPKO.PerformLayout()
+        CType(Me.TEReminderKO.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1699,4 +1751,9 @@ Partial Class FormScheduler
     Friend WithEvents BtnLineList As DevExpress.XtraEditors.SimpleButton
     Friend WithEvents Label24 As Label
     Friend WithEvents TELineList As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents XTPKO As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents BReminderKO As DevExpress.XtraEditors.SimpleButton
+    Friend WithEvents Label25 As Label
+    Friend WithEvents TEReminderKO As DevExpress.XtraEditors.TimeEdit
+    Friend WithEvents XTPSampleTrack As DevExpress.XtraTab.XtraTabPage
 End Class
