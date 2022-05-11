@@ -3454,6 +3454,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
                     <th>Description</th>
                     <th>Silhouette</th>
                     <th>Color</th>
+                    <th>Qty</th>
                     <th>In Store Date</th>
                     <th>ETA AWAL</th>
                     <th>UPDATE ETA</th>
@@ -3475,6 +3476,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
                     <td>" + ddet_local(i)("product_name").ToString + "</td>
                     <td>" + ddet_local(i)("sht").ToString + "</td>
                     <td>" + ddet_local(i)("color").ToString + "</td>
+                    <td>" + Decimal.Parse(ddet_local(i)("total_qty").ToString).ToString("N0") + "</td>
                     <td>" + ddet_local(i)("in_store_date").ToString + "</td>
                     <td>" + ddet_local(i)("eta_awal").ToString + "</td>
                     <td>" + ddet_local(i)("eta_update").ToString + "</td>
@@ -3506,6 +3508,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
                     <th>Description</th>
                     <th>Silhouette</th>
                     <th>Color</th>
+                    <th>Qty</th>
                     <th>In Store Date</th>
                     <th>ETA AWAL</th>
                     <th>UPDATE ETA</th>
@@ -3527,6 +3530,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
                     <td>" + ddet_import(i)("product_name").ToString + "</td>
                     <td>" + ddet_import(i)("sht").ToString + "</td>
                     <td>" + ddet_import(i)("color").ToString + "</td>
+                    <td>" + Decimal.Parse(ddet_import(i)("total_qty").ToString).ToString("N0") + "</td>
                     <td>" + ddet_import(i)("in_store_date").ToString + "</td>
                     <td>" + ddet_import(i)("eta_awal").ToString + "</td>
                     <td>" + ddet_import(i)("eta_update").ToString + "</td>
