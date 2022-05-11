@@ -3385,7 +3385,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
           <td style='padding:30.0pt 30.0pt 30.0pt 30.0pt'>
           <div align='center'>
 
-          <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:6.25in;background:white'>
+          <table class='m_1811720018273078822MsoNormalTable' border='0' cellspacing='0' cellpadding='0' width='600' style='width:8.25in;background:white'>
            <tbody><tr>
             <td style='padding:0in 0in 0in 0in'></td>
            </tr>
@@ -3454,6 +3454,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
                     <th>Description</th>
                     <th>Silhouette</th>
                     <th>Color</th>
+                    <th>In Store Date</th>
                     <th>ETA AWAL</th>
                     <th>UPDATE ETA</th>
                     <th>SELISIH HARI</th>
@@ -3474,6 +3475,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
                     <td>" + ddet_local(i)("product_name").ToString + "</td>
                     <td>" + ddet_local(i)("sht").ToString + "</td>
                     <td>" + ddet_local(i)("color").ToString + "</td>
+                    <td>" + ddet_local(i)("in_store_date").ToString + "</td>
                     <td>" + ddet_local(i)("eta_awal").ToString + "</td>
                     <td>" + ddet_local(i)("eta_update").ToString + "</td>
                     <td>" + ddet_local(i)("diff").ToString + "</td>
@@ -3504,6 +3506,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
                     <th>Description</th>
                     <th>Silhouette</th>
                     <th>Color</th>
+                    <th>In Store Date</th>
                     <th>ETA AWAL</th>
                     <th>UPDATE ETA</th>
                     <th>SELISIH HARI</th>
@@ -3524,6 +3527,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
                     <td>" + ddet_import(i)("product_name").ToString + "</td>
                     <td>" + ddet_import(i)("sht").ToString + "</td>
                     <td>" + ddet_import(i)("color").ToString + "</td>
+                    <td>" + ddet_import(i)("in_store_date").ToString + "</td>
                     <td>" + ddet_import(i)("eta_awal").ToString + "</td>
                     <td>" + ddet_import(i)("eta_update").ToString + "</td>
                     <td>" + ddet_import(i)("diff").ToString + "</td>
