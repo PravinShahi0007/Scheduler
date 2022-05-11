@@ -3262,7 +3262,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
         Else
             For i As Integer = 0 To ddet_import.Length - 1
                 mail.Body += "<tr>
-                    <td>" + no_local.ToString + "</td>
+                    <td>" + no_import.ToString + "</td>
                     <td>" + ddet_import(i)("season").ToString + "</td>
                     <td>" + ddet_import(i)("code").ToString + "</td>
                     <td>" + ddet_import(i)("class").ToString + "</td>
