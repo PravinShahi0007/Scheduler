@@ -190,6 +190,12 @@
     <Compile Include="FormDatabase.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="FormResendNotifLineList.Designer.vb">
+      <DependentUpon>FormResendNotifLineList.vb</DependentUpon>
+    </Compile>
+    <Compile Include="FormResendNotifLineList.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="FormScheduler.Designer.vb">
       <DependentUpon>FormScheduler.vb</DependentUpon>
     </Compile>
@@ -293,6 +299,9 @@
   <ItemGroup>
     <EmbeddedResource Include="FormDatabase.resx">
       <DependentUpon>FormDatabase.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormResendNotifLineList.resx">
+      <DependentUpon>FormResendNotifLineList.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormScheduler.resx">
       <DependentUpon>FormScheduler.vb</DependentUpon>

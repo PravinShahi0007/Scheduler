@@ -3240,7 +3240,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
                       <th>Silhouette</th>
                       <th>Color</th>
                     </tr> "
-        Dim qdet As String = "CALL view_drop_changes_list()"
+        Dim qdet As String = "CALL view_drop_changes_list_v2('" + par1 + "')"
         Dim ddet As DataTable = execute_query(qdet, -1, True, "", "", "", "")
         For i As Integer = 0 To ddet.rows.count - 1
             mail.Body += "<tr>

@@ -154,6 +154,7 @@ Partial Class FormScheduler
         Me.Label23 = New System.Windows.Forms.Label()
         Me.TEBSPNotif = New DevExpress.XtraEditors.TimeEdit()
         Me.XTPLineList = New DevExpress.XtraTab.XtraTabPage()
+        Me.BtnResendEmail = New DevExpress.XtraEditors.SimpleButton()
         Me.BtnLineList = New DevExpress.XtraEditors.SimpleButton()
         Me.Label24 = New System.Windows.Forms.Label()
         Me.TELineList = New DevExpress.XtraEditors.TimeEdit()
@@ -1422,12 +1423,24 @@ Partial Class FormScheduler
         '
         'XTPLineList
         '
+        Me.XTPLineList.Controls.Add(Me.BtnResendEmail)
         Me.XTPLineList.Controls.Add(Me.BtnLineList)
         Me.XTPLineList.Controls.Add(Me.Label24)
         Me.XTPLineList.Controls.Add(Me.TELineList)
         Me.XTPLineList.Name = "XTPLineList"
         Me.XTPLineList.Size = New System.Drawing.Size(872, 161)
         Me.XTPLineList.Text = "Line List"
+        '
+        'BtnResendEmail
+        '
+        Me.BtnResendEmail.Location = New System.Drawing.Point(291, 14)
+        Me.BtnResendEmail.LookAndFeel.SkinMaskColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(192, Byte), Integer))
+        Me.BtnResendEmail.LookAndFeel.SkinMaskColor2 = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
+        Me.BtnResendEmail.LookAndFeel.UseDefaultLookAndFeel = False
+        Me.BtnResendEmail.Name = "BtnResendEmail"
+        Me.BtnResendEmail.Size = New System.Drawing.Size(99, 23)
+        Me.BtnResendEmail.TabIndex = 29
+        Me.BtnResendEmail.Text = "Resend Email"
         '
         'BtnLineList
         '
@@ -1756,4 +1769,5 @@ Partial Class FormScheduler
     Friend WithEvents Label25 As Label
     Friend WithEvents TEReminderKO As DevExpress.XtraEditors.TimeEdit
     Friend WithEvents XTPSampleTrack As DevExpress.XtraTab.XtraTabPage
+    Friend WithEvents BtnResendEmail As DevExpress.XtraEditors.SimpleButton
 End Class
