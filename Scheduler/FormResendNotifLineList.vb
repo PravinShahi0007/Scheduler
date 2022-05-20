@@ -29,6 +29,7 @@
                     If dtl.Rows.Count > 0 Then
                         Dim sm As New ClassSendEmail()
                         sm.report_mark_type = "397"
+                        sm.par1 = check_date
                         sm.dt = dtl
                         sm.send_email_line_list()
                     End If
@@ -54,7 +55,21 @@
                     MsgBox("error resend")
                 End Try
             ElseIf id_line_list_notif_type = "3" Then
-
+                'eta
+                Try
+                    Dim qeta As String = "CALL view_eta_changes_list_v2('" + check_date + "')"
+                    Dim deta As DataTable = execute_query(qeta, -1, True, "", "", "", "")
+                    If deta.Rows.Count > 0 Then
+                        Dim sm As New ClassSendEmail()
+                        sm.report_mark_type = "406"
+                        sm.par1 = check_date
+                        sm.send_email_eta_changes()
+                    End If
+                    execute_non_query("UPDATE tb_log_line_list_mail SET is_resend=1, resend_date=NOW() WHERE id_log_line_list_mail='" + id_log_line_list_mail + "' ", True, "", "", "", "")
+                    viewData()
+                Catch ex As Exception
+                    MsgBox("error resend")
+                End Try
             End If
         End If
     End Sub

@@ -2951,7 +2951,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
 
         'send email turun harga
         Dim query As String = "SELECT o.line_list_subject_mail, o.line_list_body_mail1, o.line_list_body_mail2,
-        DATE_FORMAT(DATE(NOW()),'%d %M %Y') AS tgl_notif
+        DATE_FORMAT('" + par1 + "','%d %M %Y') AS tgl_notif
         FROM tb_opt o "
         Dim data As DataTable = execute_query(query, -1, True, "", "", "", "")
         Dim subject_mail As String = data.Rows(0)("line_list_subject_mail").ToString
@@ -3129,7 +3129,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
         End If
 
         'data
-        Dim qd As String = "SELECT UPPER(DATE_FORMAT(DATE(NOW()),'%d %M %Y')) AS `tgl_sekarang`, UPPER(o.app_name) AS `app_name`, o.mail_volcom_logo, o.dc_subject_mail
+        Dim qd As String = "SELECT UPPER(DATE_FORMAT('" + par1 + "','%d %M %Y')) AS `tgl_sekarang`, UPPER(o.app_name) AS `app_name`, o.mail_volcom_logo, o.dc_subject_mail
         FROM tb_opt o "
         Dim dd As DataTable = execute_query(qd, -1, True, "", "", "", "")
         Dim subject_mail As String = dd.Rows(0)("dc_subject_mail").ToString
@@ -3319,7 +3319,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
         End If
 
         'data
-        Dim qd As String = "SELECT UPPER(DATE_FORMAT(DATE(NOW()),'%d %M %Y')) AS `tgl_sekarang`, UPPER(o.app_name) AS `app_name`, 
+        Dim qd As String = "SELECT UPPER(DATE_FORMAT('" + par1 + "','%d %M %Y')) AS `tgl_sekarang`, UPPER(o.app_name) AS `app_name`, 
         o.mail_volcom_logo, o.eta_title_mail, o.eta_subject_mail, o.eta_body_mail1, o.eta_body_mail2, o.eta_body_mail3
         FROM tb_opt o "
         Dim dd As DataTable = execute_query(qd, -1, True, "", "", "", "")
@@ -3375,7 +3375,7 @@ AND DATEDIFF(DATE(NOW()),DATE(pl.`complete_date`))>18"
         mail.IsBodyHtml = True
 
         'detail data
-        Dim qdet As String = "CALL view_eta_changes_list()"
+        Dim qdet As String = "CALL view_eta_changes_list_v2('" + par1 + "')"
         Dim ddet As DataTable = execute_query(qdet, -1, True, "", "", "", "")
         Dim ddet_local As DataRow() = ddet.Select("[src]='LOCAL' ")
         Dim ddet_import As DataRow() = ddet.Select("[src]='IMPORT' ")
