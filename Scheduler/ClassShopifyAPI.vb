@@ -25,7 +25,7 @@
         Net.ServicePointManager.SecurityProtocol = CType(3072, Net.SecurityProtocolType)
         Dim check_time_set = get_setup_field("shopify_min_date_order_failed")
         Dim limit_order As String = get_setup_field("shopify_limit_order_failed")
-        Dim url_first As String = "https://" + username + ":" + password + "@" + shop + "/admin/api/" + api_new_version + "/orders.json?fulfillment_status=unshipped&financial_status=pending&status=open&limit=" + limit_order + ""
+        Dim url_first As String = "https://" + username + ":" + password + "@" + shop + "/admin/api/" + api_new_version + "/orders.json?status=open&limit=" + limit_order + ""
         Dim url As String = "https://" + username + ":" + password + "@" + shop + "/admin/api/" + api_new_version + "/orders.json?limit=" + limit_order + ""
         Dim page_info As String = ""
         Dim i As Integer = 0
@@ -49,17 +49,40 @@
                     Dim responseFromServer As String = reader.ReadToEnd()
                     Dim json As Newtonsoft.Json.Linq.JObject = Newtonsoft.Json.Linq.JObject.Parse(responseFromServer)
                     For Each row In json("orders").ToList
+                        Dim order_id As String = row("id").ToString
                         Dim financial_status As String = row("financial_status").ToString
                         Dim created_at As DateTime = DateTime.Parse(row("created_at").ToString)
                         Dim created_at_cek As DateTime = New DateTime(created_at.Year, created_at.Month, created_at.Day, created_at.Hour, created_at.Minute, 0)
                         Dim diff_time As Long = (schedule_cek - created_at_cek).TotalMinutes
-                        'Console.WriteLine(schedule_cek.ToString)
-                        'Console.WriteLine(created_at.ToString)
-                        'Console.WriteLine(diff_time.ToString)
-                        If financial_status = "pending" And diff_time >= check_time_set Then
+
+                        'check failure
+                        Dim is_failure As Boolean = False
+                        Try
+                            Dim url_trans As String = "https://" + username + ":" + password + "@" + shop + "/admin/api/" + api_new_version + "/orders/" + order_id + "/transactions.json"
+                            Dim request_trans As Net.WebRequest = Net.WebRequest.Create(url_trans)
+                            request_trans.Method = "GET"
+                            request_trans.Credentials = New Net.NetworkCredential(username, password)
+                            Dim response_trans As Net.WebResponse = request_trans.GetResponse()
+                            Using dataStreamTrans As IO.Stream = response_trans.GetResponseStream()
+                                Dim readerTrans As IO.StreamReader = New IO.StreamReader(dataStreamTrans)
+                                Dim responseFromServerTrans As String = readerTrans.ReadToEnd()
+                                Dim json_trans As Newtonsoft.Json.Linq.JObject = Newtonsoft.Json.Linq.JObject.Parse(responseFromServerTrans)
+                                For Each row_trans In json_trans("transactions").ToList
+                                    If row_trans("status").ToString = "failure" Then
+                                        is_failure = True
+                                    End If
+                                Next
+                            End Using
+                        Catch ex As Exception
+                            is_failure = False
+                        End Try
+
+                        'Console.WriteLine("CEK : " + row("order_number").ToString + "/" + is_failure.ToString + "/" + financial_status + "/" + diff_time.ToString)
+                        If is_failure = True And financial_status = "pending" And diff_time >= check_time_set Then
+                            'Console.WriteLine("OK :" + row("order_number").ToString)
                             'check existing
                             Dim id As String = row("id").ToString
-                            Dim qcek As String = "SELECT * FROM tb_ol_store_order_fail od WHERE od.id='" + id + "' "
+                            Dim qcek As String = "Select * FROM tb_ol_store_order_fail od WHERE od.id='" + id + "' "
                             Dim dcek As DataTable = execute_query(qcek, -1, True, "", "", "", "")
                             If dcek.Rows.Count = 0 Then
                                 Dim schedule_time As String = DateTime.Parse(schedule_cek).ToString("yyyy-MM-dd HH:mm:ss")
